@@ -16,7 +16,7 @@ import {
   DONT_HAVE_ACCOUNT,
   LOGIN,
   REGISTER_SUCCESS,
-  TECH_TEAM,
+  TEACH_TEAM,
 } from "./constant";
 import { userValidation } from "../util/userValidation";
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
@@ -106,7 +106,7 @@ export const LoginPage = ({
   return (
     <AuthWrapper>
       <AuthContainer>
-        <h1>{TECH_TEAM}</h1>
+        <h1>{TEACH_TEAM}</h1>
         <h2 data-testid="login">{LOGIN}</h2>
 
         {registrationSuccess && (

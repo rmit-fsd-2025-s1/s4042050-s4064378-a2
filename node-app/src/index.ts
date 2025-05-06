@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
-app.use("/api", userRoutes);
+app.use("/teach_team", userRoutes);
 
 AppDataSource.initialize()
   .then(() => {

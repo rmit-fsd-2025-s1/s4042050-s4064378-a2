@@ -21,7 +21,7 @@ export class User {
   email: string;
 
   @Column()
-  age: number;
+  password: string;
 
   @CreateDateColumn()
   createdAt: Date;

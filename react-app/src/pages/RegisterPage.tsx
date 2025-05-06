@@ -9,7 +9,7 @@ import {
   StyledSelect,
 } from "./element";
 import { PrimaryButton } from "../components/Buttons/PrimaryButton";
-import { HAVE_ACCOUNT, LOGIN, REGISTER, TECH_TEAM } from "./constant";
+import { HAVE_ACCOUNT, LOGIN, REGISTER, TEACH_TEAM } from "./constant";
 import { addUser, isEmailExist } from "../util";
 import { Role } from "../types/User";
 import { Page } from "../App";
@@ -66,7 +66,7 @@ export const RegisterPage = ({
   return (
     <AuthWrapper>
       <AuthContainer>
-        <h1>{TECH_TEAM}</h1>
+        <h1>{TEACH_TEAM}</h1>
         <h2>{REGISTER}</h2>
 
         <form onSubmit={handleRegister}>

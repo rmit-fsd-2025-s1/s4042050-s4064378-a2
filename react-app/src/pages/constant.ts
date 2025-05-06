@@ -1,4 +1,4 @@
-export const TECH_TEAM = "Tech Team";
+export const TEACH_TEAM = "Teach Team";
 export const LOGIN = "Login";
 export const REGISTER = "Register";
 export const REGISTER_SUCCESS = "Registration successful! You can now login.";
