@@ -1,9 +1,21 @@
-export type Role = "tutor" | "lecturer";
+export type Role = "candidate" | "lecturer";
+
+// export interface User {
+//   email: string;
+//   firstName: string;
+//   lastName: string;
+//   password: string;
+//   role: Role;
+// }
 
 export interface User {
-  email: string;
+  id: number;
   firstName: string;
   lastName: string;
+  userName: string;
+  email: string;
   password: string;
   role: Role;
+  createdAt: Date;
+  updatedAt: Date;
 }

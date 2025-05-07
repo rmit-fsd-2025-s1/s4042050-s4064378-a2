@@ -1,5 +1,5 @@
 import { Page } from "../App";
-import { setCurrentUserToLocalStorage } from "../util/localStorage";
+// import { setCurrentUserToLocalStorage } from "../util/localStorage";
 import { LogoutButton } from "./Buttons/LogoutButton";
 import { DashboardWrapper } from "./element";
 
@@ -19,7 +19,7 @@ export const Dashboard = ({
   navigateTo: (page: Page) => void;
 }) => {
   const onLogout = () => {
-    setCurrentUserToLocalStorage(null);
+    // setCurrentUserToLocalStorage(null);
     navigateTo("login");
   };
 

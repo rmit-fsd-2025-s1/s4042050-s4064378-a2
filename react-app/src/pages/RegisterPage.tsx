@@ -10,7 +10,7 @@ import {
 } from "./element";
 import { PrimaryButton } from "../components/Buttons/PrimaryButton";
 import { HAVE_ACCOUNT, LOGIN, REGISTER, TEACH_TEAM } from "./constant";
-import { addUser, isEmailExist } from "../util";
+// import { addUser, isEmailExist } from "../util";
 import { Role } from "../types/User";
 import { Page } from "../App";
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
@@ -31,7 +31,8 @@ export const RegisterPage = ({
     React.SetStateAction<boolean | undefined>
   >;
 }) => {
-  const [role, setRole] = useState<Role>("tutor");
+  const [role, setRole] = useState<Role>("candidate");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -43,13 +44,14 @@ export const RegisterPage = ({
     e.preventDefault();
 
     // Basic validation
-    if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields");
+    if (!email || !password || !confirmPassword || !userName || !lastName) {
+      setError("Please fill all fields");
       return;
     }
 
     // Check if email already exists
-    const emailExists = isEmailExist(email);
+    // const emailExists = isEmailExist(email);
+    const emailExists = false;
 
     if (emailExists) {
       setError("The email already exists");
@@ -57,7 +59,7 @@ export const RegisterPage = ({
       setError("Passwords should be same");
     } else {
       // In a real app, you would call an API to register the user
-      addUser({ email, role, password, firstName, lastName });
+      // addUser({ email, role, password, firstName, lastName });
       setRegistrationSuccess(true);
       navigateTo("login");
     }
@@ -78,6 +80,16 @@ export const RegisterPage = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
+            />
+          </FormGroup>
+          <FormGroup>
+            <label htmlFor="user-name">User Name</label>
+            <input
+              type="text"
+              id="user-name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="Enter a Username"
             />
           </FormGroup>
           <FormGroup>
@@ -108,7 +120,7 @@ export const RegisterPage = ({
               onChange={(e) => setRole(e.target.value as unknown as Role)}
               required
             >
-              <option value="tutor">Tutor</option>
+              <option value="candidate">Candidate</option>
               <option value="lecturer">Lecturer</option>
             </StyledSelect>
           </FormGroup>

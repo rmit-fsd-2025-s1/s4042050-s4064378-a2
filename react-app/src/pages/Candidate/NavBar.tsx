@@ -1,11 +1,11 @@
-import { TutoTabType } from "./TutorDashboard";
+import { CandidateTabType } from "./CandidateDashboard";
 
 export const NavBar = ({
   activeTab,
   setActiveTab,
 }: {
-  activeTab: TutoTabType;
-  setActiveTab: React.Dispatch<React.SetStateAction<TutoTabType>>;
+  activeTab: CandidateTabType;
+  setActiveTab: React.Dispatch<React.SetStateAction<CandidateTabType>>;
 }) => {
   return (
     <nav>

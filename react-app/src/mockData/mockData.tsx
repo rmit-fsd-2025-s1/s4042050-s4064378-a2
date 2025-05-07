@@ -1,9 +1,6 @@
-import { User } from "../types/User";
-import { Tutor } from "../types/Tutor";
-
 //This is the hardcoded mock data
 // Some of the mock data were genrated using chaGPT
-export const mockUsers: User[] = [
+export const mockUsers = [
   {
     email: "test@example.com",
     firstName: "Tom",
@@ -16,56 +13,56 @@ export const mockUsers: User[] = [
     firstName: "John",
     lastName: "Doe",
     password: "abc",
-    role: "tutor",
+    role: "candidate",
   },
   {
     firstName: "Jane",
     lastName: "Smith",
     email: "jane.smith@example.com",
     password: "abc",
-    role: "tutor",
+    role: "candidate",
   },
   {
     firstName: "Arun",
     lastName: "Kumar",
     email: "arun.k@example.com",
     password: "abcd",
-    role: "tutor",
+    role: "candidate",
   },
   {
     firstName: "abc",
     lastName: "def",
     email: "abc@gmail.com",
     password: "123",
-    role: "tutor",
+    role: "candidate",
   },
   {
     firstName: "Emily",
     lastName: "Brown",
     email: "emily.b@example.com",
     password: "pass123",
-    role: "tutor",
+    role: "candidate",
   },
   {
     firstName: "Michael",
     lastName: "Lee",
     email: "michael.lee@example.com",
     password: "lee456",
-    role: "tutor",
+    role: "candidate",
   },
   {
     firstName: "Sara",
     lastName: "Ahmed",
     email: "sara.ahmed@example.com",
     password: "sara789",
-    role: "tutor",
+    role: "candidate",
   },
 ];
 
-export const mockTutors: Tutor[] = [
+export const mockCandidates = [
   {
     ...mockUsers[1],
-    id: "tutor-1",
+    id: "candidate-1",
     skills: ["JavaScript", "React", "CSS"],
     availability: "full-time",
     credentials: [
@@ -78,14 +75,14 @@ export const mockTutors: Tutor[] = [
     appliedRoles: [
       {
         courseId: "1",
-        role: "tutor",
+        role: "candidate",
         status: "accepted",
         rank: 0,
       },
     ],
   },
   {
-    id: "tutor-2",
+    id: "candidate-2",
     ...mockUsers[2],
     skills: ["TypeScript", "Node.js", "Express"],
     availability: "part-time",
@@ -99,20 +96,20 @@ export const mockTutors: Tutor[] = [
     appliedRoles: [
       {
         courseId: "2",
-        role: "tutor",
+        role: "candidate",
         status: "accepted",
         rank: 0,
       },
       {
         courseId: "1",
-        role: "tutor",
+        role: "candidate",
         status: "accepted",
         rank: 0,
       },
     ],
   },
   {
-    id: "tutor-3",
+    id: "candidate-3",
     ...mockUsers[3],
     skills: ["Python", "Django"],
     availability: "full-time",
@@ -126,20 +123,20 @@ export const mockTutors: Tutor[] = [
     appliedRoles: [
       {
         courseId: "3",
-        role: "tutor",
+        role: "candidate",
         status: "pending",
         rank: 0,
       },
       {
         courseId: "4",
-        role: "tutor",
+        role: "candidate",
         status: "pending",
         rank: 0,
       },
     ],
   },
   {
-    id: "tutor-4",
+    id: "candidate-4",
     ...mockUsers[5],
     skills: ["HTML", "CSS", "JavaScript"],
     availability: "part-time",
@@ -153,14 +150,14 @@ export const mockTutors: Tutor[] = [
     appliedRoles: [
       {
         courseId: "1",
-        role: "tutor",
+        role: "candidate",
         status: "pending",
         rank: 0,
       },
     ],
   },
   {
-    id: "tutor-5",
+    id: "candidate-5",
     ...mockUsers[6],
     skills: ["Java", "Spring", "SQL"],
     availability: "full-time",
@@ -174,14 +171,14 @@ export const mockTutors: Tutor[] = [
     appliedRoles: [
       {
         courseId: "2",
-        role: "tutor",
+        role: "candidate",
         status: "pending",
         rank: 0,
       },
     ],
   },
   {
-    id: "tutor-6",
+    id: "candidate-6",
     ...mockUsers[7],
     skills: ["Python", "Pandas", "TensorFlow"],
     availability: "part-time",
@@ -195,7 +192,7 @@ export const mockTutors: Tutor[] = [
     appliedRoles: [
       {
         courseId: "3",
-        role: "tutor",
+        role: "candidate",
         status: "pending",
         rank: 0,
       },

@@ -41,13 +41,12 @@ export class UserController {
    * @returns JSON response containing the created user or error message
    */
   async save(request: Request, response: Response) {
-    const { firstName, lastName, email, age } = request.body;
+    const { firstName, lastName, email } = request.body;
 
     const user = Object.assign(new User(), {
       firstName,
       lastName,
       email,
-      age,
     });
 
     try {

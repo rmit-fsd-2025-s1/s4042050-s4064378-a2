@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tutor } from "../../types/Tutor";
+import { Candidate } from "../../types/Candidate";
 import {
   AddCredentialWrapper,
   CredentialItem,
@@ -16,29 +16,29 @@ import {
 import { Popup } from "../../components/Popup";
 
 /**
- * ProfileInformation - A component for displaying and editing tutor profile information.
+ * ProfileInformation - A component for displaying and editing candidate profile information.
  *
- * This component renders a tutor's profile details and provides functionality to update them.
+ * This component renders a candidate's profile details and provides functionality to update them.
  * It handles the display logic while delegating the actual update operations to the parent component.
  *
  * @component
  * @param {Object} props - Component props
- * @param {Tutor} props.profile - The tutor profile object containing all profile information
+ * @param {Candidate} props.profile - The candidate profile object containing all profile information
  * @param {function} props.onUpdate - Callback function invoked when profile updates occur
  * @returns {React.ReactElement} The profile information form component
  *
  */
 
 interface ProfileInformationProps {
-  profile: Tutor;
-  onUpdate: (updatedProfile: Partial<Tutor>) => void;
+  profile: Candidate;
+  onUpdate: (updatedProfile: Partial<Candidate>) => void;
 }
 
 const ProfileInformation: React.FC<ProfileInformationProps> = ({
   profile,
   onUpdate,
 }) => {
-  // tutor availability
+  // candidate availability
   const [availability, setAvailability] = useState<"part-time" | "full-time">(
     profile.availability
   );
@@ -141,7 +141,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
 
       <Section>
         <h3>Availability</h3>
-        {/** radio group for select tutor availability */}
+        {/** radio group for select candidate availability */}
         <RadioGroup>
           <label>
             <input

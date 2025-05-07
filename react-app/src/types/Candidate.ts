@@ -1,7 +1,7 @@
 import { User } from "./User";
 
-export interface Tutor extends User {
-  id: string;
+export interface Candidate extends User {
+  candidateId: string;
   // name:string, // use first name and last name from User parent object
   // course: string; // should be removed
   availability: "full-time" | "part-time";
@@ -11,7 +11,7 @@ export interface Tutor extends User {
     institution: string;
     year: number;
   }[];
-  appliedRoles?: TutorRole[];
+  appliedRoles?: CandidateRole[];
 }
 
 export interface Course {
@@ -21,18 +21,18 @@ export interface Course {
   semester: string;
 }
 
-export interface TutorRole {
+export interface CandidateRole {
   // id: string; I feel we don't need this
   courseId: string;
-  role: "tutor" | "lab-assistant";
+  role: "candidate" | "lab-assistant";
   status: "accepted" | "rejected" | "pending";
   rank?: number;
-  comment?:string
+  comment?: string;
 }
 
-export interface TutorApplication extends Tutor {
-  course: string;
-  rank: number;
-  status: "pending" | "accepted" | "rejected";
-  appliedRole: TutorRole;
-}
+// export interface CandidateApplication extends Candidate {
+//   course: string;
+//   rank: number;
+//   status: "pending" | "accepted" | "rejected";
+//   appliedRole: CandidateRole;
+// }

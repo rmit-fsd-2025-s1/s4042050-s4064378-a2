@@ -1,20 +1,20 @@
 // src/components/PreviousRoles.tsx
 import React, { useState } from "react";
-import { Course, TutorRole } from "../../types/Tutor";
+import { Course, CandidateRole } from "../../types/Candidate";
 import { PreviousRolesHeading, RolesTable } from "./element";
-import { getAllCourses } from "../../util/getAllCourses";
+// import { getAllCourses } from "../../util/getAllCourses";
 
 /**
- * Displays a tutor's previous teaching roles and positions.
+ * Displays a candidate's previous teaching roles and positions.
  *
- * @param roles - Array of the tutor's previous roles and their details
+ * @param roles - Array of the candidate's previous roles and their details
  */
 interface PreviousRolesProps {
-  roles: TutorRole[];
+  roles: CandidateRole[];
 }
 
 const PreviousRoles: React.FC<PreviousRolesProps> = ({ roles }) => {
-  const [allCourse, setAllCourse] = useState<Course[]>(getAllCourses());
+  const [allCourse, setAllCourse] = useState<Course[]>([]);
 
   return (
     <div className="previous-roles">
@@ -47,7 +47,9 @@ const PreviousRoles: React.FC<PreviousRolesProps> = ({ roles }) => {
                       course!.name.slice(1)}
                   </td>
                   <td>{course?.semester}</td>
-                  <td>{role.role === "tutor" ? "Tutor" : "Lab Assistant"}</td>
+                  <td>
+                    {role.role === "candidate" ? "Candidate" : "Lab Assistant"}
+                  </td>
                 </tr>
               );
             })}

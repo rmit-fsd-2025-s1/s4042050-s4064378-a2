@@ -18,7 +18,7 @@ import {
   REGISTER_SUCCESS,
   TEACH_TEAM,
 } from "./constant";
-import { userValidation } from "../util/userValidation";
+// import { userValidation } from "../util/userValidation";
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
 
 const REACT_APP_SITE_KEY = "6LfaTQErAAAAAM4oamNji2SSm2uVi3-gUk1ul29S";
@@ -89,18 +89,18 @@ export const LoginPage = ({
 
     setError("");
 
-    const user = userValidation({ email, password });
-    if (user) {
-      setCurrentUser(user);
-      if (user.role === "lecturer") {
-        navigateTo("lecturer");
-      } else {
-        navigateTo("tutor");
-      }
-      return;
-    }
+    // const user = userValidation({ email, password });
+    // if (user) {
+    //   setCurrentUser(user);
+    //   if (user.role === "lecturer") {
+    //     navigateTo("lecturer");
+    //   } else {
+    //     navigateTo("candidate");
+    //   }
+    //   return;
+    // }
 
-    setError("User Not Found");
+    // setError("User Not Found");
   };
 
   return (

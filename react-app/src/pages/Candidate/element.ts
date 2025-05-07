@@ -100,7 +100,7 @@ export const RequiredIndicator = styled.span`
   margin-left: 4px;
 `;
 
-export const TutorApplicationHeading = styled.h2`
+export const CandidateApplicationHeading = styled.h2`
   margin-bottom: 15px;
   color: var(--secondary-color);
 `;
@@ -115,7 +115,7 @@ export const ProfileInformationHeading = styled.h2`
   color: var(--secondary-color);
 `;
 
-export const TutorApplicationSubHeading = styled.p`
+export const CandidateApplicationSubHeading = styled.p`
   margin-bottom: 20px;
   color: #666;
 `;
@@ -210,7 +210,7 @@ export const CoursesList = styled.ul`
   }
 `;
 
-export const TutorDashboardWrapper = styled.div`
+export const CandidateDashboardWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
