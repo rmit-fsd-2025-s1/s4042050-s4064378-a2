@@ -20,6 +20,8 @@ import {
 } from "./constant";
 // import { userValidation } from "../util/userValidation";
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
+import { userApi } from "../services/userApi";
+import axios from "axios";
 
 const REACT_APP_SITE_KEY = "6LfaTQErAAAAAM4oamNji2SSm2uVi3-gUk1ul29S";
 const SITE_SECRET = "6LfaTQErAAAAACODMgjJzjm-jubUGIz8S13k9m2H";
@@ -62,7 +64,7 @@ export const LoginPage = ({
     }
   }, [registrationSuccess, setRegistrationSuccess]);
 
-  const handleLogin = (e: any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
 
     if (!validateRegex(email, CHECK_EMAIL_REGEX)) {
@@ -88,6 +90,25 @@ export const LoginPage = ({
     }
 
     setError("");
+
+    try {
+      const response = await userApi.login(email, password);
+      console.log(response);
+      setCurrentUser(response.data);
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        // Handle Axios-specific errors (e.g., HTTP 4xx/5xx responses)
+        setError(
+          err.response?.data?.message || err.message || "Request failed"
+        );
+      } else if (err instanceof Error) {
+        // Handle generic JavaScript errors (e.g., TypeError, SyntaxError)
+        setError(err.message);
+      } else {
+        // Fallback for non-Error objects (e.g., thrown strings, null, etc.)
+        setError(String(err));
+      }
+    }
 
     // const user = userValidation({ email, password });
     // if (user) {

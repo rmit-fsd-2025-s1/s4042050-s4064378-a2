@@ -12,6 +12,11 @@ export const userApi = {
     return response.data;
   },
 
+  login: async (email: string, password: string) => {
+    const response = await api.post(`/users/login`, { email, password });
+    return response.data;
+  },
+
   createUser: async (user: Partial<User>) => {
     const response = await api.post("/users", user);
     return response.data;

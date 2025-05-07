@@ -14,6 +14,7 @@ import { HAVE_ACCOUNT, LOGIN, REGISTER, TEACH_TEAM } from "./constant";
 import { Role } from "../types/User";
 import { Page } from "../App";
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
+import { userApi } from "../services/userApi";
 
 /**
  * Handles user registration and manages registration success state.
@@ -32,7 +33,6 @@ export const RegisterPage = ({
   >;
 }) => {
   const [role, setRole] = useState<Role>("candidate");
-  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -40,29 +40,44 @@ export const RegisterPage = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleRegister = (e: any) => {
+  const handleRegister = async (e: any) => {
     e.preventDefault();
 
     // Basic validation
-    if (!email || !password || !confirmPassword || !userName || !lastName) {
+    if (!email || !password || !confirmPassword || !lastName) {
       setError("Please fill all fields");
       return;
     }
 
-    // Check if email already exists
-    // const emailExists = isEmailExist(email);
-    const emailExists = false;
-
-    if (emailExists) {
-      setError("The email already exists");
-    } else if (confirmPassword !== password) {
+    if (confirmPassword !== password) {
       setError("Passwords should be same");
-    } else {
-      // In a real app, you would call an API to register the user
-      // addUser({ email, role, password, firstName, lastName });
-      setRegistrationSuccess(true);
-      navigateTo("login");
+      return;
     }
+
+    try {
+      await userApi.createUser({
+        password: password,
+        email,
+        lastName,
+        firstName,
+        role,
+      });
+    } catch (error: any) {
+      if (
+        error.response.data.error &&
+        error.response.data.error.code === "ER_DUP_ENTRY"
+      ) {
+        setError("Email already exist");
+      } else {
+        console.log(error);
+        setError("Error in creating user");
+      }
+
+      return;
+    }
+    setError("");
+    setRegistrationSuccess(true);
+    navigateTo("login");
   };
 
   return (
@@ -80,16 +95,6 @@ export const RegisterPage = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-            />
-          </FormGroup>
-          <FormGroup>
-            <label htmlFor="user-name">User Name</label>
-            <input
-              type="text"
-              id="user-name"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              placeholder="Enter a Username"
             />
           </FormGroup>
           <FormGroup>
@@ -113,7 +118,7 @@ export const RegisterPage = ({
             />
           </FormGroup>
           <FormGroup>
-            <StyledLabel htmlFor="role">Role</StyledLabel>
+            <StyledLabel htmlFor="role">Type</StyledLabel>
             <StyledSelect
               id="role"
               value={String(role)}

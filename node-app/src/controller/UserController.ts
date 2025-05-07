@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
+import { hashPassword } from "../util/hashPassword";
+import { comparePassword } from "../util/comparePassword";
+import { Candidate } from "src/entity/Candidate";
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -41,16 +44,27 @@ export class UserController {
    * @returns JSON response containing the created user or error message
    */
   async save(request: Request, response: Response) {
-    const { firstName, lastName, email } = request.body;
+    const { firstName, lastName, email, password, role } = request.body;
 
     const user = Object.assign(new User(), {
       firstName,
       lastName,
       email,
+      password: await hashPassword(password),
     });
 
     try {
       const savedUser = await this.userRepository.save(user);
+
+      if (role === "candidate") {
+        const { skills, credentials, availability } = request.body;
+        const candidate = new Candidate();
+        candidate.availability = availability;
+        candidate.skills = skills;
+        candidate.credentials = credentials;
+        candidate.userId = savedUser.id;
+      }
+
       return response.status(201).json(savedUser);
     } catch (error) {
       return response
@@ -112,5 +126,25 @@ export class UserController {
         .status(400)
         .json({ message: "Error updating user", error });
     }
+  }
+
+  async login(request: Request, response: Response) {
+    const { email, password } = request.body;
+
+    let user = await this.userRepository.findOne({
+      where: { email },
+    });
+    console.log(user);
+
+    if (!user) {
+      return response.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const isValidPassword = await comparePassword(password, user.password);
+
+    if (!isValidPassword) {
+      return response.status(401).json({ message: "Invalid credentials" });
+    }
+    return response.json(user);
   }
 }

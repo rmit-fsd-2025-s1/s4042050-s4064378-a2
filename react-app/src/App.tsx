@@ -4,12 +4,12 @@ import { User } from "./types/User";
 import { App } from "./elements";
 import { RegisterPage } from "./pages/RegisterPage";
 import CandidateDashboard from "./pages/Candidate/CandidateDashboard";
-// import {
-//   getCurrentPage,
-//   getCurrentUser,
-//   setCurrentPageToLocalStorage,
-//   setCurrentUserToLocalStorage,
-// } from "./util/localStorage";
+import {
+  getCurrentPage,
+  getCurrentUser,
+  setCurrentPageToLocalStorage,
+  setCurrentUserToLocalStorage,
+} from "./util/localStorage";
 
 export type Page = "login" | "register" | "candidate" | "lecturer";
 
@@ -22,31 +22,31 @@ const TechTeam = () => {
 
   const navigateTo = (page: Page) => {
     setCurrentPage(page);
-    // setCurrentPageToLocalStorage(page);
+    setCurrentPageToLocalStorage(page);
   };
 
   const setUser = (user: User) => {
-    // setCurrentUserToLocalStorage(user);
+    setCurrentUserToLocalStorage(user);
     setCurrentUser(user);
   };
 
-  // useEffect(() => {
-  //   if (!currentUser) {
-  //     const user = getCurrentUser();
+  useEffect(() => {
+    if (!currentUser) {
+      const user = getCurrentUser();
 
-  //     if (user) {
-  //       setCurrentUser(() => user);
-  //     }
-  //   }
+      if (user) {
+        setCurrentUser(() => user);
+      }
+    }
 
-  //   console.log(currentPage, currentUser);
-  //   if (!currentPage) {
-  //     const page = getCurrentPage();
-  //     if (page) {
-  //       setCurrentPage(page);
-  //     }
-  //   }
-  // }, [currentPage, currentUser]);
+    console.log(currentPage, currentUser);
+    if (!currentPage) {
+      const page = getCurrentPage();
+      if (page) {
+        setCurrentPage(page);
+      }
+    }
+  }, [currentPage, currentUser]);
 
   // useEffect(() => {
   //   addMockDataToLocalStorage();
