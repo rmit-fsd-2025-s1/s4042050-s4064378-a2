@@ -112,7 +112,7 @@ export const RegisterPage = ({
             <input
               type="text"
               id="last-name"
-              value={firstName}
+              value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Enter your last name"
             />

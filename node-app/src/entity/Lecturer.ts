@@ -9,31 +9,10 @@ import {
 } from "typeorm";
 import { User } from "./User";
 
-// candidate_id{pk}
-// user_id{fk}
-// availability
-// credentials
-// skills
-// created_at
-// updated_at
-
 @Entity()
-export class Candidate {
+export class Lecturer {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  availability: string;
-
-  @Column("simple-array")
-  skills: string[];
-
-  @Column("json")
-  credentials: Array<{
-    degree: string;
-    institution: string;
-    year: number;
-  }>;
 
   @CreateDateColumn()
   createdAt: Date;

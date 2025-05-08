@@ -3,7 +3,8 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import { hashPassword } from "../util/hashPassword";
 import { comparePassword } from "../util/comparePassword";
-import { Candidate } from "src/entity/Candidate";
+import { CandidateController } from "./CandidateController";
+import { LecturerController } from "./LecturerController";
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -54,16 +55,20 @@ export class UserController {
     });
 
     try {
-      const savedUser = await this.userRepository.save(user);
-
-      if (role === "candidate") {
-        const { skills, credentials, availability } = request.body;
-        const candidate = new Candidate();
-        candidate.availability = availability;
-        candidate.skills = skills;
-        candidate.credentials = credentials;
-        candidate.userId = savedUser.id;
-      }
+      const savedUser = await this.userRepository
+        .save(user)
+        .then(async (res) => {
+          request.body.user_id = res.id;
+          console.log(res, role);
+          if (role === "candidate") {
+            const candidateController = new CandidateController();
+            const respond = await candidateController.save(request, response);
+          } else if (role === "lecturer") {
+            console.log("inside");
+            const lecturerController = new LecturerController();
+            const respond = await lecturerController.save(request, response);
+          }
+        });
 
       return response.status(201).json(savedUser);
     } catch (error) {
@@ -133,8 +138,8 @@ export class UserController {
 
     let user = await this.userRepository.findOne({
       where: { email },
+      relations: ["candidate", "lecturer"],
     });
-    console.log(user);
 
     if (!user) {
       return response.status(401).json({ message: "Invalid credentials" });
@@ -145,6 +150,14 @@ export class UserController {
     if (!isValidPassword) {
       return response.status(401).json({ message: "Invalid credentials" });
     }
-    return response.json(user);
+
+    let role = "";
+
+    if (user.candidate) {
+      role = "candidate";
+    } else if (user.lecturer) {
+      role = "lecturer";
+    }
+    return response.json({ ...user, role });
   }
 }

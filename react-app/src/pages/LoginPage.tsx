@@ -94,7 +94,12 @@ export const LoginPage = ({
     try {
       const response = await userApi.login(email, password);
       console.log(response);
-      setCurrentUser(response.data);
+      if (!response) {
+        setError("Error in login");
+        return;
+      }
+      setCurrentUser(response);
+      navigateTo("candidate");
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
         // Handle Axios-specific errors (e.g., HTTP 4xx/5xx responses)

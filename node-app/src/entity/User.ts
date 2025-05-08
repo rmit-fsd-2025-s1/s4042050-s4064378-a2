@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from "typeorm";
+import { Candidate } from "./Candidate";
+import { Lecturer } from "./Lecturer";
 
 @Entity()
 export class User {
@@ -28,4 +31,12 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Optional 1:1 with Candidate
+  @OneToOne(() => Candidate, (candidate) => candidate.user)
+  candidate?: Candidate;
+
+  // Optional 1:1 with Lecturer
+  @OneToOne(() => Lecturer, (lecturer) => lecturer.user)
+  lecturer?: Lecturer;
 }
