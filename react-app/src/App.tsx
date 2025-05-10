@@ -19,6 +19,7 @@ const TechTeam = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState<
     boolean | undefined
   >(false);
+  const [isSuccessLogin, setIsSuccessLogin] = useState(false);
 
   const navigateTo = (page: Page) => {
     setCurrentPage(page);
@@ -56,12 +57,16 @@ const TechTeam = () => {
     switch (currentPage) {
       case "login":
         return (
-          <LoginPage
-            setCurrentUser={setUser}
-            navigateTo={navigateTo}
-            registrationSuccess={registrationSuccess}
-            setRegistrationSuccess={setRegistrationSuccess}
-          />
+          <>
+            <LoginPage
+              setCurrentUser={setUser}
+              navigateTo={navigateTo}
+              registrationSuccess={registrationSuccess}
+              setIsSuccessLogin={setIsSuccessLogin}
+              setRegistrationSuccess={setRegistrationSuccess}
+            />
+            <div>test</div>
+          </>
         );
       case "register":
         return (
@@ -75,6 +80,7 @@ const TechTeam = () => {
           <CandidateDashboard
             currentUser={currentUser}
             navigateTo={navigateTo}
+            isSuccessLogin={isSuccessLogin}
           />
         );
       // case "lecturer":
@@ -86,6 +92,7 @@ const TechTeam = () => {
             setCurrentUser={setUser}
             navigateTo={navigateTo}
             registrationSuccess={registrationSuccess}
+            setIsSuccessLogin={setIsSuccessLogin}
             setRegistrationSuccess={setRegistrationSuccess}
           />
         );

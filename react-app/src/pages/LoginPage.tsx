@@ -22,6 +22,7 @@ import {
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
 import { userApi } from "../services/userApi";
 import axios from "axios";
+import { Popup } from "../components/Popup";
 
 const REACT_APP_SITE_KEY = "6LfaTQErAAAAAM4oamNji2SSm2uVi3-gUk1ul29S";
 const SITE_SECRET = "6LfaTQErAAAAACODMgjJzjm-jubUGIz8S13k9m2H";
@@ -39,6 +40,7 @@ export type LoginPageProps = {
   setCurrentUser: (user: User) => void;
   navigateTo: (page: any) => void;
   registrationSuccess?: boolean;
+  setIsSuccessLogin: React.Dispatch<React.SetStateAction<boolean>>;
   setRegistrationSuccess?: React.Dispatch<
     React.SetStateAction<boolean | undefined>
   >;
@@ -48,12 +50,14 @@ export const LoginPage = ({
   setCurrentUser,
   navigateTo,
   registrationSuccess,
+  setIsSuccessLogin,
   setRegistrationSuccess,
 }: LoginPageProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const recaptcha = useRef<ReCAPTCHA>(null);
+  //
 
   React.useEffect(() => {
     if (registrationSuccess && setRegistrationSuccess) {
@@ -98,6 +102,7 @@ export const LoginPage = ({
         setError("Error in login");
         return;
       }
+      setIsSuccessLogin(true);
       setCurrentUser(response);
       navigateTo("candidate");
     } catch (err: any) {

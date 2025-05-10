@@ -10,6 +10,9 @@ import { User } from "../../types/User";
 import { Page } from "../../App";
 import { NavBar } from "./NavBar";
 import CandidateApplication from "./CandidateApplication";
+import { Popup } from "../../components/Popup";
+import { api } from "../../services/axios";
+import { candidateApi } from "../../services/candidateApi";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -23,15 +26,18 @@ export type CandidateTabType = "apply" | "profile" | "roles";
 const CandidateDashboard = ({
   currentUser,
   navigateTo,
+  isSuccessLogin = false,
 }: {
   currentUser: User | null;
   navigateTo: (page: Page) => void;
+  isSuccessLogin?: boolean;
 }) => {
   const [candidateProfile, setCandidateProfile] = useState<Candidate | null>(
     null
   );
   const [courses, setCourses] = useState<Course[]>([]);
   const [activeTab, setActiveTab] = useState<CandidateTabType>("profile");
+  const [openPopup, setOpenpopup] = useState(isSuccessLogin);
 
   // useEffect(() => {
   //   // Mock API call to fetch candidate profile
@@ -62,6 +68,21 @@ const CandidateDashboard = ({
   //   fetchCandidateProfile();
   //   fetchCourses();
   // }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchCandidateData(currentUser.id);
+    }
+  }, [currentUser]);
+
+  const fetchCandidateData = async (user_id: number) => {
+    try {
+      const candidateData = await candidateApi.getCandidateByUserId(user_id);
+      setCandidateProfile(candidateData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleApplyForRole = (
     courseId: string,
@@ -126,6 +147,11 @@ const CandidateDashboard = ({
           />
         )}
       </main>
+      <Popup
+        message={"Welcome to the Teach Team"}
+        isOpen={openPopup}
+        setIsOpen={setOpenpopup}
+      />
     </CandidateDashboardWrapper>
   );
 };

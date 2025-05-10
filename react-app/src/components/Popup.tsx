@@ -52,7 +52,7 @@ const PopupContainer = styled.div`
 const PopupContent = styled.div`
   position: relative;
   background: white;
-  padding: 15px;
+  padding: 10px 30px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 500px;
