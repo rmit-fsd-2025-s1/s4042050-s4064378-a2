@@ -10,11 +10,16 @@ import {
 } from "./element";
 import { PrimaryButton } from "../components/Buttons/PrimaryButton";
 import { HAVE_ACCOUNT, LOGIN, REGISTER, TEACH_TEAM } from "./constant";
-// import { addUser, isEmailExist } from "../util";
 import { Role } from "../types/User";
 import { Page } from "../App";
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
 import { userApi } from "../services/userApi";
+import PopupContainer from "../components/PopupContainer";
+import AvatarCustomizer from "../components/Avatar/AvatarCustomizer";
+import {
+  AvatarConfigProps,
+  DEFAULT_AVATAR_CONFIG,
+} from "../components/Avatar/avatarConfig";
 
 /**
  * Handles user registration and manages registration success state.
@@ -39,6 +44,8 @@ export const RegisterPage = ({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [avatarConfig, setAvatarConfig] = useState(DEFAULT_AVATAR_CONFIG);
 
   const handleRegister = async (e: any) => {
     e.preventDefault();
@@ -54,6 +61,24 @@ export const RegisterPage = ({
       return;
     }
 
+    // NOTE: enable this once the development is done
+
+    // if (password.length < 8) {
+    //   setError("Password must be at least 8 characters");
+    //   return;
+    // } else if (!/[A-Z]/.test(password)) {
+    //   setError("Add at least one uppercase letter");
+    //   return;
+    // } else if (!/[a-z]/.test(password)) {
+    //   setError("Add at least one lowercase letter");
+    //   return;
+    // } else if (!/\d/.test(password)) {
+    //   setError("Add at least one number");
+    //   return;
+    // } else {
+    //   setError(""); // No error = password accepted
+    // }
+
     try {
       await userApi.createUser({
         password: password,
@@ -61,6 +86,7 @@ export const RegisterPage = ({
         lastName,
         firstName,
         role,
+        avatarConfig,
       });
     } catch (error: any) {
       if (
@@ -151,6 +177,31 @@ export const RegisterPage = ({
               placeholder="Re-enter the password"
             />
           </FormGroup>
+          <div>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsPopupOpen(true);
+              }}
+            >
+              Select Avatar
+            </button>
+
+            <PopupContainer
+              isOpen={isPopupOpen}
+              onClose={() => setIsPopupOpen(false)}
+              width="500px"
+              height="fit-content"
+            >
+              <AvatarCustomizer
+                onSave={function (config: AvatarConfigProps): void {
+                  setAvatarConfig(config);
+                  setIsPopupOpen(false);
+                }}
+                initialConfig={avatarConfig}
+              />
+            </PopupContainer>
+          </div>
 
           <PrimaryButton type="submit">Register</PrimaryButton>
           {error && <ErrorMessage message={error} />}

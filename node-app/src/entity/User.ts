@@ -39,4 +39,27 @@ export class User {
   // Optional 1:1 with Lecturer
   @OneToOne(() => Lecturer, (lecturer) => lecturer.user)
   lecturer?: Lecturer;
+
+  @Column({
+    type: "simple-json",
+  })
+  avatarConfig: {
+    shape?: "circle" | "rounded" | "square";
+    sex?: "man" | "woman";
+    faceColor?: string;
+    earSize?: "small" | "big";
+    hairColor?: string;
+    hairStyle?: "normal" | "thick" | "mohawk" | "womanLong" | "womanShort";
+    hairColorRandom?: boolean;
+    hatColor?: string;
+    hatStyle?: "none" | "beanie" | "turban";
+    eyeStyle?: "circle" | "oval" | "smile";
+    glassesStyle?: "none" | "round" | "square";
+    noseStyle?: "short" | "long" | "round";
+    mouthStyle?: "laugh" | "smile" | "peace";
+    shirtStyle?: "hoody" | "short" | "polo";
+    shirtColor?: string;
+    bgColor?: string;
+    isGradient?: boolean;
+  };
 }

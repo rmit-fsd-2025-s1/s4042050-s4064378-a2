@@ -1,3 +1,5 @@
+import { AvatarConfigProps } from "../components/Avatar/avatarConfig";
+
 export type Role = "candidate" | "lecturer";
 
 // export interface User {
@@ -17,4 +19,5 @@ export interface User {
   role: Role;
   createdAt: Date;
   updatedAt: Date;
+  avatarConfig: AvatarConfigProps;
 }

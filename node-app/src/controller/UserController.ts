@@ -45,13 +45,15 @@ export class UserController {
    * @returns JSON response containing the created user or error message
    */
   async save(request: Request, response: Response) {
-    const { firstName, lastName, email, password, role } = request.body;
+    const { firstName, lastName, email, password, role, avatarConfig } =
+      request.body;
 
     const user = Object.assign(new User(), {
       firstName,
       lastName,
       email,
       password: await hashPassword(password),
+      avatarConfig,
     });
 
     try {
@@ -59,7 +61,6 @@ export class UserController {
         .save(user)
         .then(async (res) => {
           request.body.user_id = res.id;
-          console.log(res, role);
           if (role === "candidate") {
             const candidateController = new CandidateController();
             const respond = await candidateController.save(request, response);
@@ -135,29 +136,34 @@ export class UserController {
 
   async login(request: Request, response: Response) {
     const { email, password } = request.body;
+    console.log("test", request.body);
 
-    let user = await this.userRepository.findOne({
-      where: { email },
-      relations: ["candidate", "lecturer"],
-    });
+    try {
+      let user = await this.userRepository.findOne({
+        where: { email },
+        relations: ["candidate", "lecturer"],
+      });
 
-    if (!user) {
-      return response.status(401).json({ message: "Invalid credentials" });
+      if (!user) {
+        return response.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const isValidPassword = await comparePassword(password, user.password);
+
+      if (!isValidPassword) {
+        return response.status(401).json({ message: "Invalid credentials" });
+      }
+
+      let role = "";
+
+      if (user.candidate) {
+        role = "candidate";
+      } else if (user.lecturer) {
+        role = "lecturer";
+      }
+      return response.json({ ...user, role });
+    } catch (error) {
+      return response.status(400).json({ message: "Error login user", error });
     }
-
-    const isValidPassword = await comparePassword(password, user.password);
-
-    if (!isValidPassword) {
-      return response.status(401).json({ message: "Invalid credentials" });
-    }
-
-    let role = "";
-
-    if (user.candidate) {
-      role = "candidate";
-    } else if (user.lecturer) {
-      role = "lecturer";
-    }
-    return response.json({ ...user, role });
   }
 }
