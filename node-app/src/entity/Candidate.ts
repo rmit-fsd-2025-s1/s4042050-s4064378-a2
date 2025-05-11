@@ -6,34 +6,18 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 import { User } from "./User";
-
-// candidate_id{pk}
-// user_id{fk}
-// availability
-// credentials
-// skills
-// created_at
-// updated_at
+import { Application } from "./Application";
 
 @Entity()
 export class Candidate {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  availability: string;
-
-  @Column("simple-array")
-  skills: string[];
-
-  @Column("json")
-  credentials: Array<{
-    degree: string;
-    institution: string;
-    year: number;
-  }>;
+  // @Column()
+  // availability: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -48,4 +32,7 @@ export class Candidate {
 
   @Column({ name: "user_id", unique: true }) // Explicit user_id column
   userId: number; // For easier querying
+
+  @OneToMany(() => Application, (application) => application.candidate)
+  applications?: Application[];
 }

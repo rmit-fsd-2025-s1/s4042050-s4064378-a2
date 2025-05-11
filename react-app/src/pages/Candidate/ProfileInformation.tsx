@@ -39,11 +39,11 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
   onUpdate,
 }) => {
   // candidate availability
-  const [availability, setAvailability] = useState<"part-time" | "full-time">(
-    profile.availability
-  );
+  // const [availability, setAvailability] = useState<"part-time" | "full-time">(
+  //   profile.availability
+  // );
   const [newSkill, setNewSkill] = useState<string>("");
-  const [skills, setSkills] = useState<string[]>(profile.skills);
+  // const [skills, setSkills] = useState<string[]>(profile.skills);
 
   const [newCredential, setNewCredential] = useState({
     degree: "",
@@ -51,77 +51,79 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
     year: new Date().getFullYear(),
   });
 
+  console.log(profile);
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
   // handle adding new skills
-  const handleAddSkill = () => {
-    if (newSkill.trim() === "") return;
+  // const handleAddSkill = () => {
+  //   if (newSkill.trim() === "") return;
 
-    // check old skills includes the new one if not add
-    if (!skills.includes(newSkill.trim())) {
-      const updatedSkills = [...skills, newSkill.trim()];
-      setSkills(updatedSkills);
-      onUpdate({ skills: updatedSkills });
-      setNewSkill("");
+  //   // check old skills includes the new one if not add
+  //   if (!skills.includes(newSkill.trim())) {
+  //     const updatedSkills = [...skills, newSkill.trim()];
+  //     setSkills(updatedSkills);
+  //     onUpdate({ skills: updatedSkills });
+  //     setNewSkill("");
 
-      setPopupMessage("Skill Added Successfully!");
-    }
-    // if skill exist inform with a pop up message
-    setPopupMessage("Skill Already Exist!");
-    setIsPopupOpen(true);
-  };
+  //     setPopupMessage("Skill Added Successfully!");
+  //   }
+  //   // if skill exist inform with a pop up message
+  //   setPopupMessage("Skill Already Exist!");
+  //   setIsPopupOpen(true);
+  // };
 
   // remove skills
-  const handleRemoveSkill = (skillToRemove: string) => {
-    const updatedSkills = skills.filter((skill) => skill !== skillToRemove);
-    setSkills(updatedSkills);
-    onUpdate({ skills: updatedSkills });
-  };
+  // const handleRemoveSkill = (skillToRemove: string) => {
+  //   const updatedSkills = skills.filter((skill) => skill !== skillToRemove);
+  //   setSkills(updatedSkills);
+  //   // onUpdate({ skills: updatedSkills });
+  // };
 
   // change availability
-  const handleAvailabilityChange = (
-    newAvailability: "part-time" | "full-time"
-  ) => {
-    setAvailability(newAvailability);
-    onUpdate({ availability: newAvailability });
-  };
+  // const handleAvailabilityChange = (
+  //   newAvailability: "part-time" | "full-time"
+  // ) => {
+  //   setAvailability(newAvailability);
+  //   onUpdate({ availability: newAvailability });
+  // };
 
-  const handleAddCredential = () => {
-    // check for empty inputs
-    if (
-      newCredential.degree.trim() !== "" &&
-      newCredential.institution.trim() !== ""
-    ) {
-      const year = parseInt(newCredential.year.toString(), 10);
+  // const handleAddCredential = () => {
+  //   // check for empty inputs
+  //   if (
+  //     newCredential.degree.trim() !== "" &&
+  //     newCredential.institution.trim() !== ""
+  //   ) {
+  //     const year = parseInt(newCredential.year.toString(), 10);
 
-      if (isNaN(year) || year < 1900 || year > new Date().getFullYear()) {
-        return; // Invalid year
-      }
+  //     if (isNaN(year) || year < 1900 || year > new Date().getFullYear()) {
+  //       return; // Invalid year
+  //     }
 
-      // updated credentials with old values
-      const updatedCredentials = [
-        ...profile.credentials,
-        {
-          degree: newCredential.degree.trim(),
-          institution: newCredential.institution.trim(),
-          year,
-        },
-      ];
+  //     // updated credentials with old values
+  //     const updatedCredentials = [
+  //       ...profile.credentials,
+  //       {
+  //         degree: newCredential.degree.trim(),
+  //         institution: newCredential.institution.trim(),
+  //         year,
+  //       },
+  //     ];
 
-      onUpdate({ credentials: updatedCredentials });
+  //     onUpdate({ credentials: updatedCredentials });
 
-      setPopupMessage("Credentials Added Successfully!");
-      setIsPopupOpen(true);
+  //     setPopupMessage("Credentials Added Successfully!");
+  //     setIsPopupOpen(true);
 
-      // Reset form
-      setNewCredential({
-        degree: "",
-        institution: "",
-        year: new Date().getFullYear(),
-      });
-    }
-  };
+  //     // Reset form
+  //     setNewCredential({
+  //       degree: "",
+  //       institution: "",
+  //       year: new Date().getFullYear(),
+  //     });
+  //   }
+  // };
 
   return (
     <ProfileInformationWrapper>
@@ -130,146 +132,19 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
       <Section>
         <div>
           <label>Full Name: </label>
-          {profile.firstName + " " + profile.lastName}
+          {profile.user.firstName + " " + profile.user.lastName}
         </div>
         <div>
           <label>Email: </label>
 
-          {profile.email}
+          {profile.user.email}
         </div>
       </Section>
 
-      <Section>
-        <h3>Availability</h3>
-        {/** radio group for select candidate availability */}
-        <RadioGroup>
-          <label>
-            <input
-              type="radio"
-              name="availability"
-              value="part-time"
-              checked={availability === "part-time"}
-              onChange={() => handleAvailabilityChange("part-time")}
-            />
-            Part Time
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="availability"
-              value="full-time"
-              checked={availability === "full-time"}
-              onChange={() => handleAvailabilityChange("full-time")}
-            />
-            Full Time
-          </label>
-        </RadioGroup>
-      </Section>
+      {/* <Section>
+        <h3>Applied Roles</h3>
+      </Section> */}
 
-      <Section>
-        {/** skills list */}
-        <h3>Skills</h3>
-        <SkillList>
-          {skills.map((skill) => (
-            <SkillTag key={skill}>
-              {skill}
-              <RemoveSkillsButton
-                type="button"
-                onClick={() => handleRemoveSkill(skill)}
-              >
-                ×
-              </RemoveSkillsButton>
-            </SkillTag>
-          ))}
-        </SkillList>
-
-        <FormGroupWrapper>
-          <input
-            type="text"
-            value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
-            placeholder="Add a new skill"
-          />
-          <SubmitButton type="button" onClick={handleAddSkill}>
-            Add
-          </SubmitButton>
-        </FormGroupWrapper>
-      </Section>
-
-      {/** academic credentials */}
-      <Section>
-        <h3>Academic Credentials</h3>
-        <CredentialList>
-          {profile.credentials.map((credential, index) => (
-            <CredentialItem key={index}>
-              <div>
-                <strong>Degree:</strong> {credential.degree}
-              </div>
-              <div>
-                <strong>Institution:</strong> {credential.institution}
-              </div>
-              <div>
-                <strong>Year:</strong> {credential.year}
-              </div>
-            </CredentialItem>
-          ))}
-        </CredentialList>
-
-        {/** add new academic credentials */}
-        <AddCredentialWrapper>
-          <h4>Add New Credential</h4>
-          <FormGroupWrapper>
-            <label htmlFor="degree">Degree:</label>
-            <input
-              type="text"
-              id="degree"
-              value={newCredential.degree}
-              onChange={(e) =>
-                setNewCredential({ ...newCredential, degree: e.target.value })
-              }
-              placeholder="E.g., BSc Computer Science"
-            />
-          </FormGroupWrapper>
-
-          <FormGroupWrapper>
-            <label htmlFor="institution">Institution:</label>
-            <input
-              type="text"
-              id="institution"
-              value={newCredential.institution}
-              onChange={(e) =>
-                setNewCredential({
-                  ...newCredential,
-                  institution: e.target.value,
-                })
-              }
-              placeholder="E.g., University of Technology"
-            />
-          </FormGroupWrapper>
-
-          <FormGroupWrapper>
-            <label htmlFor="year">Year:</label>
-            <input
-              type="number"
-              id="year"
-              value={newCredential.year}
-              onChange={(e) =>
-                setNewCredential({
-                  ...newCredential,
-                  year:
-                    parseInt(e.target.value, 10) || new Date().getFullYear(),
-                })
-              }
-              min="1900"
-              max={new Date().getFullYear()}
-            />
-          </FormGroupWrapper>
-
-          <SubmitButton type="button" onClick={handleAddCredential}>
-            Add Credential
-          </SubmitButton>
-        </AddCredentialWrapper>
-      </Section>
       <Popup
         isOpen={isPopupOpen}
         message={popupMessage}

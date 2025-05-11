@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Course, Candidate } from "../../types/Candidate";
+import { Candidate } from "../../types/Candidate";
+import { Course } from "../../types/Course";
 import {
   CoursesList,
   CurrentSemesterCourses,
@@ -77,7 +78,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
             required
           >
             <option value="">Select a course</option>
-            {courses.map((course) => (
+            {/* {courses.map((course) => (
               <option
                 key={course.id}
                 value={course.id}
@@ -90,7 +91,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
                 {course.code} -{" "}
                 {course.name.charAt(0).toUpperCase() + course.name.slice(1)}
               </option>
-            ))}
+            ))} */}
           </select>
         </FormGroupWrapper>
 

@@ -10,7 +10,7 @@ import {
 } from "./element";
 import { PrimaryButton } from "../components/Buttons/PrimaryButton";
 import { HAVE_ACCOUNT, LOGIN, REGISTER, TEACH_TEAM } from "./constant";
-import { Role } from "../types/User";
+import { UserType } from "../types/User";
 import { Page } from "../App";
 import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
 import { userApi } from "../services/userApi";
@@ -37,7 +37,7 @@ export const RegisterPage = ({
     React.SetStateAction<boolean | undefined>
   >;
 }) => {
-  const [role, setRole] = useState<Role>("candidate");
+  const [role, setRole] = useState<UserType>("candidate");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -148,7 +148,7 @@ export const RegisterPage = ({
             <StyledSelect
               id="role"
               value={String(role)}
-              onChange={(e) => setRole(e.target.value as unknown as Role)}
+              onChange={(e) => setRole(e.target.value as unknown as UserType)}
               required
             >
               <option value="candidate">Candidate</option>

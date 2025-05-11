@@ -96,15 +96,19 @@ export const LoginPage = ({
     setError("");
 
     try {
-      const response = await userApi.login(email, password);
-      console.log(response);
-      if (!response) {
+      const user = await userApi.login(email, password);
+      console.log(user);
+      if (!user) {
         setError("Error in login");
         return;
       }
       setIsSuccessLogin(true);
-      setCurrentUser(response);
-      navigateTo("candidate");
+      setCurrentUser(user);
+      if (user.role === "lecturer") {
+        navigateTo("lecturer");
+      } else if (user.role === "candidate") {
+        navigateTo("candidate");
+      }
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
         // Handle Axios-specific errors (e.g., HTTP 4xx/5xx responses)

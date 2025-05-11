@@ -1,6 +1,6 @@
 // src/components/PreviousRoles.tsx
 import React, { useState } from "react";
-import { Course, CandidateRole } from "../../types/Candidate";
+import { Course } from "../../types/Course";
 import { PreviousRolesHeading, RolesTable } from "./element";
 // import { getAllCourses } from "../../util/getAllCourses";
 
@@ -9,11 +9,11 @@ import { PreviousRolesHeading, RolesTable } from "./element";
  *
  * @param roles - Array of the candidate's previous roles and their details
  */
-interface PreviousRolesProps {
-  roles: CandidateRole[];
-}
+// interface PreviousRolesProps {
+//   roles: CandidateRole[];
+// }
 
-const PreviousRoles: React.FC<PreviousRolesProps> = ({ roles }) => {
+const PreviousRoles: React.FC<any> = ({ roles }) => {
   const [allCourse, setAllCourse] = useState<Course[]>([]);
 
   return (
@@ -33,7 +33,7 @@ const PreviousRoles: React.FC<PreviousRolesProps> = ({ roles }) => {
             </tr>
           </thead>
           <tbody>
-            {roles.map((role) => {
+            {roles.map((role: { courseId: string; role: string }) => {
               const course = allCourse.find(
                 (course) => course.id === role.courseId
               );

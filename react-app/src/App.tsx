@@ -83,9 +83,8 @@ const TechTeam = () => {
             isSuccessLogin={isSuccessLogin}
           />
         );
-      // case "lecturer":
-      //   return <LecturerPage
-      //           navigateTo={navigateTo} />;
+      case "lecturer":
+        return <div>Lecturere Page</div>;
       default:
         return (
           <LoginPage

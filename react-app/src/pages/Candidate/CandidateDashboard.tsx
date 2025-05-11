@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Course, Candidate, CandidateRole } from "../../types/Candidate";
+import { Candidate } from "../../types/Candidate";
+import { Course } from "../../types/Course";
 import PreviousRoles from "./CandidatePreviousRoles";
 import ProfileInformation from "./ProfileInformation";
 import { CandidateDashboardWrapper } from "./element";
-import { mockCourses } from "../../mockData/mockData";
 import { Dashboard } from "../../components/DashBoard";
 import { User } from "../../types/User";
 
@@ -11,8 +11,7 @@ import { Page } from "../../App";
 import { NavBar } from "./NavBar";
 import CandidateApplication from "./CandidateApplication";
 import { Popup } from "../../components/Popup";
-import { api } from "../../services/axios";
-import { candidateApi } from "../../services/candidateApi";
+import { omit } from "lodash";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -70,19 +69,21 @@ const CandidateDashboard = ({
   // }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser) {
-      fetchCandidateData(currentUser.id);
+    if (currentUser && currentUser.candidate) {
+      const newCandidate = currentUser.candidate;
+      newCandidate.user = omit(currentUser, ["candidate"]);
+      setCandidateProfile(currentUser.candidate);
     }
   }, [currentUser]);
 
-  const fetchCandidateData = async (user_id: number) => {
-    try {
-      const candidateData = await candidateApi.getCandidateByUserId(user_id);
-      setCandidateProfile(candidateData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const fetchCandidateData = async (user_id: number) => {
+  //   try {
+  //     const candidateData = await candidateApi.getCandidateByUserId(user_id);
+  //     setCandidateProfile(candidateData);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleApplyForRole = (
     courseId: string,
@@ -92,27 +93,27 @@ const CandidateDashboard = ({
     console.log(`Applied for ${role} role in course ${courseId}`);
 
     // Update local state to show the application
-    if (candidateProfile) {
-      const course = courses.find((c) => c.id === courseId);
-      if (course) {
-        const newRole: CandidateRole = {
-          courseId,
-          status: "pending",
-          rank: 0,
-          role,
-        };
+    // if (candidateProfile) {
+    //   const course = courses.find((c) => c.id === courseId);
+    //   if (course) {
+    //     const newRole: CandidateRole = {
+    //       courseId,
+    //       status: "pending",
+    //       rank: 0,
+    //       role,
+    //     };
 
-        const updateProfile: Candidate = {
-          ...candidateProfile,
-          appliedRoles: candidateProfile.appliedRoles
-            ? [...candidateProfile.appliedRoles, newRole]
-            : [newRole],
-        };
+    //     // const updateProfile: Candidate = {
+    //     //   ...candidateProfile,
+    //     //   appliedRoles: candidateProfile.appliedRoles
+    //     //     ? [...candidateProfile.appliedRoles, newRole]
+    //     //     : [newRole],
+    //     // };
 
-        setCandidateProfile(updateProfile);
-        // updateCandidate(updateProfile);
-      }
-    }
+    //     // setCandidateProfile(updateProfile);
+    //     // updateCandidate(updateProfile);
+    //   }
+    // }
   };
 
   const updateProfile = (updatedProfile: Partial<Candidate>) => {
@@ -126,9 +127,17 @@ const CandidateDashboard = ({
   return (
     <CandidateDashboardWrapper>
       <Dashboard header="Candidate Dashboard" navigateTo={navigateTo} />
-      <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
+      {/* <NavBar activeTab={activeTab} setActiveTab={setActiveTab} /> */}
       <main>
-        {activeTab === "apply" && (
+        {candidateProfile && (
+          <ProfileInformation
+            profile={candidateProfile}
+            onUpdate={updateProfile}
+          />
+        )}
+        <PreviousRoles roles={[]} />
+
+        {/* {activeTab === "apply" && (
           <CandidateApplication
             courses={courses}
             onApply={handleApplyForRole}
@@ -137,7 +146,7 @@ const CandidateDashboard = ({
         )}
 
         {activeTab === "roles" && candidateProfile && (
-          <PreviousRoles roles={candidateProfile.appliedRoles || []} />
+          <PreviousRoles roles={[]} />
         )}
 
         {activeTab === "profile" && candidateProfile && (
@@ -145,7 +154,7 @@ const CandidateDashboard = ({
             profile={candidateProfile}
             onUpdate={updateProfile}
           />
-        )}
+        )} */}
       </main>
       <Popup
         message={"Welcome to the Teach Team"}
