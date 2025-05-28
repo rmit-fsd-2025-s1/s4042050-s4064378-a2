@@ -3,6 +3,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { User } from "./types/User";
 import { App } from "./elements";
 import { RegisterPage } from "./pages/RegisterPage";
+import { LecturerPage } from "./pages/LecturerDashboard";
 import CandidateDashboard from "./pages/Candidate/CandidateDashboard";
 import {
   getCurrentPage,
@@ -84,7 +85,8 @@ const TechTeam = () => {
           />
         );
       case "lecturer":
-        return <div>Lecturere Page</div>;
+        return <LecturerPage
+                navigateTo={navigateTo} />;
       default:
         return (
           <LoginPage
