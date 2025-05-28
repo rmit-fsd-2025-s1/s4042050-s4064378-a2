@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Role } from "./Role";
 import { Candidate } from "./Candidate";
+import {Course } from "./Course"
 
 @Entity()
 export class Application {
@@ -42,9 +43,18 @@ export class Application {
   @Column()
   status: "accepted" | "rejected" | "pending";
 
+  @Column({ type: "int", default: 0 })
+  rank: number;
+
+  @Column({ type: "text", nullable: true })
+  comment: string;
+
   @ManyToOne(() => Role, (role) => role.applications)
   role: Role;
 
   @ManyToOne(() => Candidate, (candidate) => candidate.applications)
   candidate: Candidate;
+
+  @ManyToOne(() => Course, { onDelete: "CASCADE" })
+  course: Course;
 }
