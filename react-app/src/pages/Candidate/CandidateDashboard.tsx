@@ -12,6 +12,7 @@ import { NavBar } from "./NavBar";
 import CandidateApplication from "./CandidateApplication";
 import { Popup } from "../../components/Popup";
 import { omit } from "lodash";
+import { DEFAULT_AVATAR_CONFIG } from "../../components/Avatar/avatarConfig";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -37,6 +38,7 @@ const CandidateDashboard = ({
   const [courses, setCourses] = useState<Course[]>([]);
   const [activeTab, setActiveTab] = useState<CandidateTabType>("profile");
   const [openPopup, setOpenpopup] = useState(isSuccessLogin);
+  console.log(candidateProfile);
 
   // useEffect(() => {
   //   // Mock API call to fetch candidate profile
@@ -70,8 +72,8 @@ const CandidateDashboard = ({
 
   useEffect(() => {
     if (currentUser && currentUser.candidate) {
-      const newCandidate = currentUser.candidate;
-      newCandidate.user = omit(currentUser, ["candidate"]);
+      // const newCandidate = currentUser.candidate;
+      // newCandidate.user = omit(currentUser, ["candidate"]);
       setCandidateProfile(currentUser.candidate);
     }
   }, [currentUser]);
@@ -126,16 +128,20 @@ const CandidateDashboard = ({
 
   return (
     <CandidateDashboardWrapper>
-      <Dashboard header="Candidate Dashboard" navigateTo={navigateTo} />
+      <Dashboard
+        header="Candidate Dashboard"
+        navigateTo={navigateTo}
+        avatarConfig={currentUser?.avatarConfig || DEFAULT_AVATAR_CONFIG}
+      />
       {/* <NavBar activeTab={activeTab} setActiveTab={setActiveTab} /> */}
       <main>
-        {candidateProfile && (
+        {currentUser && currentUser.candidate && (
           <ProfileInformation
-            profile={candidateProfile}
+            currentUser={currentUser}
             onUpdate={updateProfile}
           />
         )}
-        <PreviousRoles roles={[]} />
+        {/* <PreviousRoles roles={[]} /> */}
 
         {/* {activeTab === "apply" && (
           <CandidateApplication

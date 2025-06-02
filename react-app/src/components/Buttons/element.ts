@@ -25,6 +25,7 @@ export const LogoutButtonWrapper = styled(BaseButton)`
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  height: 40px;
 
   &:hover {
     background-color: #e0e0e0;

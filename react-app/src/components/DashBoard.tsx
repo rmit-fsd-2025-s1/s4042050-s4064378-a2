@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { Page } from "../App";
 // import { setCurrentUserToLocalStorage } from "../util/localStorage";
 import { LogoutButton } from "./Buttons/LogoutButton";
-import { DashboardWrapper } from "./element";
+import { DashboardRightSide, DashboardWrapper } from "./element";
+import Avatar, { genConfig } from "react-nice-avatar";
+import { AvatarConfigProps } from "./Avatar/avatarConfig";
 
 /**
  * Dashboard component that displays a header and provides navigation functionality.
@@ -14,27 +17,47 @@ import { DashboardWrapper } from "./element";
 export const Dashboard = ({
   header,
   navigateTo,
+  avatarConfig,
 }: {
   header: string;
   navigateTo: (page: Page) => void;
+  avatarConfig: AvatarConfigProps;
 }) => {
   const onLogout = () => {
     // setCurrentUserToLocalStorage(null);
     navigateTo("login");
   };
+  const [generatedConfig, setX] = useState(genConfig(avatarConfig));
 
   return (
     <DashboardWrapper>
       <div>
         <h1>{header}</h1>
       </div>
-      <div>
+      <DashboardRightSide>
         <LogoutButton
           onClick={() => {
             onLogout();
           }}
         />
-      </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <div>
+          <Avatar
+            style={{ width: "60px", height: "60px" }}
+            {...generatedConfig}
+          />
+
+          <div
+            className={`avatar ${avatarConfig.shape}`}
+            style={{
+              backgroundColor: avatarConfig.bgColor,
+              backgroundImage: avatarConfig.isGradient
+                ? `linear-gradient(45deg, ${avatarConfig.bgColor}, #FFFFFF)`
+                : undefined,
+            }}
+          />
+        </div>
+      </DashboardRightSide>
     </DashboardWrapper>
   );
 };

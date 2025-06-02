@@ -7,6 +7,8 @@ import SearchSortBar from "./SearchBar/index";
 import TutorOverviewList from "./TutorOverviewList";
 import { Page } from "./styles/Layout";
 import { Dashboard } from "../../components/DashBoard";
+import { getCurrentUser } from "../../util/localStorage";
+import { DEFAULT_AVATAR_CONFIG } from "../../components/Avatar/avatarConfig";
 
 // This is the main component of lecturer dashboard
 
@@ -15,17 +17,18 @@ export const LecturerPage = ({
 }: {
   navigateTo: (page: any) => void;
 }) => {
-  const [filteredTutorApps, setFilteredTutorApps] = useState<TutorApplication[]>([]);
+  const [filteredTutorApps, setFilteredTutorApps] = useState<
+    TutorApplication[]
+  >([]);
   const [filteredTutorObjects, setFilteredTutorObjects] = useState<Tutor[]>([]);
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [viewMode, setViewMode] = useState("all");
+  const user = getCurrentUser();
 
   useEffect(() => {
     const fetchTutors = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3001/api/applications`
-        );
+        const res = await axios.get(`http://localhost:3001/api/applications`);
         setTutors(res.data);
       } catch (error) {
         console.error("Error fetching tutor applications:", error);
@@ -40,7 +43,11 @@ export const LecturerPage = ({
   // 2. Otherwise, show detailed list
   return (
     <Page>
-      <Dashboard header={"Lecturer Dashboard"} navigateTo={navigateTo} />
+      <Dashboard
+        header={"Lecturer Dashboard"}
+        navigateTo={navigateTo}
+        avatarConfig={user?.avatarConfig || DEFAULT_AVATAR_CONFIG}
+      />
       <SearchSortBar
         TutorApplicants={tutors}
         onFilteredchangedList={(filtered) => {

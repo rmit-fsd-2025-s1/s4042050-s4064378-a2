@@ -85,8 +85,7 @@ const TechTeam = () => {
           />
         );
       case "lecturer":
-        return <LecturerPage
-                navigateTo={navigateTo} />;
+        return <LecturerPage navigateTo={navigateTo} />;
       default:
         return (
           <LoginPage

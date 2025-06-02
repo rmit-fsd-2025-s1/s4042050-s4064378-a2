@@ -107,10 +107,11 @@ export class UserController {
    */
   async update(request: Request, response: Response) {
     const id = parseInt(request.params.id);
-    const { firstName, lastName, email, age } = request.body;
+    const { firstName, lastName, email, avatarConfig } = request.body;
 
     let userToUpdate = await this.userRepository.findOne({
       where: { id },
+      relations: ["candidate", "lecturer"],
     });
 
     if (!userToUpdate) {
@@ -121,7 +122,7 @@ export class UserController {
       firstName,
       lastName,
       email,
-      age,
+      avatarConfig,
     });
 
     try {
@@ -136,7 +137,7 @@ export class UserController {
 
   async login(request: Request, response: Response) {
     const { email, password } = request.body;
-    console.log("test", request.body);
+    // console.log("test", request.body);
 
     try {
       let user = await this.userRepository.findOne({
