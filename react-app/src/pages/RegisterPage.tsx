@@ -121,6 +121,7 @@ export const RegisterPage = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -131,6 +132,7 @@ export const RegisterPage = ({
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="Enter your first name"
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -141,6 +143,7 @@ export const RegisterPage = ({
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Enter your last name"
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -164,6 +167,7 @@ export const RegisterPage = ({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Choose a password"
+              required
             />
           </FormGroup>
 
@@ -175,6 +179,7 @@ export const RegisterPage = ({
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Re-enter the password"
+              required
             />
           </FormGroup>
           <div>

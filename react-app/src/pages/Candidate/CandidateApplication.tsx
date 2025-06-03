@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Candidate } from "../../types/Candidate";
 import { Course } from "../../types/Course";
 import {
@@ -12,6 +12,68 @@ import {
 } from "./element";
 import { ErrorMessage } from "../../components/ActivityStatus/ErrorMessage";
 import { Popup } from "../../components/Popup";
+import { courseApi } from "../../services/courseApi";
+import styled from "styled-components";
+
+// Styled Components
+const FormSection = styled.div`
+  margin-bottom: 2rem;
+`;
+
+const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const Label = styled.label`
+  font-weight: 600;
+`;
+
+const Input = styled.input`
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 5px;
+`;
+
+const TextArea = styled.textarea`
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+`;
+
+// const Button = styled.button`
+//   padding: 0.5rem 1rem;
+//   background-color: #2980b9;
+//   color: white;
+//   border: none;
+//   border-radius: 5px;
+//   cursor: pointer;
+// `;
+const Button = styled.button<{ warning?: boolean }>`
+  padding: 0.5rem 1rem;
+  background-color: ${(props) => (props.warning ? "#e74c3c" : "#3498db")};
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: fit-content;
+
+  &:hover {
+    background-color: ${(props) => (props.warning ? "#c0392b" : "#2980b9")};
+  }
+`;
+
+const ListItem = styled.div`
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+  width: fit-content;
+  margin-right: 5px;
+`;
 
 /**
  * Displays available courses and allows candidates to apply for positions.
@@ -28,7 +90,7 @@ interface CandidateApplicationProps {
 }
 
 const CandidateApplication: React.FC<CandidateApplicationProps> = ({
-  courses,
+  // courses,
   onApply,
   candidateProfile,
 }) => {
@@ -36,9 +98,22 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
   const [selectedRole, setSelectedRole] = useState<
     "candidate" | "lab-assistant"
   >("candidate");
+  const [selectedAvailavility, setSelectedAvailability] = useState<
+    "part-time" | "full-time"
+  >("part-time");
   const [error, setError] = useState<string>("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  const [roles, setRoles] = useState([
+    { courseCode: "", courseName: "", semester: "", role: "" },
+  ]);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [newSkill, setNewSkill] = useState("");
+  const [credentials, setCredentials] = useState([
+    { degree: "", institution: "", year: "" },
+  ]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +134,65 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
     setError("");
   };
 
+  const fetchAllCourses = async () => {
+    try {
+      const courses = await courseApi.getAllCourses();
+      setCourses(courses);
+    } catch (error) {
+      setError(String(error));
+    }
+  };
+
+  const handleRoleChange = (index: number, field: string, value: string) => {
+    const updated = [...roles];
+    updated[index][field as keyof (typeof updated)[0]] = value;
+    setRoles(updated);
+  };
+
+  const handleAddRole = () => {
+    setRoles([
+      ...roles,
+      { courseCode: "", courseName: "", semester: "", role: "" },
+    ]);
+  };
+
+  const removeRoles = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    index: number
+  ) => {
+    setRoles((prevRoles) => prevRoles.filter((val, i) => i !== index));
+  };
+
+  const handleAddSkill = () => {
+    const skill = newSkill.trim().toLowerCase();
+    if (!skill) return;
+    if (skills.includes(skill)) {
+      setError("Duplicate entry");
+      return;
+    }
+    setSkills([...skills, skill]);
+    setNewSkill("");
+    setError("");
+  };
+
+  const handleCredentialChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const updated = [...credentials];
+    updated[index][field as keyof (typeof updated)[0]] = value;
+    setCredentials(updated);
+  };
+
+  const handleAddCredential = () => {
+    setCredentials([...credentials, { degree: "", institution: "", year: "" }]);
+  };
+
+  useEffect(() => {
+    fetchAllCourses();
+  }, []);
+
   return (
     <div>
       <CandidateApplicationHeading>
@@ -78,20 +212,20 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
             required
           >
             <option value="">Select a course</option>
-            {/* {courses.map((course) => (
+            {courses.map((course) => (
               <option
                 key={course.id}
                 value={course.id}
-                disabled={Boolean(
-                  candidateProfile?.appliedRoles?.find(
-                    (d) => d.courseId === course.id
-                  )
-                )}
+                // disabled={Boolean(
+                //   candidateProfile?.appliedRoles?.find(
+                //     (d) => d.courseId === course.id
+                //   )
+                // )}
               >
                 {course.code} -{" "}
                 {course.name.charAt(0).toUpperCase() + course.name.slice(1)}
               </option>
-            ))} */}
+            ))}
           </select>
         </FormGroupWrapper>
 
@@ -119,6 +253,132 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
               Lab Assistant
             </label>
           </RadioGroup>
+        </FormGroupWrapper>
+        <FormGroupWrapper>
+          <label htmlFor="availability">Availability:</label>
+          <RadioGroup>
+            <label>
+              <input
+                type="radio"
+                name="availability"
+                value="availability"
+                checked={selectedAvailavility === "part-time"}
+                onChange={() => setSelectedAvailability("part-time")}
+              />
+              Part Time
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="availability"
+                value="availability"
+                checked={selectedAvailavility === "full-time"}
+                onChange={() => setSelectedAvailability("full-time")}
+              />
+              Full Time
+            </label>
+          </RadioGroup>
+        </FormGroupWrapper>
+        <FormGroupWrapper>
+          <label htmlFor="role">Previous Roles:</label>
+          {roles.map((role, index) => (
+            <FieldGroup key={index}>
+              <div>
+                <Input
+                  placeholder="Course Code"
+                  value={role.courseCode}
+                  onChange={(e) =>
+                    handleRoleChange(index, "courseCode", e.target.value)
+                  }
+                  required
+                />
+                <Input
+                  placeholder="Course Name"
+                  value={role.courseName}
+                  onChange={(e) =>
+                    handleRoleChange(index, "courseName", e.target.value)
+                  }
+                  required
+                />
+                <Input
+                  placeholder="Semester"
+                  value={role.semester}
+                  onChange={(e) =>
+                    handleRoleChange(index, "semester", e.target.value)
+                  }
+                  required
+                />
+                <Input
+                  placeholder="Role"
+                  value={role.role}
+                  onChange={(e) =>
+                    handleRoleChange(index, "role", e.target.value)
+                  }
+                  required
+                />
+                <Button warning onClick={(e) => removeRoles(e, index)}>
+                  Remove
+                </Button>
+              </div>
+            </FieldGroup>
+          ))}
+          <Button type="button" onClick={handleAddRole}>
+            Add Role
+          </Button>
+        </FormGroupWrapper>
+
+        <FormGroupWrapper>
+          <h2>Skills</h2>
+          <FieldGroup>
+            <Input
+              placeholder="Add a skill"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.preventDefault(), handleAddSkill())
+              }
+            />
+            <Button type="button" onClick={handleAddSkill}>
+              Add Skill
+            </Button>
+            <div style={{ display: "flex" }}>
+              {skills.map((skill, idx) => (
+                <ListItem key={idx}>{skill}</ListItem>
+              ))}
+            </div>
+          </FieldGroup>
+        </FormGroupWrapper>
+
+        <FormGroupWrapper>
+          <h2>Academic Credentials</h2>
+          {credentials.map((cred, index) => (
+            <FieldGroup key={index}>
+              <Input
+                placeholder="Degree"
+                value={cred.degree}
+                onChange={(e) =>
+                  handleCredentialChange(index, "degree", e.target.value)
+                }
+              />
+              <Input
+                placeholder="Institution"
+                value={cred.institution}
+                onChange={(e) =>
+                  handleCredentialChange(index, "institution", e.target.value)
+                }
+              />
+              <Input
+                placeholder="Year"
+                value={cred.year}
+                onChange={(e) =>
+                  handleCredentialChange(index, "year", e.target.value)
+                }
+              />
+            </FieldGroup>
+          ))}
+          <Button type="button" onClick={handleAddCredential}>
+            Add Credential
+          </Button>
         </FormGroupWrapper>
 
         {error && <ErrorMessage message={error} />}

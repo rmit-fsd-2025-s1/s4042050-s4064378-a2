@@ -3,7 +3,7 @@ import express from "express";
 import { AppDataSource } from "./data-source";
 import userRoutes from "./routes/user.routes";
 import applicationsRouter from "./routes/applications";
-import courseRoutes from "./routes/courses";
+import courseRoutes from "./routes/courses.routes";
 import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/teach_team", userRoutes);
 app.use("/api/applications", applicationsRouter);
-app.use("/api/courses", courseRoutes);
+app.use("/teach_team/courses", courseRoutes);
 
 AppDataSource.initialize()
   .then(() => {

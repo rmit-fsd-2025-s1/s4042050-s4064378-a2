@@ -133,17 +133,17 @@ const CandidateDashboard = ({
         navigateTo={navigateTo}
         avatarConfig={currentUser?.avatarConfig || DEFAULT_AVATAR_CONFIG}
       />
-      {/* <NavBar activeTab={activeTab} setActiveTab={setActiveTab} /> */}
+      <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main>
-        {currentUser && currentUser.candidate && (
+        {/* {currentUser && currentUser.candidate && (
           <ProfileInformation
             currentUser={currentUser}
             onUpdate={updateProfile}
           />
-        )}
+        )} */}
         {/* <PreviousRoles roles={[]} /> */}
 
-        {/* {activeTab === "apply" && (
+        {activeTab === "apply" && (
           <CandidateApplication
             courses={courses}
             onApply={handleApplyForRole}
@@ -155,12 +155,12 @@ const CandidateDashboard = ({
           <PreviousRoles roles={[]} />
         )}
 
-        {activeTab === "profile" && candidateProfile && (
+        {activeTab === "profile" && currentUser && currentUser.candidate && (
           <ProfileInformation
-            profile={candidateProfile}
+            currentUser={currentUser}
             onUpdate={updateProfile}
           />
-        )} */}
+        )}
       </main>
       <Popup
         message={"Welcome to the Teach Team"}

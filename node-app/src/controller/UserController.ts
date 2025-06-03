@@ -107,7 +107,7 @@ export class UserController {
    */
   async update(request: Request, response: Response) {
     const id = parseInt(request.params.id);
-    const { firstName, lastName, email, avatarConfig } = request.body;
+    const { firstName, lastName, email, avatarConfig, password } = request.body;
 
     let userToUpdate = await this.userRepository.findOne({
       where: { id },
@@ -125,6 +125,12 @@ export class UserController {
       avatarConfig,
     });
 
+    if (password) {
+      userToUpdate = Object.assign(userToUpdate, {
+        password: await hashPassword(password),
+      });
+    }
+
     try {
       const updatedUser = await this.userRepository.save(userToUpdate);
       return response.json(updatedUser);
@@ -137,7 +143,6 @@ export class UserController {
 
   async login(request: Request, response: Response) {
     const { email, password } = request.body;
-    // console.log("test", request.body);
 
     try {
       let user = await this.userRepository.findOne({

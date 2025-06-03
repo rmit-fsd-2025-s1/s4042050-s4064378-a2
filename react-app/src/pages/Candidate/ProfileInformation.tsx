@@ -72,8 +72,6 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
     year: new Date().getFullYear(),
   });
 
-  // console.log(profile);
-
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
@@ -88,75 +86,6 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
     getCurrentUser()!.avatarConfig
   );
 
-  // handle adding new skills
-  // const handleAddSkill = () => {
-  //   if (newSkill.trim() === "") return;
-
-  //   // check old skills includes the new one if not add
-  //   if (!skills.includes(newSkill.trim())) {
-  //     const updatedSkills = [...skills, newSkill.trim()];
-  //     setSkills(updatedSkills);
-  //     onUpdate({ skills: updatedSkills });
-  //     setNewSkill("");
-
-  //     setPopupMessage("Skill Added Successfully!");
-  //   }
-  //   // if skill exist inform with a pop up message
-  //   setPopupMessage("Skill Already Exist!");
-  //   setIsPopupOpen(true);
-  // };
-
-  // remove skills
-  // const handleRemoveSkill = (skillToRemove: string) => {
-  //   const updatedSkills = skills.filter((skill) => skill !== skillToRemove);
-  //   setSkills(updatedSkills);
-  //   // onUpdate({ skills: updatedSkills });
-  // };
-
-  // change availability
-  // const handleAvailabilityChange = (
-  //   newAvailability: "part-time" | "full-time"
-  // ) => {
-  //   setAvailability(newAvailability);
-  //   onUpdate({ availability: newAvailability });
-  // };
-
-  // const handleAddCredential = () => {
-  //   // check for empty inputs
-  //   if (
-  //     newCredential.degree.trim() !== "" &&
-  //     newCredential.institution.trim() !== ""
-  //   ) {
-  //     const year = parseInt(newCredential.year.toString(), 10);
-
-  //     if (isNaN(year) || year < 1900 || year > new Date().getFullYear()) {
-  //       return; // Invalid year
-  //     }
-
-  //     // updated credentials with old values
-  //     const updatedCredentials = [
-  //       ...profile.credentials,
-  //       {
-  //         degree: newCredential.degree.trim(),
-  //         institution: newCredential.institution.trim(),
-  //         year,
-  //       },
-  //     ];
-
-  //     onUpdate({ credentials: updatedCredentials });
-
-  //     setPopupMessage("Credentials Added Successfully!");
-  //     setIsPopupOpen(true);
-
-  //     // Reset form
-  //     setNewCredential({
-  //       degree: "",
-  //       institution: "",
-  //       year: new Date().getFullYear(),
-  //     });
-  //   }
-  // };
-
   const onEditProfile = () => {
     setIsEditProfile(true);
   };
@@ -165,12 +94,16 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
     event.preventDefault();
     const submitter = event.nativeEvent.submitter.name;
     if (submitter === "save" && currentUser) {
+      if (!email || !firstName || !lastName) {
+        setError("Please fill all fields");
+        return;
+      }
       try {
         const result = await userApi.updateUser(currentUser.id, {
           firstName,
           lastName,
           email,
-          // password: newPassword,
+          password: newPassword,
           avatarConfig,
         });
 
@@ -200,6 +133,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                required
               />
             </FormGroup>
             <FormGroup>
@@ -210,6 +144,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Enter your first name"
+                required
               />
             </FormGroup>
             <FormGroup>
@@ -220,6 +155,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Enter your last name"
+                required
               />
             </FormGroup>
             <FormGroup>
@@ -233,16 +169,6 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
               />
             </FormGroup>
 
-            {/* <FormGroup>
-              <label htmlFor="password">Old Password</label>
-              <input
-                type="password"
-                id="old-password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                placeholder="Enter the old password to change the existing password"
-              />
-            </FormGroup> */}
             <div>
               <button
                 onClick={(e) => {
