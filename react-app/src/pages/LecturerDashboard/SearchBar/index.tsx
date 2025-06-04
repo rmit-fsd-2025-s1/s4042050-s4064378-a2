@@ -49,12 +49,17 @@ const SearchSortBar: React.FC<Props> = ({
     }
 
     const SelectedTutors: TutorApplication[] = [];
+
     TutorApplicants.forEach((tutor) => {
       if (!tutor.appliedRoles?.length) return;
 
       tutor.appliedRoles.forEach((role) => {
+        // ✅ Defensive check: skip roles with missing course or course name
+        if (!role.course || !role.course.name) return;
+
         const courseName = role.course.name.toLowerCase();
-        const filteredTutorByCourse = filterByCourse === "all" || role.course.id.toString() === filterByCourse;
+        const filteredTutorByCourse =
+          filterByCourse === "all" || role.course.id.toString() === filterByCourse;
 
         const queriedTutor =
           searchQuery === "" ||
