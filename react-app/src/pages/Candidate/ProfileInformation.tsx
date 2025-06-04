@@ -15,7 +15,6 @@ import {
 } from "./element";
 import { Popup } from "../../components/Popup";
 import { EditButton } from "../../components/Buttons/EditButton";
-import { ProfileEditPopup } from "./ProfileEditPopup";
 import { ErrorMessage } from "../../components/ActivityStatus/ErrorMessage";
 import PopupContainer from "../../components/PopupContainer";
 import { FormGroup, StyledLabel, StyledSelect } from "../element";

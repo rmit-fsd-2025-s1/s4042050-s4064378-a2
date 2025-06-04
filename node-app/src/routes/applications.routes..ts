@@ -85,4 +85,11 @@ router.post("/", async (req, res) => {
   await applicationController.save(req, res);
 });
 
+router.get("/", async (req, res) => {
+  await applicationController.all(req, res);
+});
+router.get("/:id", async (req, res) => {
+  await applicationController.allByCandidateId(req, res);
+});
+
 export default router;

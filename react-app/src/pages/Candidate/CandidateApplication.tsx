@@ -18,6 +18,7 @@ import { applicationApi } from "../../services/applicationApi";
 import { rolesApi } from "../../services/rolesApi";
 import { Role } from "../../types/Role";
 import { getCurrentUser } from "../../util/localStorage";
+import { Application } from "../../types/Application";
 
 // Styled Components
 const FormSection = styled.div`
@@ -108,6 +109,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
 
   const [previousRoles, setPreviousRoles] = useState([
     { course: "", role: "" },
@@ -132,6 +134,17 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
       return;
     }
 
+    let alreadyApplied = applications.some(
+      (application) =>
+        application.course.id === +selectedCourse &&
+        application.role.id === +selectedRole
+    );
+
+    if (alreadyApplied) {
+      setError("You have already applied for this role in the selected course");
+      return;
+    }
+
     try {
       const application = await applicationApi.create({
         availability: selectedAvailavility,
@@ -144,10 +157,9 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
         skills,
       });
 
-      // onApply(selectedCourse, selectedRole);
-
+      // Reset form
       setIsPopupOpen(true);
-      setPopupMessage("Course Added Successfully!");
+      setPopupMessage("Application Submitted Successfully!");
       setSelectedCourse("");
       setSelectedRole("");
       setPreviousRoles([]);
@@ -157,8 +169,6 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
     } catch (error) {
       setError(String(error));
     }
-
-    // Reset form
   };
 
   const fetchAllCourses = async () => {
@@ -174,6 +184,20 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
     try {
       const rolesResult = await rolesApi.getAll();
       setRoles(rolesResult);
+    } catch (error) {
+      setError(String(error));
+    }
+  };
+
+  const fetchApplicationsByCandidateId = async () => {
+    try {
+      const applicationsResult =
+        await applicationApi.getApplicationsByCandidateId(
+          getCurrentUser()!.candidate!.id
+        );
+
+      console.log("applicationsResult", applicationsResult);
+      setApplications(applicationsResult);
     } catch (error) {
       setError(String(error));
     }
@@ -205,7 +229,10 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
 
   const handleAddSkill = () => {
     const skill = newSkill.trim().toLowerCase();
-    if (!skill) return;
+    if (!skill) {
+      setError("Empty Skill");
+      return;
+    }
     if (skills.includes(skill)) {
       setError("Duplicate entry");
       return;
@@ -232,6 +259,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
   useEffect(() => {
     fetchAllCourses();
     fetchAllRoles();
+    fetchApplicationsByCandidateId();
   }, []);
 
   return (
@@ -294,32 +322,6 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
             ))}
           </select>
         </FormGroupWrapper>
-
-        {/* <FormGroupWrapper>
-          <label htmlFor="role">Role:</label>
-          <RadioGroup>
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="tutor"
-                checked={selectedRole === "tutor"}
-                onChange={() => setSelectedRole("tutor")}
-              />
-              Candidate
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="lab-assistant"
-                checked={selectedRole === "lab-assistant"}
-                onChange={() => setSelectedRole("lab-assistant")}
-              />
-              Lab Assistant
-            </label>
-          </RadioGroup>
-        </FormGroupWrapper> */}
         <FormGroupWrapper>
           <label htmlFor="availability">Availability:</label>
           <RadioGroup>
@@ -358,22 +360,6 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
                   }
                   required
                 />
-                {/* <Input
-                  placeholder="Course Name"
-                  value={role.courseName}
-                  onChange={(e) =>
-                    handleRoleChange(index, "courseName", e.target.value)
-                  }
-                  required
-                /> */}
-                {/* <Input
-                  placeholder="Semester"
-                  value={role.semester}
-                  onChange={(e) =>
-                    handleRoleChange(index, "semester", e.target.value)
-                  }
-                  required
-                /> */}
                 <Input
                   placeholder="Role"
                   value={role.role}
@@ -389,27 +375,41 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
             </FieldGroup>
           ))}
           <Button type="button" onClick={handleAddRole}>
-            Add Role
+            Add Another Role
           </Button>
         </FormGroupWrapper>
 
         <FormGroupWrapper>
           <h2>Skills</h2>
           <FieldGroup>
-            <Input
-              placeholder="Add a skill"
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && (e.preventDefault(), handleAddSkill())
-              }
-            />
-            <Button type="button" onClick={handleAddSkill}>
-              Add Skill
-            </Button>
+            <div>
+              <Input
+                placeholder="Add a skill"
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), handleAddSkill())
+                }
+              />
+              <Button type="button" onClick={handleAddSkill}>
+                +
+              </Button>
+            </div>
             <div style={{ display: "flex" }}>
               {skills.map((skill, idx) => (
-                <ListItem key={idx}>{skill}</ListItem>
+                <ListItem key={idx}>
+                  {skill}&nbsp;&nbsp;
+                  <Button
+                    style={{ padding: "5px" }}
+                    warning
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSkills((sk) => sk.filter((s, i) => i !== idx));
+                    }}
+                  >
+                    x
+                  </Button>
+                </ListItem>
               ))}
             </div>
           </FieldGroup>
@@ -463,7 +463,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
             </FieldGroup>
           ))}
           <Button type="button" onClick={handleAddCredential}>
-            Add Credential
+            Add Another Credential
           </Button>
         </FormGroupWrapper>
 
