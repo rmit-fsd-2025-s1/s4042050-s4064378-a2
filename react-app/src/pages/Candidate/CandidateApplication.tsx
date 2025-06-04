@@ -44,20 +44,6 @@ const Input = styled.input`
   margin-right: 5px;
 `;
 
-const TextArea = styled.textarea`
-  padding: 0.5rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-`;
-
-// const Button = styled.button`
-//   padding: 0.5rem 1rem;
-//   background-color: #2980b9;
-//   color: white;
-//   border: none;
-//   border-radius: 5px;
-//   cursor: pointer;
-// `;
 const Button = styled.button<{ warning?: boolean }>`
   padding: 0.5rem 1rem;
   background-color: ${(props) => (props.warning ? "#e74c3c" : "#3498db")};
@@ -282,15 +268,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
           >
             <option value="">Select a course</option>
             {courses.map((course) => (
-              <option
-                key={course.id}
-                value={course.id}
-                // disabled={Boolean(
-                //   candidateProfile?.appliedRoles?.find(
-                //     (d) => d.courseId === course.id
-                //   )
-                // )}
-              >
+              <option key={course.id} value={course.id}>
                 {course.code} -{" "}
                 {course.name.charAt(0).toUpperCase() + course.name.slice(1)}
               </option>
@@ -308,15 +286,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
           >
             <option value="">Select a role</option>
             {roles.map((role) => (
-              <option
-                key={role.id}
-                value={role.id}
-                // disabled={Boolean(
-                //   candidateProfile?.appliedRoles?.find(
-                //     (d) => d.courseId === course.id
-                //   )
-                // )}
-              >
+              <option key={role.id} value={role.id}>
                 {role.name}
               </option>
             ))}
@@ -436,15 +406,6 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
                   }
                   required
                 />
-                {/* <Input
-                  
-                  placeholder="Year"
-                  value={cred.year}
-                  onChange={(e) =>
-                    handleCredentialChange(index, "year", e.target.value)
-                  }
-                  required
-                /> */}
                 <Input
                   type="number"
                   placeholder="Year"

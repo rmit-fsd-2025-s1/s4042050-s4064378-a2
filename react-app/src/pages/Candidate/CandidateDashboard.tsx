@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Candidate } from "../../types/Candidate";
 import { Course } from "../../types/Course";
-import PreviousRoles from "./CandidatePreviousRoles";
+import PreviousRoles from "./CandidateAppliedRoles";
 import ProfileInformation from "./ProfileInformation";
 import { CandidateDashboardWrapper } from "./element";
 import { Dashboard } from "../../components/DashBoard";
