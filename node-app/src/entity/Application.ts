@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { Role } from "./Role";
 import { Candidate } from "./Candidate";
-import {Course } from "./Course"
+import { Course } from "./Course";
 
 @Entity()
 export class Application {
@@ -31,7 +31,7 @@ export class Application {
   credentials: Array<{
     degree: string;
     institution: string;
-    year: number;
+    year: string;
   }>;
 
   @Column("json")

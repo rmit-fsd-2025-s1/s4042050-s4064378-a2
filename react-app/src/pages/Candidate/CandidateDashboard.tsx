@@ -89,7 +89,7 @@ const CandidateDashboard = ({
 
   const handleApplyForRole = (
     courseId: string,
-    role: "candidate" | "lab-assistant"
+    role: "tutor" | "lab-assistant"
   ) => {
     // In a real application, this would be an API call
     console.log(`Applied for ${role} role in course ${courseId}`);

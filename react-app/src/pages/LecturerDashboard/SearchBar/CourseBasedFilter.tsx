@@ -20,7 +20,9 @@ const CourseBasedFilter: React.FC<Props> = ({ value, onChange, disabled }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/api/courses`);
+        const response = await axios.get(
+          `http://localhost:3001/tech_team/courses`
+        );
         setCourses(response.data);
       } catch (error) {
         console.error("Error loading courses:", error);

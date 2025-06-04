@@ -14,6 +14,10 @@ import { ErrorMessage } from "../../components/ActivityStatus/ErrorMessage";
 import { Popup } from "../../components/Popup";
 import { courseApi } from "../../services/courseApi";
 import styled from "styled-components";
+import { applicationApi } from "../../services/applicationApi";
+import { rolesApi } from "../../services/rolesApi";
+import { Role } from "../../types/Role";
+import { getCurrentUser } from "../../util/localStorage";
 
 // Styled Components
 const FormSection = styled.div`
@@ -32,6 +36,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
+  width: 200px !important;
   padding: 0.5rem;
   border-radius: 5px;
   border: 1px solid #ccc;
@@ -85,7 +90,7 @@ const ListItem = styled.div`
 
 interface CandidateApplicationProps {
   courses: Course[];
-  onApply: (courseId: string, role: "candidate" | "lab-assistant") => void;
+  onApply: (courseId: string, role: "tutor" | "lab-assistant") => void;
   candidateProfile: Candidate | null;
 }
 
@@ -95,9 +100,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
   candidateProfile,
 }) => {
   const [selectedCourse, setSelectedCourse] = useState<string>("");
-  const [selectedRole, setSelectedRole] = useState<
-    "candidate" | "lab-assistant"
-  >("candidate");
+  const [selectedRole, setSelectedRole] = useState<string>("");
   const [selectedAvailavility, setSelectedAvailability] = useState<
     "part-time" | "full-time"
   >("part-time");
@@ -106,17 +109,22 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
   const [popupMessage, setPopupMessage] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
 
-  const [roles, setRoles] = useState([
-    { courseCode: "", courseName: "", semester: "", role: "" },
+  const [previousRoles, setPreviousRoles] = useState([
+    { course: "", role: "" },
   ]);
+
+  const [roles, setRoles] = useState<Role[]>([]);
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
   const [credentials, setCredentials] = useState([
     { degree: "", institution: "", year: "" },
   ]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
+    const submitter = e.nativeEvent.submitter.name;
+
+    if (submitter !== "apply") return;
 
     // input validation
     if (!selectedCourse) {
@@ -124,43 +132,75 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
       return;
     }
 
-    onApply(selectedCourse, selectedRole);
+    try {
+      const application = await applicationApi.create({
+        availability: selectedAvailavility,
+        credentials,
+        previousRoles: previousRoles,
+        status: "pending",
+        role: roles.find((r) => r.id === +selectedRole),
+        course: courses.find((c) => c.id === +selectedCourse),
+        candidate: getCurrentUser()?.candidate,
+        skills,
+      });
 
-    setIsPopupOpen(true);
-    setPopupMessage("Course Added Successfully!");
+      // onApply(selectedCourse, selectedRole);
+
+      setIsPopupOpen(true);
+      setPopupMessage("Course Added Successfully!");
+      setSelectedCourse("");
+      setSelectedRole("");
+      setPreviousRoles([]);
+      setCredentials([]);
+      setSkills([]);
+      setError("");
+    } catch (error) {
+      setError(String(error));
+    }
 
     // Reset form
-    setSelectedCourse("");
-    setError("");
   };
 
   const fetchAllCourses = async () => {
     try {
-      const courses = await courseApi.getAllCourses();
-      setCourses(courses);
+      const coursesResult = await courseApi.getAllCourses();
+      setCourses(coursesResult);
+    } catch (error) {
+      setError(String(error));
+    }
+  };
+
+  const fetchAllRoles = async () => {
+    try {
+      const rolesResult = await rolesApi.getAll();
+      setRoles(rolesResult);
     } catch (error) {
       setError(String(error));
     }
   };
 
   const handleRoleChange = (index: number, field: string, value: string) => {
-    const updated = [...roles];
+    const updated = [...previousRoles];
     updated[index][field as keyof (typeof updated)[0]] = value;
-    setRoles(updated);
+    setPreviousRoles(updated);
   };
 
   const handleAddRole = () => {
-    setRoles([
-      ...roles,
-      { courseCode: "", courseName: "", semester: "", role: "" },
-    ]);
+    setPreviousRoles([...previousRoles, { course: "", role: "" }]);
   };
 
   const removeRoles = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     index: number
   ) => {
-    setRoles((prevRoles) => prevRoles.filter((val, i) => i !== index));
+    setPreviousRoles((prevRoles) => prevRoles.filter((val, i) => i !== index));
+  };
+
+  const removeCredentials = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    index: number
+  ) => {
+    setCredentials((prev) => prev.filter((val, i) => i !== index));
   };
 
   const handleAddSkill = () => {
@@ -191,12 +231,13 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
 
   useEffect(() => {
     fetchAllCourses();
+    fetchAllRoles();
   }, []);
 
   return (
     <div>
       <CandidateApplicationHeading>
-        Apply for Candidate/Lab Assistant Roles
+        Apply for Tutor/Lab Assistant Roles
       </CandidateApplicationHeading>
       <CandidateApplicationSubHeading>
         Select from available courses for the current semester
@@ -231,14 +272,39 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
 
         <FormGroupWrapper>
           <label htmlFor="role">Role:</label>
+          <select
+            id="role"
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
+            required
+          >
+            <option value="">Select a role</option>
+            {roles.map((role) => (
+              <option
+                key={role.id}
+                value={role.id}
+                // disabled={Boolean(
+                //   candidateProfile?.appliedRoles?.find(
+                //     (d) => d.courseId === course.id
+                //   )
+                // )}
+              >
+                {role.name}
+              </option>
+            ))}
+          </select>
+        </FormGroupWrapper>
+
+        {/* <FormGroupWrapper>
+          <label htmlFor="role">Role:</label>
           <RadioGroup>
             <label>
               <input
                 type="radio"
                 name="role"
-                value="candidate"
-                checked={selectedRole === "candidate"}
-                onChange={() => setSelectedRole("candidate")}
+                value="tutor"
+                checked={selectedRole === "tutor"}
+                onChange={() => setSelectedRole("tutor")}
               />
               Candidate
             </label>
@@ -253,7 +319,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
               Lab Assistant
             </label>
           </RadioGroup>
-        </FormGroupWrapper>
+        </FormGroupWrapper> */}
         <FormGroupWrapper>
           <label htmlFor="availability">Availability:</label>
           <RadioGroup>
@@ -281,33 +347,33 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
         </FormGroupWrapper>
         <FormGroupWrapper>
           <label htmlFor="role">Previous Roles:</label>
-          {roles.map((role, index) => (
+          {previousRoles.map((role, index) => (
             <FieldGroup key={index}>
               <div>
                 <Input
-                  placeholder="Course Code"
-                  value={role.courseCode}
+                  placeholder="Course"
+                  value={role.course}
                   onChange={(e) =>
-                    handleRoleChange(index, "courseCode", e.target.value)
+                    handleRoleChange(index, "course", e.target.value)
                   }
                   required
                 />
-                <Input
+                {/* <Input
                   placeholder="Course Name"
                   value={role.courseName}
                   onChange={(e) =>
                     handleRoleChange(index, "courseName", e.target.value)
                   }
                   required
-                />
-                <Input
+                /> */}
+                {/* <Input
                   placeholder="Semester"
                   value={role.semester}
                   onChange={(e) =>
                     handleRoleChange(index, "semester", e.target.value)
                   }
                   required
-                />
+                /> */}
                 <Input
                   placeholder="Role"
                   value={role.role}
@@ -353,27 +419,47 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
           <h2>Academic Credentials</h2>
           {credentials.map((cred, index) => (
             <FieldGroup key={index}>
-              <Input
-                placeholder="Degree"
-                value={cred.degree}
-                onChange={(e) =>
-                  handleCredentialChange(index, "degree", e.target.value)
-                }
-              />
-              <Input
-                placeholder="Institution"
-                value={cred.institution}
-                onChange={(e) =>
-                  handleCredentialChange(index, "institution", e.target.value)
-                }
-              />
-              <Input
-                placeholder="Year"
-                value={cred.year}
-                onChange={(e) =>
-                  handleCredentialChange(index, "year", e.target.value)
-                }
-              />
+              <div>
+                <Input
+                  placeholder="Degree"
+                  value={cred.degree}
+                  onChange={(e) =>
+                    handleCredentialChange(index, "degree", e.target.value)
+                  }
+                  required
+                />
+                <Input
+                  placeholder="Institution"
+                  value={cred.institution}
+                  onChange={(e) =>
+                    handleCredentialChange(index, "institution", e.target.value)
+                  }
+                  required
+                />
+                {/* <Input
+                  
+                  placeholder="Year"
+                  value={cred.year}
+                  onChange={(e) =>
+                    handleCredentialChange(index, "year", e.target.value)
+                  }
+                  required
+                /> */}
+                <Input
+                  type="number"
+                  placeholder="Year"
+                  min="1900"
+                  max={new Date().getFullYear() + 5} // Allows some future years
+                  value={cred.year || ""} // Handles undefined/null cases
+                  onChange={(e) =>
+                    handleCredentialChange(index, "year", e.target.value)
+                  }
+                  required
+                />
+                <Button warning onClick={(e) => removeCredentials(e, index)}>
+                  Remove
+                </Button>
+              </div>
             </FieldGroup>
           ))}
           <Button type="button" onClick={handleAddCredential}>
@@ -383,7 +469,9 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
 
         {error && <ErrorMessage message={error} />}
 
-        <SubmitButton type="submit">Apply</SubmitButton>
+        <SubmitButton name="apply" type="submit">
+          Apply
+        </SubmitButton>
       </form>
 
       <CurrentSemesterCourses>

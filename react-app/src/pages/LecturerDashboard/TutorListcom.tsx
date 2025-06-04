@@ -14,15 +14,21 @@ const TutorList: React.FC<Props> = ({ tutors }) => {
   }
 
   // Save updated tutor role to backend
-  const handleUpdate = async (update: { id: number; updatedRole: TutorRole }) => {
+  const handleUpdate = async (update: {
+    id: number;
+    updatedRole: TutorRole;
+  }) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/applications/${update.id}`,
+        `${process.env.REACT_APP_API_URL}/tech_team/applications/${update.id}`,
         {
           role: update.updatedRole.role,
           courseId: update.updatedRole.course.id, // course is now inside appliedRole
           comment: update.updatedRole.comment,
-          rank: update.updatedRole.status === "accepted" ? update.updatedRole.rank : 0,
+          rank:
+            update.updatedRole.status === "accepted"
+              ? update.updatedRole.rank
+              : 0,
           status: update.updatedRole.status,
         }
       );

@@ -34,9 +34,7 @@ const PreviousRoles: React.FC<any> = ({ roles }) => {
           </thead>
           <tbody>
             {roles.map((role: { courseId: string; role: string }) => {
-              const course = allCourse.find(
-                (course) => course.id === role.courseId
-              );
+              const course = allCourse.find((course) => course.id);
               if (!course) return <></>;
 
               return (
@@ -46,7 +44,7 @@ const PreviousRoles: React.FC<any> = ({ roles }) => {
                     {course!.name.charAt(0).toUpperCase() +
                       course!.name.slice(1)}
                   </td>
-                  <td>{course?.semester}</td>
+                  {/* <td>{course?.semester}</td> */}
                   <td>
                     {role.role === "candidate" ? "Candidate" : "Lab Assistant"}
                   </td>

@@ -15,8 +15,20 @@ async function seed() {
   const appRepo = AppDataSource.getRepository(Application);
 
   // 👤 Create Users
-  const user1 = userRepo.create({ firstName: "Alice", lastName: "Smith", email: "alice@example.com", password: "pass", avatarConfig: {} });
-  const user2 = userRepo.create({ firstName: "Bob", lastName: "Lee", email: "bob@example.com", password: "pass", avatarConfig: {} });
+  const user1 = userRepo.create({
+    firstName: "Alice",
+    lastName: "Smith",
+    email: "alice@example.com",
+    password: "pass",
+    avatarConfig: {},
+  });
+  const user2 = userRepo.create({
+    firstName: "Bob",
+    lastName: "Lee",
+    email: "bob@example.com",
+    password: "pass",
+    avatarConfig: {},
+  });
   await userRepo.save([user1, user2]);
 
   // 🎓 Create Candidates
@@ -25,8 +37,14 @@ async function seed() {
   await candidateRepo.save([cand1, cand2]);
 
   // 📚 Create Courses
-  const course1 = courseRepo.create({ code: "COSC2640", name: "Full Stack Development" });
-  const course2 = courseRepo.create({ code: "COSC2626", name: "Cloud Computing" });
+  const course1 = courseRepo.create({
+    code: "COSC2640",
+    name: "Full Stack Development",
+  });
+  const course2 = courseRepo.create({
+    code: "COSC2626",
+    name: "Cloud Computing",
+  });
   await courseRepo.save([course1, course2]);
 
   // 🎭 Create Roles
@@ -38,7 +56,7 @@ async function seed() {
   const app1 = appRepo.create({
     availability: "part-time",
     skills: ["React", "Node"],
-    credentials: [{ degree: "BSc IT", institution: "RMIT", year: 2022 }],
+    credentials: [{ degree: "BSc IT", institution: "RMIT", year: "2022" }],
     previousRoles: [{ course: "COSC1234", role: "Tutor" }],
     status: "accepted",
     course: course1,
@@ -51,7 +69,7 @@ async function seed() {
   const app2 = appRepo.create({
     availability: "full-time",
     skills: ["AWS", "Docker"],
-    credentials: [{ degree: "BSc CS", institution: "UniMelb", year: 2021 }],
+    credentials: [{ degree: "BSc CS", institution: "UniMelb", year: "2021" }],
     previousRoles: [{ course: "COSC5678", role: "Lab Assistant" }],
     status: "pending",
     course: course2,
