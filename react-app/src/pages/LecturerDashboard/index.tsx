@@ -28,7 +28,9 @@ export const LecturerPage = ({
   useEffect(() => {
     const fetchTutors = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/api/applications`);
+        const res = await axios.get(
+          `http://localhost:3001/teach_team/applications`
+        );
         setTutors(res.data);
       } catch (error) {
         console.error("Error fetching tutor applications:", error);
