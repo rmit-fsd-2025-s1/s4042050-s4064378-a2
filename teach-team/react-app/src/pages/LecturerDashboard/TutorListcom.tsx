@@ -6,14 +6,15 @@ import { TutorApplication, TutorRole } from "../../types/Tutor";
 
 interface Props {
   tutors: TutorApplication[];
+  refreshTutors: () => void; // ✅ Add refresh function as prop
 }
 
-const TutorList: React.FC<Props> = ({ tutors }) => {
+const TutorList: React.FC<Props> = ({ tutors, refreshTutors }) => {
   if (tutors.length === 0) {
     return <p className="text-gray-600 text-center mt-7">No Tutors found</p>;
   }
 
-  // Save updated tutor role to backend
+  // Save updated tutor role to backend and then refresh
   const handleUpdate = async (update: {
     id: number;
     updatedRole: TutorRole;
@@ -23,7 +24,7 @@ const TutorList: React.FC<Props> = ({ tutors }) => {
         `http://localhost:3001/teach_team/applications/${update.id}`,
         {
           role: update.updatedRole.role,
-          courseId: update.updatedRole.course.id, // course is now inside appliedRole
+          courseId: update.updatedRole.course.id,
           comment: update.updatedRole.comment,
           rank:
             update.updatedRole.status === "accepted"
@@ -33,6 +34,7 @@ const TutorList: React.FC<Props> = ({ tutors }) => {
         }
       );
       console.log("Application updated successfully");
+      refreshTutors(); // ✅ Refetch tutor data after update
     } catch (err) {
       console.error("Failed to update tutor application", err);
     }

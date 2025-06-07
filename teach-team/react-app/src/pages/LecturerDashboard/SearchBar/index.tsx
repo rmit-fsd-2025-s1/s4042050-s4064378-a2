@@ -54,7 +54,6 @@ const SearchSortBar: React.FC<Props> = ({
       if (!tutor.appliedRoles?.length) return;
 
       tutor.appliedRoles.forEach((role) => {
-        // ✅ Defensive check: skip roles with missing course or course name
         if (!role.course || !role.course.name) return;
 
         const courseName = role.course.name.toLowerCase();
@@ -64,14 +63,16 @@ const SearchSortBar: React.FC<Props> = ({
         const queriedTutor =
           searchQuery === "" ||
           `${tutor.firstName} ${tutor.lastName}`.toLowerCase().includes(searchQuery) ||
-          tutor.availability?.toLowerCase().includes(searchQuery) ||
-          tutor.skills?.some((skill) => skill.toLowerCase().includes(searchQuery)) ||
+          role.availability?.toLowerCase().includes(searchQuery) ||
+          role.skills?.some((skill) => skill.toLowerCase().includes(searchQuery)) ||
           courseName.includes(searchQuery);
 
         if (filteredTutorByCourse && queriedTutor) {
           SelectedTutors.push({
             ...tutor,
             appliedRole: { ...role },
+            availability: role.availability, // ✅ from role
+            skills: role.skills,             // ✅ from role
             rank: role.rank ?? 0,
           });
         }
@@ -81,11 +82,17 @@ const SearchSortBar: React.FC<Props> = ({
     if (sortByCourseAvailability === "course" && filterByCourse === "all") {
       SelectedTutors.sort((a, b) => a.appliedRole.course.id - b.appliedRole.course.id);
     } else if (sortByCourseAvailability === "availability") {
-      SelectedTutors.sort((a, b) => a.availability.localeCompare(b.availability));
+      SelectedTutors.sort((a, b) => (a.availability || "").localeCompare(b.availability || ""));
     }
 
     onFilteredchangedList(SelectedTutors);
-  }, [userSearchQuery, sortByCourseAvailability, filterByCourse, tutorSelectFilter, TutorApplicants]);
+  }, [
+    userSearchQuery,
+    sortByCourseAvailability,
+    filterByCourse,
+    tutorSelectFilter,
+    TutorApplicants,
+  ]);
 
   return (
     <Filter>
