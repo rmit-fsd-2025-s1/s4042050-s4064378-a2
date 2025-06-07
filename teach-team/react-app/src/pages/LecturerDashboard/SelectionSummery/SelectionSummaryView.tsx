@@ -1,6 +1,6 @@
 import React from "react";
 import { TutorApplication } from "../../../types/Tutor";
-import SummaryCard from "./SummaryCard";
+import SummaryCardContainer from "./SelectionSummaryContainer";
 
 interface Props {
   most: TutorApplication[];
@@ -11,9 +11,9 @@ interface Props {
 const SelectionSummaryView: React.FC<Props> = ({ most, least, unselected }) => {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-      <SummaryCard title="Most Chosen Applicant" tutors={most} />
-      <SummaryCard title="Least Chosen Applicant" tutors={least} />
-      <SummaryCard title="Unselected Applicants" tutors={unselected} />
+      <SummaryCardContainer title="Most Chosen Applicant" tutors={most} />
+      <SummaryCardContainer title="Least Chosen Applicant" tutors={least} />
+      <SummaryCardContainer title="Unselected Applicants" tutors={unselected} />
     </div>
   );
 };

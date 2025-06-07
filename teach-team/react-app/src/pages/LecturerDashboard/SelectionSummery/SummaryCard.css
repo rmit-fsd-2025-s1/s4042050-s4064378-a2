@@ -1,0 +1,66 @@
+.cardWrapper {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.cardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tutorCard {
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background-color: #fafafa;
+}
+
+.tutorName {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.progressBarContainer {
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.progressBar {
+  background-color: #007bff;
+  height: 100%;
+}
+
+.progressText {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.courseTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.accepted {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.rejected {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.tag {
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+}

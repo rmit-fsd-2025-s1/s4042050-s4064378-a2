@@ -3,23 +3,18 @@ import axios from "axios";
 import { Tutor, TutorApplication } from "../../types/Tutor";
 import TutorList from "./TutorListcom";
 import SearchSortBar from "./SearchBar/index";
-import SelectionSummaryContainer from "./SelectionSummery/SelectionSummaryContainer";
 import { Page } from "./styles/Layout";
 import { Dashboard } from "../../components/DashBoard";
 import { getCurrentUser } from "../../util/localStorage";
 import { DEFAULT_AVATAR_CONFIG } from "../../components/Avatar/avatarConfig";
+import { filterTutorsBySelectionType } from "../../util/tutorSelection";
+import SelectionSummaryView from "./SelectionSummery/SelectionSummaryView";
 
-// Optional: import your modal styles or use Material UI/Bootstrap if preferred
-
-export const LecturerPage = ({
-  navigateTo,
-}: {
-  navigateTo: (page: any) => void;
-}) => {
+export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }) => {
   const [filteredTutorApps, setFilteredTutorApps] = useState<TutorApplication[]>([]);
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [viewMode, setViewMode] = useState("all");
-  const [showSummary, setShowSummary] = useState(false); // NEW
+  const [showSummary, setShowSummary] = useState(false);
   const user = getCurrentUser();
 
   useEffect(() => {
@@ -35,6 +30,11 @@ export const LecturerPage = ({
     fetchTutors();
   }, []);
 
+  // Pre-process grouped data for visual summary (used in modal)
+  const most = filterTutorsBySelectionType(tutors, "most");
+  const least = filterTutorsBySelectionType(tutors, "least");
+  const unselected = filterTutorsBySelectionType(tutors, "unselected");
+
   return (
     <Page>
       <Dashboard
@@ -43,7 +43,6 @@ export const LecturerPage = ({
         avatarConfig={user?.avatarConfig || DEFAULT_AVATAR_CONFIG}
       />
 
-      {/* NEW BUTTON TO OPEN POPUP */}
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem" }}>
         <button onClick={() => setShowSummary(true)}>View Selection Summary</button>
       </div>
@@ -56,7 +55,7 @@ export const LecturerPage = ({
 
       <TutorList tutors={filteredTutorApps} />
 
-      {/* NEW MODAL/POPUP */}
+      {/* Modal for Visual Summary */}
       {showSummary && (
         <div style={modalStyle}>
           <div style={modalContentStyle}>
@@ -67,7 +66,7 @@ export const LecturerPage = ({
               ❌
             </button>
             <h2>Selection Summary</h2>
-            <SelectionSummaryContainer applicants={tutors} />
+            <SelectionSummaryView most={most} least={least} unselected={unselected} />
           </div>
         </div>
       )}
@@ -75,7 +74,7 @@ export const LecturerPage = ({
   );
 };
 
-// Basic Modal Styles (replace with your CSS/styled-components if needed)
+// Modal Styles
 const modalStyle: React.CSSProperties = {
   position: "fixed",
   top: 0,

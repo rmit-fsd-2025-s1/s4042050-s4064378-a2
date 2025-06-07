@@ -1,25 +1,64 @@
 import React from "react";
-import { Tutor } from "../../../types/Tutor";
 import { TutorApplication } from "../../../types/Tutor";
-import { filterTutorsBySelectionType } from "../../../util/tutorSelection";
-import SelectionSummaryView from "./SelectionSummaryView";
+import SummaryCard from "./SummaryCard";
 
 interface Props {
-  applicants: Tutor[];
+  title: string;
+  tutors: TutorApplication[];
 }
 
-const SelectionSummaryContainer: React.FC<Props> = ({ applicants }) => {
-  const most = filterTutorsBySelectionType(applicants, "most");
-  const least = filterTutorsBySelectionType(applicants, "least");
-  const unselected = filterTutorsBySelectionType(applicants, "unselected");
+/**
+ * SummaryCardContainer Component
+ *
+ * Architectural Note:
+ * --------------------
+ * This container component is responsible for processing raw tutor data
+ * (e.g., grouping by tutor, computing accepted vs total roles) and passing
+ * the formatted data to the `SummaryCard` presentational component.
+ *
+ * This follows the container-presentational pattern:
+ * - Keeps business logic separate from UI rendering
+ * - Improves testability, reusability, and clarity
+ * - Supports future scaling and modification with minimal UI impact
+ */
 
-  return (
-    <SelectionSummaryView
-      most={most}
-      least={least}
-      unselected={unselected}
-    />
-  );
+const SummaryCardContainer: React.FC<Props> = ({ title, tutors }) => {
+  // Group tutors by full name
+  const grouped = tutors.reduce<
+    Record<string, {
+      id: number;
+      accepted: number;
+      total: number;
+      courses: { name: string; status: string }[];
+    }>
+  >((acc, t) => {
+    const fullName = `${t.firstName} ${t.lastName}`;
+    const courseName = t.appliedRole?.course?.name ?? "No Course Assigned";
+    const status = t.appliedRole?.status ?? "pending";
+
+    if (!acc[fullName]) {
+      acc[fullName] = {
+        id: t.id,
+        accepted: status === "accepted" ? 1 : 0,
+        total: 1,
+        courses: [{ name: courseName, status }],
+      };
+    } else {
+      acc[fullName].accepted += status === "accepted" ? 1 : 0;
+      acc[fullName].total += 1;
+      acc[fullName].courses.push({ name: courseName, status });
+    }
+
+    return acc;
+  }, {});
+
+  // Flatten into array for rendering
+  const processed = Object.entries(grouped).map(([name, data]) => ({
+    name,
+    ...data,
+  }));
+
+  return <SummaryCard title={title} tutors={processed} />;
 };
 
-export default SelectionSummaryContainer;
+export default SummaryCardContainer;
