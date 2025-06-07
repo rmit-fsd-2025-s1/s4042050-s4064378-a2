@@ -65,15 +65,17 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
     }
 
     const updated = {
-      id: tutor.id,
+      id: tutor.appliedRole.id, // ✅ correct application ID
       updatedRole: {
+        id: tutor.appliedRole.id, // ✅ required by TutorRole type
         role: tutor.appliedRole.role,
-        course: tutor.appliedRole.course, // full object, contains id/code/name
+        course: tutor.appliedRole.course,
         comment: tuttorComment.trim(),
         rank: tutorStatus === "accepted" ? tutorRank : 0,
         status: tutorStatus,
       },
     };
+
 
     onUpdate(updated);
     setSuccessStatus(true);

@@ -10,6 +10,7 @@ export interface Tutor {
 
 // A single role applied by a tutor (used inside Tutor.appliedRoles)
 export interface TutorRole {
+  id: number;
   role: string;
   course: {
     id: number;

@@ -20,7 +20,7 @@ const TutorList: React.FC<Props> = ({ tutors }) => {
   }) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_URL}/teach_team/applications/${update.id}`,
+        `http://localhost:3001/teach_team/applications/${update.id}`,
         {
           role: update.updatedRole.role,
           courseId: update.updatedRole.course.id, // course is now inside appliedRole

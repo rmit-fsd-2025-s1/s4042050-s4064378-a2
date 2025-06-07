@@ -30,6 +30,7 @@ router.get("/", async (req, res) => {
         availability: c.applications?.[0]?.availability ?? "",
         appliedRoles:
           c.applications?.map((a) => ({
+            id: a.id,
             role: a.role.name,
             course: a.course
               ? {
