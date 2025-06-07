@@ -1,0 +1,19 @@
+type Admin {
+  id: ID!
+  username: String!
+  password: String!
+}
+
+type AuthPayload {
+  success: Boolean!
+  message: String!
+  user: Admin
+}
+
+type Query {
+  admins: [Admin]
+}
+
+type Mutation {
+  login(username: String!, password: String!): AuthPayload
+}

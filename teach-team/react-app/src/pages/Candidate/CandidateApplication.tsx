@@ -143,6 +143,8 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
         skills,
       });
 
+      fetchApplicationsByCandidateId();
+
       // Reset form
       setIsPopupOpen(true);
       setPopupMessage("Application Submitted Successfully!");
@@ -152,6 +154,7 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
       setCredentials([]);
       setSkills([]);
       setError("");
+      setNewSkill("");
     } catch (error) {
       setError(String(error));
     }
