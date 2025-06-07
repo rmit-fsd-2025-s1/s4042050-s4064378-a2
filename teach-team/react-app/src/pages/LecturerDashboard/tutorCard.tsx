@@ -52,7 +52,9 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
           t.id !== tutor.id &&
           t.appliedRole.status === "accepted" &&
           t.appliedRole.rank === tutorRank &&
-          t.appliedRole.course.id === tutor.appliedRole.course.id
+          t.appliedRole.course.id === tutor.appliedRole.course.id &&
+          t.appliedRole.role === tutor.appliedRole.role
+
       );
 
       if (duplicateRank) {
