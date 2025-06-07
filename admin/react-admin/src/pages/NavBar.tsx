@@ -42,7 +42,6 @@ export const NavBar = ({
             className={activeTab === "report" ? "active" : ""}
             onClick={() => {
               setActiveTab("report");
-              navigate("/reports/candidates-by-course");
             }}
           >
             Reports

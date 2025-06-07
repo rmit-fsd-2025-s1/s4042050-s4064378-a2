@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import { Dashboard } from "./Dashboard";
 import { MainPageWrapper } from "./element";
 import { NavBar } from "./NavBar";
+import CandidatesByCourse from "./reports/CandidatesByCourse";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -55,7 +56,7 @@ const MainPage = ({ isSuccessLogin = false }: { isSuccessLogin?: boolean }) => {
         {activeTab === "candidate" && <div>candidate</div>}
 
         {activeTab === "course" && <div>Courses</div>}
-        {activeTab === "report" && <div>Reports</div>}
+        {activeTab === "report" && <CandidatesByCourse />}
       </main>
       {/* <Popup
         message={"Welcome to the Teach Team"}
