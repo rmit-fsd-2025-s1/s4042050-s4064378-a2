@@ -17,16 +17,17 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
   const [showSummary, setShowSummary] = useState(false);
   const user = getCurrentUser();
 
-  useEffect(() => {
-    const fetchTutors = async () => {
-      try {
-        const res = await axios.get("http://localhost:3001/teach_team/applications");
-        setTutors(res.data);
-      } catch (error) {
-        console.error("Error fetching tutor applications:", error);
-      }
-    };
+  // Expose this function to child to refresh after patch
+  const fetchTutors = async () => {
+    try {
+      const res = await axios.get("http://localhost:3001/teach_team/applications");
+      setTutors(res.data);
+    } catch (error) {
+      console.error("Error fetching tutor applications:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchTutors();
   }, []);
 
@@ -53,9 +54,9 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
         onViewModeChange={setViewMode}
       />
 
-      <TutorList tutors={filteredTutorApps} />
+      {/* ✅ Now passes `refreshTutors` to trigger fresh fetch after update */}
+      <TutorList tutors={filteredTutorApps} refreshTutors={fetchTutors} />
 
-      {/* Modal for Visual Summary */}
       {showSummary && (
         <div style={modalStyle}>
           <div style={modalContentStyle}>
