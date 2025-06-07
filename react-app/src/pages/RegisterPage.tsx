@@ -95,7 +95,6 @@ export const RegisterPage = ({
       ) {
         setError("Email already exist");
       } else {
-        console.log(error);
         setError("Error in creating user");
       }
 

@@ -23,6 +23,7 @@ import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
 import { userApi } from "../services/userApi";
 import axios from "axios";
 import { Popup } from "../components/Popup";
+import { TeachTeamLanding } from "./LandingPage";
 
 const REACT_APP_SITE_KEY = "6LfaTQErAAAAAM4oamNji2SSm2uVi3-gUk1ul29S";
 const SITE_SECRET = "6LfaTQErAAAAACODMgjJzjm-jubUGIz8S13k9m2H";
@@ -97,7 +98,6 @@ export const LoginPage = ({
 
     try {
       const user = await userApi.login(email, password);
-      console.log(user);
       if (!user) {
         setError("Error in login");
         return;
@@ -123,19 +123,6 @@ export const LoginPage = ({
         setError(String(err));
       }
     }
-
-    // const user = userValidation({ email, password });
-    // if (user) {
-    //   setCurrentUser(user);
-    //   if (user.role === "lecturer") {
-    //     navigateTo("lecturer");
-    //   } else {
-    //     navigateTo("candidate");
-    //   }
-    //   return;
-    // }
-
-    // setError("User Not Found");
   };
 
   return (
