@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Page } from "../App";
 
 interface NavButtonProps {
   variant?: "primary" | "secondary" | "disabled";
@@ -309,7 +310,11 @@ const FooterCopyright = styled.p`
   margin: 0;
 `;
 
-export const TeachTeamLanding = () => {
+export const TeachTeamLanding = ({
+  navigateTo,
+}: {
+  navigateTo: (page: Page) => void;
+}) => {
   return (
     <Container>
       {/* Header */}
@@ -323,9 +328,19 @@ export const TeachTeamLanding = () => {
               <BrandName>TeachTeam</BrandName>
             </LogoSection>
             <Navigation>
-              <NavButton variant="secondary">Sign In</NavButton>
-              <NavButton variant="primary">Sign Up</NavButton>
-              <NavButton variant="disabled">Sign Out</NavButton>
+              <NavButton
+                variant="secondary"
+                onClick={() => navigateTo("login")}
+              >
+                Sign In
+              </NavButton>
+              <NavButton
+                variant="primary"
+                onClick={() => navigateTo("register")}
+              >
+                Sign Up
+              </NavButton>
+              {/* <NavButton variant="disabled" onClick={()=>navigateTo('login')}>Sign Out</NavButton> */}
             </Navigation>
           </HeaderFlex>
         </HeaderContent>

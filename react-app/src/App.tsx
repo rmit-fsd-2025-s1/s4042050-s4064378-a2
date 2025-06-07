@@ -11,8 +11,9 @@ import {
   setCurrentPageToLocalStorage,
   setCurrentUserToLocalStorage,
 } from "./util/localStorage";
+import { TeachTeamLanding } from "./pages/LandingPage";
 
-export type Page = "login" | "register" | "candidate" | "lecturer";
+export type Page = "login" | "register" | "candidate" | "lecturer" | "landing";
 
 const TechTeam = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -44,7 +45,11 @@ const TechTeam = () => {
     if (!currentPage) {
       const page = getCurrentPage();
       if (page) {
-        setCurrentPage(page);
+        if (page === "login" || page === "register") {
+          setCurrentPage("landing");
+        } else {
+          setCurrentPage(page);
+        }
       }
     }
   }, [currentPage, currentUser]);
@@ -85,15 +90,18 @@ const TechTeam = () => {
         );
       case "lecturer":
         return <LecturerPage navigateTo={navigateTo} />;
+      case "landing":
+        return <TeachTeamLanding navigateTo={navigateTo} />;
       default:
         return (
-          <LoginPage
-            setCurrentUser={setUser}
-            navigateTo={navigateTo}
-            registrationSuccess={registrationSuccess}
-            setIsSuccessLogin={setIsSuccessLogin}
-            setRegistrationSuccess={setRegistrationSuccess}
-          />
+          // <LoginPage
+          //   setCurrentUser={setUser}
+          //   navigateTo={navigateTo}
+          //   registrationSuccess={registrationSuccess}
+          //   setIsSuccessLogin={setIsSuccessLogin}
+          //   setRegistrationSuccess={setRegistrationSuccess}
+          // />
+          <TeachTeamLanding navigateTo={navigateTo} />
         );
     }
   };

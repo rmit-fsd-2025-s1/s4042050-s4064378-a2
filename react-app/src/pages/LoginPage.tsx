@@ -125,8 +125,6 @@ export const LoginPage = ({
     }
   };
 
-  return <TeachTeamLanding />;
-
   return (
     <AuthWrapper>
       <AuthContainer>

@@ -24,8 +24,8 @@ export const Dashboard = ({
   avatarConfig: AvatarConfigProps;
 }) => {
   const onLogout = () => {
-    // setCurrentUserToLocalStorage(null);
-    navigateTo("login");
+    localStorage.clear();
+    navigateTo("landing");
   };
   const [generatedConfig, setX] = useState(genConfig(avatarConfig));
 
