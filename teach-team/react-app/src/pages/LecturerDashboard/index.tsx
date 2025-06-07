@@ -19,13 +19,21 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
 
   // Expose this function to child to refresh after patch
   const fetchTutors = async () => {
-    try {
-      const res = await axios.get("http://localhost:3001/teach_team/applications");
-      setTutors(res.data);
-    } catch (error) {
-      console.error("Error fetching tutor applications:", error);
+  try {
+    const currentUser = getCurrentUser();
+    const userId = currentUser?.id;
+
+    if (!userId) {
+      console.error("User ID not found in current user");
+      return;
     }
-  };
+
+    const res = await axios.get(`http://localhost:3001/teach_team/applications/by-lecturer/${userId}`);
+    setTutors(res.data);
+  } catch (error) {
+    console.error("Error fetching tutor applications by user ID:", error);
+  }
+};
 
   useEffect(() => {
     fetchTutors();
