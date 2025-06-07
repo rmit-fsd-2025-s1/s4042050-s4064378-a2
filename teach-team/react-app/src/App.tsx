@@ -54,10 +54,6 @@ const TechTeam = () => {
     }
   }, [currentPage, currentUser]);
 
-  // useEffect(() => {
-  //   addMockDataToLocalStorage();
-  // }, []);
-
   const renderPage = () => {
     switch (currentPage) {
       case "login":
@@ -93,16 +89,7 @@ const TechTeam = () => {
       case "landing":
         return <TeachTeamLanding navigateTo={navigateTo} />;
       default:
-        return (
-          // <LoginPage
-          //   setCurrentUser={setUser}
-          //   navigateTo={navigateTo}
-          //   registrationSuccess={registrationSuccess}
-          //   setIsSuccessLogin={setIsSuccessLogin}
-          //   setRegistrationSuccess={setRegistrationSuccess}
-          // />
-          <TeachTeamLanding navigateTo={navigateTo} />
-        );
+        return <TeachTeamLanding navigateTo={navigateTo} />;
     }
   };
 
