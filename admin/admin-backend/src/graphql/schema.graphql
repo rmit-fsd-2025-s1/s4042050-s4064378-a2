@@ -4,14 +4,35 @@ type Admin {
   password: String!
 }
 
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+}
+
+
 type AuthPayload {
   success: Boolean!
   message: String!
   user: Admin
 }
 
+type Candidate {
+  id: ID!
+  user: User!
+}
+
+type Report {
+  courseName: String!
+  candidates: [User!]!
+}
+
 type Query {
   admins: [Admin]
+  candidatesByCourse: [Report!]!
+  candidatesWithMoreThan3Courses: [User!]!
+  unselectedCandidates: [User!]!
 }
 
 type Mutation {

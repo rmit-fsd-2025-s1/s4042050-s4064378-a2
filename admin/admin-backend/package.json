@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon --watch src --ext ts,js --exec \"tsc && node dist/index.js\"",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+  "build": "tsc",
+  "start": "node dist/index.js"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -26,7 +26,9 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^3.0.0",
-    "@types/node": "^22.15.30"
+    "@types/node": "^22.15.30",
+    "nodemon": "^3.1.10",
+    "ts-node-dev": "^2.0.0"
   },
   "compilerOptions": {
     "outDir": "./dist",
