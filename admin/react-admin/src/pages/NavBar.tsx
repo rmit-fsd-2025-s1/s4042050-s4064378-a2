@@ -1,3 +1,6 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
 export const NavBar = ({
   activeTab,
   setActiveTab,
@@ -5,6 +8,8 @@ export const NavBar = ({
   activeTab: string;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const navigate = useNavigate();
+
   return (
     <nav>
       <ul>
@@ -35,7 +40,10 @@ export const NavBar = ({
         <li>
           <button
             className={activeTab === "report" ? "active" : ""}
-            onClick={() => setActiveTab("report")}
+            onClick={() => {
+              setActiveTab("report");
+              navigate("/reports/candidates-by-course");
+            }}
           >
             Reports
           </button>

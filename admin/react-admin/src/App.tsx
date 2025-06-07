@@ -5,6 +5,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { LoginPage } from "./pages/LoginPage";
 import { Dashboard } from "./pages/Dashboard";
 import MainPage from "./pages/MainPage";
+import CandidatesByCourse from "./pages/reports/CandidatesByCourse";
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
@@ -18,7 +19,9 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/dashboard" element={<MainPage />} />
+          <Route path="/reports/candidates-by-course" element={<CandidatesByCourse />} />
         </Routes>
+
       </BrowserRouter>
     </ApolloProvider>
   );
