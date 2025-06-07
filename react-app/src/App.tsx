@@ -41,7 +41,6 @@ const TechTeam = () => {
       }
     }
 
-    console.log(currentPage, currentUser);
     if (!currentPage) {
       const page = getCurrentPage();
       if (page) {

@@ -38,7 +38,6 @@ const CandidateDashboard = ({
   const [courses, setCourses] = useState<Course[]>([]);
   const [activeTab, setActiveTab] = useState<CandidateTabType>("profile");
   const [openPopup, setOpenpopup] = useState(isSuccessLogin);
-  console.log(candidateProfile);
 
   // useEffect(() => {
   //   // Mock API call to fetch candidate profile
@@ -92,8 +91,6 @@ const CandidateDashboard = ({
     role: "tutor" | "lab-assistant"
   ) => {
     // In a real application, this would be an API call
-    console.log(`Applied for ${role} role in course ${courseId}`);
-
     // Update local state to show the application
     // if (candidateProfile) {
     //   const course = courses.find((c) => c.id === courseId);
@@ -104,14 +101,12 @@ const CandidateDashboard = ({
     //       rank: 0,
     //       role,
     //     };
-
     //     // const updateProfile: Candidate = {
     //     //   ...candidateProfile,
     //     //   appliedRoles: candidateProfile.appliedRoles
     //     //     ? [...candidateProfile.appliedRoles, newRole]
     //     //     : [newRole],
     //     // };
-
     //     // setCandidateProfile(updateProfile);
     //     // updateCandidate(updateProfile);
     //   }

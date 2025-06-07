@@ -182,7 +182,6 @@ const CandidateApplication: React.FC<CandidateApplicationProps> = ({
           getCurrentUser()!.candidate!.id
         );
 
-      console.log("applicationsResult", applicationsResult);
       setApplications(applicationsResult);
     } catch (error) {
       setError(String(error));

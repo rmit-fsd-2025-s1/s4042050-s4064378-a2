@@ -20,7 +20,6 @@ const PreviousRoles: React.FC<any> = ({}) => {
           getCurrentUser()!.candidate!.id
         );
 
-      console.log("applicationsResult", applicationsResult);
       setApplications(applicationsResult);
     } catch (error) {
       setError(String(error));
