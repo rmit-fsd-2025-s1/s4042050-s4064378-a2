@@ -24,9 +24,9 @@ interface Props {
 }
 
 const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
-  const [tutorStatus, settutorStatus] = useState<
-    "rejected" | "accepted" | "pending"
-  >(tutor.appliedRole.status);
+  const [tutorStatus, settutorStatus] = useState<"rejected" | "accepted" | "pending">(
+    tutor.appliedRole.status
+  );
   const [tutorRank, settutorRank] = useState<number>(tutor.appliedRole.rank);
   const [tuttorComment, setTuttorComment] = useState<string>(
     tutor.appliedRole.comment || ""
@@ -65,17 +65,18 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
     }
 
     const updated = {
-      id: tutor.appliedRole.id, // ✅ correct application ID
+      id: tutor.appliedRole.id,
       updatedRole: {
-        id: tutor.appliedRole.id, // ✅ required by TutorRole type
+        id: tutor.appliedRole.id,
         role: tutor.appliedRole.role,
         course: tutor.appliedRole.course,
         comment: tuttorComment.trim(),
         rank: tutorStatus === "accepted" ? tutorRank : 0,
         status: tutorStatus,
+        availability: tutor.appliedRole.availability,
+        skills: tutor.appliedRole.skills,
       },
     };
-
 
     onUpdate(updated);
     setSuccessStatus(true);
@@ -90,21 +91,26 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
       </Name>
       <TutorDetails>
         <Row>
-          <RowLabel>Email:</RowLabel> <RowValue>{tutor.email}</RowValue>
+          <RowLabel>Email:</RowLabel>
+          <RowValue>{tutor.email}</RowValue>
         </Row>
         <Row>
-          <RowLabel>Availability:</RowLabel>{" "}
-          <RowValue>{tutor.availability}</RowValue>
+          <RowLabel>Availability:</RowLabel>
+          <RowValue>{tutor.appliedRole.availability}</RowValue>
         </Row>
         <Row>
-          <RowLabel>Skills:</RowLabel>{" "}
-          <RowValue>{tutor.skills.join(", ")}</RowValue>
+          <RowLabel>Skills:</RowLabel>
+          <RowValue>{tutor.appliedRole.skills.join(", ")}</RowValue>
         </Row>
         <Row>
           <RowLabel>Applied Course:</RowLabel>
           <RowValue>
             {tutor.appliedRole.course.name} ({tutor.appliedRole.course.code})
           </RowValue>
+        </Row>
+        <Row>
+          <RowLabel>Applied Role:</RowLabel>
+          <RowValue>{tutor.appliedRole.role}</RowValue>
         </Row>
       </TutorDetails>
 
@@ -131,9 +137,7 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
           <StyledInput
             type="number"
             min={1}
-            value={
-              tutorRank === 0 ? "" : tutorRank.toString().replace(/^0+/, "")
-            }
+            value={tutorRank === 0 ? "" : tutorRank.toString().replace(/^0+/, "")}
             disabled={tutorStatus !== "accepted"}
             onChange={(e) => {
               const val = parseInt(e.target.value);

@@ -26,12 +26,12 @@ router.get("/", async (req, res) => {
         firstName: c.user.firstName,
         lastName: c.user.lastName,
         email: c.user.email,
-        skills: c.applications?.[0]?.skills ?? [],
-        availability: c.applications?.[0]?.availability ?? "",
         appliedRoles:
           c.applications?.map((a) => ({
+            availability:a.availability,
             id: a.id,
             role: a.role.name,
+            skills: a.skills,
             course: a.course
               ? {
                   id: a.course.id,

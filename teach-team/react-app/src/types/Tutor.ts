@@ -20,6 +20,8 @@ export interface TutorRole {
   rank: number;
   status: "pending" | "accepted" | "rejected";
   comment?: string;
+  availability: "full-time" | "part-time"; // ✅ new
+  skills: string[]; // ✅ new
 }
 
 export interface TutorApplication extends Omit<Tutor, "appliedRoles"> {

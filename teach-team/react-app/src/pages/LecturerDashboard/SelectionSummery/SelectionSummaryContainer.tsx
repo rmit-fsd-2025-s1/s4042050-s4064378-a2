@@ -25,28 +25,35 @@ interface Props {
 const SummaryCardContainer: React.FC<Props> = ({ title, tutors }) => {
   // Group tutors by full name
   const grouped = tutors.reduce<
-    Record<string, {
-      id: number;
-      accepted: number;
-      total: number;
-      courses: { name: string; status: string }[];
-    }>
+    Record<
+      string,
+      {
+        id: number;
+        accepted: number;
+        total: number;
+        courses: { name: string; status: string; role: string; availability: string }[];
+      }
+    >
   >((acc, t) => {
     const fullName = `${t.firstName} ${t.lastName}`;
     const courseName = t.appliedRole?.course?.name ?? "No Course Assigned";
     const status = t.appliedRole?.status ?? "pending";
+    const role = t.appliedRole?.role ?? "N/A";
+    const availability = t.appliedRole?.availability ?? "unknown";
+
+    const courseEntry = { name: courseName, status, role, availability };
 
     if (!acc[fullName]) {
       acc[fullName] = {
         id: t.id,
         accepted: status === "accepted" ? 1 : 0,
         total: 1,
-        courses: [{ name: courseName, status }],
+        courses: [courseEntry],
       };
     } else {
       acc[fullName].accepted += status === "accepted" ? 1 : 0;
       acc[fullName].total += 1;
-      acc[fullName].courses.push({ name: courseName, status });
+      acc[fullName].courses.push(courseEntry);
     }
 
     return acc;

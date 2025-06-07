@@ -60,3 +60,11 @@ export const Tag = styled.span<{ accepted: boolean }>`
   border: ${({ accepted }) =>
     accepted ? "1px solid #badbcc" : "1px solid #f5c2c7"};
 `;
+
+
+export const AvailabilityLabel = styled.div`
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0.2rem;
+  color: #333;
+`;
