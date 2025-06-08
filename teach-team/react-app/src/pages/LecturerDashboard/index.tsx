@@ -37,6 +37,9 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
    * This function encapsulates the business logic of making API calls,
    * separated from any rendering logic.
    */
+  const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL
+  
+  console.log("BASE_URL",BASE_URL)
   const fetchTutors = async () => {
     try {
       const currentUser = getCurrentUser();
@@ -47,7 +50,7 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
         return;
       }
 
-      const res = await axios.get(`http://localhost:3001/teach_team/applications/by-lecturer/${userId}`);
+      const res = await axios.get(`${BASE_URL}/applications/by-lecturer/${userId}`);
       setTutors(res.data);
     } catch (error) {
       console.error("Error fetching tutor applications by user ID:", error);

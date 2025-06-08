@@ -15,6 +15,8 @@ interface Props {
   disabled: boolean;
 }
 
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL
+
 const CourseBasedFilter: React.FC<Props> = ({ value, onChange, disabled }) => {
   const [courses, setCourses] = useState<Course[]>([]);
 
@@ -30,7 +32,7 @@ const CourseBasedFilter: React.FC<Props> = ({ value, onChange, disabled }) => {
         }
 
         const response = await axios.get(
-          `http://localhost:3001/teach_team/courses/by-user/${userId}`
+          `${BASE_URL}/teach_team/courses/by-user/${userId}`
         );
         setCourses(response.data);
       } catch (error) {

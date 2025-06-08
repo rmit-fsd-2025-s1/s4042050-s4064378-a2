@@ -9,6 +9,8 @@ interface Props {
   refreshTutors: () => void; // ✅ Add refresh function as prop
 }
 
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL
+
 const TutorList: React.FC<Props> = ({ tutors, refreshTutors }) => {
   if (tutors.length === 0) {
     return <p className="text-gray-600 text-center mt-7">No Tutors found</p>;
@@ -21,7 +23,7 @@ const TutorList: React.FC<Props> = ({ tutors, refreshTutors }) => {
   }) => {
     try {
       await axios.patch(
-        `http://localhost:3001/teach_team/applications/${update.id}`,
+        `${BASE_URL}/applications/${update.id}`,
         {
           role: update.updatedRole.role,
           courseId: update.updatedRole.course.id,

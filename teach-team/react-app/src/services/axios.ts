@@ -1,5 +1,6 @@
 import axios from "axios";
 
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL
 export const api = axios.create({
-  baseURL: "http://localhost:3001/teach_team", // Adjust this to match your backend URL
+  baseURL: BASE_URL, // Adjust this to match your backend URL
 });
