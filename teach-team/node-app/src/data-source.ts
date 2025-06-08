@@ -6,30 +6,32 @@ import { Lecturer } from "./entity/Lecturer";
 import { Application } from "./entity/Application";
 import { Role } from "./entity/Role";
 import { Course } from "./entity/Course";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const isTest = process.env.NODE_ENV === "test";
 
 export const AppDataSource = new DataSource(
   isTest
     ? {
-        type: "sqlite",
-        database: "test.sqlite", // ✅ file-based SQLite to avoid concurrency issues
-        synchronize: true,
-        dropSchema: true,        // ✅ resets schema for each test run
-        logging: false,
-        entities: [User, Candidate, Lecturer, Application, Course, Role],
-      }
+      type: "sqlite",
+      database: "test.sqlite", // ✅ file-based SQLite to avoid concurrency issues
+      synchronize: true,
+      dropSchema: true,        // ✅ resets schema for each test run
+      logging: false,
+      entities: [User, Candidate, Lecturer, Application, Course, Role],
+    }
     : {
-        type: "mysql",
-        host: "209.38.26.237",
-        port: 3306,
-        username: "S4064378",
-        password: "Aa@2235023",
-        database: "S4064378",
-        synchronize: true,
-        logging: true,
-        entities: [User, Candidate, Lecturer, Application, Course, Role],
-        migrations: [],
-        subscribers: [],
-      }
+      type: process.env.DB_TYPE as any, // use 'as any' to satisfy TypeORM typing
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT || "3306"),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      synchronize: true,
+      logging: true,
+      entities: [User, Candidate, Lecturer, Application, Course, Role],
+      migrations: [],
+      subscribers: [],
+    }
 );
