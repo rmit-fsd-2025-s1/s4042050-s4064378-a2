@@ -9,3 +9,5 @@ router.get("/by-lecturer/:userId", controller.getByLecturer.bind(controller));
 router.patch("/:id", controller.update.bind(controller));
 router.post("/", controller.create.bind(controller));
 router.get("/:id", controller.getByCandidateId.bind(controller));
+
+export default router;

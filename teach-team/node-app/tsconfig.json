@@ -2,10 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "lib": [
-      "es6",
-      "dom"
-    ],
+    "lib": ["es6", "dom"],
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
@@ -17,10 +14,13 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "types": ["jest", "node"]        // ✅ ADD THIS LINE
   },
   "include": [
-    "src/**/*","src/**/*.ts"
+    "src/**/*",
+    "__tests__/**/*",                // ✅ ADD TESTS DIRECTORY
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules"

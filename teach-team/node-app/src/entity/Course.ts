@@ -25,8 +25,8 @@ export class Course {
   @Column()
   name: string;
 
-  @Column()
-  semester: number;
+  @Column({ nullable: true })
+semester?: number;
 
   @ManyToOne(() => Lecturer, (lecturer) => lecturer.courses, {
     onDelete: "SET NULL",
