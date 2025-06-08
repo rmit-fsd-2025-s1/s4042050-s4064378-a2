@@ -115,16 +115,45 @@ export const resolvers = {
 
   candidatesWithMoreThan3Courses: async () => {
     const [rows] = await pool.query(`
-        SELECT u.id, u.firstName, u.lastName, u.email
-        FROM application a
-        JOIN candidate c ON a.candidateId = c.id
-        JOIN user u ON c.user_id = u.id
-        WHERE a.status = 'accepted'
-        GROUP BY u.id
-        HAVING COUNT(DISTINCT a.courseId) > 3
-      `);
-    return rows;
+    SELECT 
+      u.id,
+      CONCAT(u.firstName, ' ', u.lastName) AS name,
+      u.email,
+      c.name AS courseName,
+      r.name AS role,
+      a.availability
+    FROM application a
+    JOIN course c ON a.courseId = c.id
+    JOIN role r ON a.roleId = r.id
+    JOIN candidate cand ON a.candidateId = cand.id
+    JOIN user u ON cand.user_id = u.id
+    WHERE a.status = 'accepted'
+  `);
+
+    // Group applications by candidate
+    const candidateMap: Record<string, any> = {};
+
+    for (const row of rows) {
+      if (!candidateMap[row.id]) {
+        candidateMap[row.id] = {
+          id: row.id,
+          name: row.name,
+          email: row.email,
+          courses: [],
+        };
+      }
+
+      candidateMap[row.id].courses.push({
+        courseName: row.courseName,
+        role: row.role,
+        availability: row.availability,
+      });
+    }
+
+    // Filter candidates with more than 3 courses
+    return Object.values(candidateMap).filter((c: any) => c.courses.length > 3);
   },
+
 
   unselectedCandidates: async () => {
     const [rows] = await pool.query(`

@@ -38,6 +38,18 @@ type CandidateWithMeta {
   availability: String!
 }
 
+type CandidateCourseInfo {
+  courseName: String!
+  role: String!
+  availability: String!
+}
+
+type CandidateWithCourses {
+  id: ID!
+  name: String!
+  email: String!
+  courses: [CandidateCourseInfo!]!
+}
 
 type Report {
   courseName: String!
@@ -47,7 +59,7 @@ type Report {
 type Query {
   admins: [Admin]
   candidatesByCourse: [Report!]!
-  candidatesWithMoreThan3Courses: [User!]!
+  candidatesWithMoreThan3Courses: [CandidateWithCourses!]!
   unselectedCandidates: [User!]!
   allCandidates:AuthPayload
 }
