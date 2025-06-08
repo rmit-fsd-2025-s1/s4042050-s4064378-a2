@@ -1,7 +1,7 @@
 import request from "supertest";
-import { app } from "../src/index";
-import { AppDataSource } from "../src/data-source";
-import { User } from "../src/entity/User";
+import { app } from "../index";
+import { AppDataSource } from "../data-source";
+import { User } from "../entity/User";
 
 describe("UserController API Tests", () => {
   let createdUserId: number;

@@ -1,7 +1,7 @@
 import request from "supertest";
-import { app } from "../src/index";
-import { AppDataSource } from "../src/data-source";
-import { Application } from "../src/entity/Application";
+import { app } from "../index";
+import { AppDataSource } from "../data-source";
+import { Application } from "../entity/Application";
 
 /**
  * Seeds the database with test data for User, Lecturer, Candidate, Course, and Role.

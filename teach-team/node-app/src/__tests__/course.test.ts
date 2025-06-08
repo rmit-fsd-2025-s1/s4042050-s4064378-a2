@@ -1,9 +1,9 @@
 import request from "supertest";
-import { app } from "../src/index";
-import { AppDataSource } from "../src/data-source";
-import { Course } from "../src/entity/Course";
-import { User } from "../src/entity/User";
-import { Lecturer } from "../src/entity/Lecturer";
+import { app } from "../index";
+import { AppDataSource } from "../data-source";
+import { Course } from "../entity/Course";
+import { User } from "../entity/User";
+import { Lecturer } from "../entity/Lecturer";
 
 // Global variables to hold the created lecturer entities for use in tests
 let lecturerUser: User;

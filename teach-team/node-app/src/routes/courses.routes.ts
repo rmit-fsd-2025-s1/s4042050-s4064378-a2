@@ -6,20 +6,13 @@ import { CourseController } from "../controller/CourseController";
 const router = Router();
 const courseController = new CourseController();
 
-// router.get("/courses", async (req, res) => {
-//   try {
-//     const courseRepo = AppDataSource.getRepository(Course);
-//     const courses = await courseRepo.find();
-
-//     return res.json(courses);
-//   } catch (err) {
-//     console.error("Error fetching courses:", err);
-//     return res.status(500).json({ error: "Failed to fetch courses" });
-//   }
-// });
 
 router.get("/", async (req, res) => {
   await courseController.all(req, res);
+});
+
+router.get("/by-user/:userId", async (req, res) => {
+  await courseController.getByUserId(req, res);
 });
 
 export default router;
