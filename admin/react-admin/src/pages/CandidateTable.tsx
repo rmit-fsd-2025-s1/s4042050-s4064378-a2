@@ -42,7 +42,6 @@ const CandidateTable: React.FC = () => {
           active: !candidate.active,
         },
       });
-      setCandidates(result.data.updateCandidateActive.candidates);
     } catch (error) {
       console.error("Error updating status:", error);
     }

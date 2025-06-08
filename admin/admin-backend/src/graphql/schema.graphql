@@ -16,6 +16,7 @@ type AuthPayload {
   success: Boolean!
   message: String!
   user: Admin
+  candidate:Candidate
   candidates: [Candidate!]
 }
 
