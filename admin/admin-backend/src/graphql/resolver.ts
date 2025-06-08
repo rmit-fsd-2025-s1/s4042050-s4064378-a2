@@ -70,7 +70,6 @@ export const resolvers = {
 
   login: async (_, args) => {
     const { username, password } = args.body.variables;
-    console.log(username, password);
     const [admins] = await pool.query(
       "SELECT * FROM admin WHERE username = ?",
       [username]
@@ -415,7 +414,6 @@ export const resolvers = {
   updateCourse: async (_: any, args) => {
     try {
       const { id, name, code, lecturerId } = args.body.variables;
-      console.log(args.body.variables);
 
       if (code && !/^COSC\d{4}$/.test(code)) {
         return {

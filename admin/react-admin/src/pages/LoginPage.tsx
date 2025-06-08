@@ -45,10 +45,6 @@ export const LoginPage = () => {
       });
 
       if (data?.login.success) {
-        // Store token if available
-        if (data.login.token) {
-          localStorage.setItem("token", data.login.token);
-        }
         localStorage.setItem("isAuthenticated", "true");
         navigate("/dashboard");
       } else {
