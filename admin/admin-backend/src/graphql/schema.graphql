@@ -53,6 +53,20 @@ type CandidateWithCourses {
   courses: [CandidateCourseInfo!]!
 }
 
+type UnselectedApplication {
+  courseName: String!
+  semester: String!
+  role: String!
+  availability: String!
+}
+
+type UnselectedCandidate {
+  id: ID!
+  name: String!
+  email: String!
+  applications: [UnselectedApplication!]!
+}
+
 type Report {
   courseName: String!
   candidates: [CandidateWithMeta!]!
@@ -62,7 +76,7 @@ type Query {
   admins: [Admin]
   candidatesByCourse: [Report!]!
   candidatesWithMoreThan3Courses: [CandidateWithCourses!]!
-  unselectedCandidates: [User!]!
+  unselectedCandidates: [UnselectedCandidate!]!
   allCandidates:AuthPayload
 }
 

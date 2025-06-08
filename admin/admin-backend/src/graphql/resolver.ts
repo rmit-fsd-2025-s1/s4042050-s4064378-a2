@@ -72,8 +72,8 @@ export const resolvers = {
     };
   },
 
- candidatesByCourse: async () => {
-  const [rows] = await pool.query(`
+  candidatesByCourse: async () => {
+    const [rows] = await pool.query(`
     SELECT 
       c.id AS courseId,
       c.name AS courseName,
@@ -92,40 +92,40 @@ export const resolvers = {
     WHERE a.status = 'accepted'
   `);
 
-  // Group by courseId
-  const courseMap: Record<
-    number,
-    {
-      courseName: string;
-      semester: string;
-      candidates: any[];
-    }
-  > = {};
+    // Group by courseId
+    const courseMap: Record<
+      number,
+      {
+        courseName: string;
+        semester: string;
+        candidates: any[];
+      }
+    > = {};
 
-  for (const row of rows) {
-    const courseId = row.courseId;
+    for (const row of rows) {
+      const courseId = row.courseId;
 
-    if (!courseMap[courseId]) {
-      courseMap[courseId] = {
-        courseName: row.courseName,
+      if (!courseMap[courseId]) {
+        courseMap[courseId] = {
+          courseName: row.courseName,
+          semester: row.semester,
+          candidates: [],
+        };
+      }
+
+      courseMap[courseId].candidates.push({
+        id: row.id,
+        firstName: row.firstName,
+        email: row.email,
+        role: row.role,
+        availability: row.availability,
         semester: row.semester,
-        candidates: [],
-      };
+      });
     }
 
-    courseMap[courseId].candidates.push({
-      id: row.id,
-      firstName: row.firstName,
-      email: row.email,
-      role: row.role,
-      availability: row.availability,
-      semester: row.semester,
-    });
-  }
-
-  // Return array of reports
-  return Object.values(courseMap);
-},
+    // Return array of reports
+    return Object.values(courseMap);
+  },
 
   candidatesWithMoreThan3Courses: async () => {
     const [rows] = await pool.query(`
@@ -174,18 +174,50 @@ export const resolvers = {
 
   unselectedCandidates: async () => {
     const [rows] = await pool.query(`
-        SELECT u.id, u.firstName, u.lastName, u.email
-        FROM candidate c
-        JOIN user u ON c.user_id = u.id
-        LEFT JOIN (
-          SELECT DISTINCT candidateId
-          FROM application
-          WHERE status = 'accepted'
-        ) accepted ON c.id = accepted.candidateId
-        WHERE accepted.candidateId IS NULL
-      `);
-    return rows;
+    SELECT 
+      u.id AS userId,
+      CONCAT(u.firstName, ' ', u.lastName) AS name,
+      u.email,
+      c.name AS courseName,
+      c.semester,
+      r.name AS role,
+      a.availability
+    FROM candidate cand
+    JOIN user u ON cand.user_id = u.id
+    JOIN application a ON a.candidateId = cand.id
+    JOIN course c ON a.courseId = c.id
+    JOIN role r ON a.roleId = r.id
+    WHERE cand.id NOT IN (
+      SELECT DISTINCT candidateId 
+      FROM application 
+      WHERE status = 'accepted'
+    )
+    AND a.status != 'accepted'
+  `);
+
+    const grouped: Record<string, any> = {};
+
+    for (const row of rows) {
+      if (!grouped[row.userId]) {
+        grouped[row.userId] = {
+          id: row.userId,
+          name: row.name,
+          email: row.email,
+          applications: [],
+        };
+      }
+
+      grouped[row.userId].applications.push({
+        courseName: row.courseName,
+        semester: row.semester,
+        role: row.role,
+        availability: row.availability,
+      });
+    }
+
+    return Object.values(grouped);
   },
+
 
   updateCandidateActive: async (_, args) => {
     const { active, id } = args.body.variables;
