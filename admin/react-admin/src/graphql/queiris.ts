@@ -31,6 +31,39 @@ export const GET_ALL_CANDIDATES = gql`
   }
 `;
 
+export const GET_ALL_LECTURERS = gql`
+  query {
+    allLecturers {
+      success
+      message
+      lecturers {
+        id
+        name
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
+export const GET_COURSE_WITH_LECTURERS = gql`
+  query {
+    courseWithLecturers(id: $id) {
+      id
+      code
+      name
+      lecturers {
+        id
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
 export const UPDATE_CANDIDATE_ACTIVE = gql`
   mutation updateCandidateActive($id: ID!, $active: Boolean!) {
     updateCandidateActive(id: $id, active: $active) {
@@ -84,20 +117,27 @@ export const CREATE_COURSE = gql`
         code
         name
         createdAt
+        lecturerId
       }
     }
   }
 `;
 
 export const UPDATE_COURSE = gql`
-  mutation UpdateCourse($id: ID!, $name: String!, $code: String!) {
-    updateCourse(id: $id, name: $name, code: $code) {
+  mutation UpdateCourse(
+    $id: ID!
+    $name: String!
+    $code: String!
+    $lecturerId: ID!
+  ) {
+    updateCourse(id: $id, name: $name, code: $code, lecturerId: $lecturerId) {
       success
       message
       course {
         id
         code
         name
+        lecturerId
       }
     }
   }
@@ -138,6 +178,10 @@ export const GET_ALL_COURSES = gql`
         id
         code
         name
+        createdAt
+        updatedAt
+        lecturerName
+        lecturerId
       }
     }
   }

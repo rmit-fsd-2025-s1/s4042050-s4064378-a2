@@ -8,7 +8,8 @@ export interface Course {
   id: number;
   code: string;
   name: string;
-  semester: number;
+  lecturerName: string;
+  lecturerId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +28,7 @@ export const CourseList = () => {
   useEffect(() => {
     if (data && !loading && !error) {
       setAllCourses(data.getAllCourses.courses);
+      console.log("data", data, data.getAllCourses.courses);
     }
   }, [data]);
 
@@ -69,6 +71,7 @@ export const CourseList = () => {
               <tr>
                 <th>Code</th>
                 <th>Name</th>
+                <th>Lecturer Name</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -77,6 +80,7 @@ export const CourseList = () => {
                 <tr key={course.id}>
                   <td>{course.code}</td>
                   <td>{course.name}</td>
+                  <td>{course.lecturerName}</td>
                   <td className="action-buttons">
                     <button
                       className="edit-btn"

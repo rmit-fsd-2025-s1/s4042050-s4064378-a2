@@ -13,14 +13,14 @@ export const NavBar = ({
   return (
     <nav>
       <ul>
-        <li>
+        {/* <li>
           <button
             className={activeTab === "lecturer" ? "active" : ""}
             onClick={() => setActiveTab("lecturer")}
           >
             Lecturers
           </button>
-        </li>
+        </li> */}
         <li>
           <button
             className={activeTab === "candidate" ? "active" : ""}

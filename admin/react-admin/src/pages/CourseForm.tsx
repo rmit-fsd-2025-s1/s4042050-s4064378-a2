@@ -1,8 +1,21 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Course } from "./CourseList";
-import { CREATE_COURSE, UPDATE_COURSE } from "../graphql/queiris";
+import {
+  CREATE_COURSE,
+  UPDATE_COURSE,
+  GET_ALL_LECTURERS,
+} from "../graphql/queiris";
 import { ErrorMessage } from "./LoginPage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface Lecturer {
+  id: number;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
+}
 
 interface CourseFormProps {
   course?: Course;
@@ -15,35 +28,57 @@ export const CourseForm: React.FC<CourseFormProps> = ({
 }) => {
   const [mutate] = useMutation(course ? UPDATE_COURSE : CREATE_COURSE);
   const [error, setError] = useState("");
+  const [selectedLecturer, setSelectedLecturer] = useState<number | null>(
+    course?.lecturerId || null
+  );
 
+  // Fetch all available lecturers
+  const { data: lec } = useQuery(GET_ALL_LECTURERS);
+
+  const [lecturers, setAllLecturers] = useState([]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const input = {
       code: formData.get("code") as string,
       name: formData.get("name") as string,
+      lecturerId: selectedLecturer,
     };
 
     try {
       const { data } = await mutate({
         variables: course
-          ? { id: course.id, name: input.name, code: input.code }
+          ? {
+              id: course.id,
+              ...input,
+            }
           : { input },
       });
-      if (data.createCourse.success) {
+      if (data?.createCourse?.success || data?.updateCourse?.success) {
         onSuccess();
       } else {
-        setError(data.createCourse.message);
+        setError(
+          data?.createCourse?.message ||
+            data?.updateCourse?.message ||
+            "Operation failed"
+        );
       }
     } catch (error) {
       console.error("Operation failed:", error);
+      setError("Failed to save course");
     }
   };
+
+  useEffect(() => {
+    if (lec && lec.allLecturers) {
+      setAllLecturers(lec.allLecturers.lecturers);
+    }
+  }, [lec]);
 
   return (
     <div className="form-container">
       <button className="close-button" onClick={() => onSuccess()}>
-        X
+        ×
       </button>
       <form onSubmit={handleSubmit} className="course-form">
         <div className="form-group">
@@ -63,6 +98,27 @@ export const CourseForm: React.FC<CourseFormProps> = ({
           <input id="name" name="name" defaultValue={course?.name} required />
         </div>
 
+        <div className="form-group">
+          <label htmlFor="lecturer">Lecturer</label>
+          <select
+            id="lecturer"
+            name="lecturer"
+            value={selectedLecturer || ""}
+            onChange={(e) =>
+              setSelectedLecturer(
+                e.target.value ? Number(e.target.value) : null
+              )
+            }
+          >
+            <option value="">-- Select Lecturer --</option>
+            {lecturers?.map((lecturer: any) => (
+              <option key={lecturer.id} value={lecturer.id}>
+                {lecturer.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <button type="submit" className="submit-btn">
           {course ? "Update" : "Create"} Course
         </button>
@@ -70,38 +126,11 @@ export const CourseForm: React.FC<CourseFormProps> = ({
       </form>
 
       <style>{`
-
-      .close-button {
-    
-    width: 32px;
-    height: 32px;
-    background-color: #f5f5f5;
-    border: none;
-    border-radius: 50%;
-    color: #666;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-left:10px;
-    
-  }
-
-  .close-button:hover {
-    background-color: #e74c3c;
-    color: white;
-    transform: scale(1.1);
-  }
-
-  .close-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5);
-  }
         .form-container {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: center;
-        align-items: flex-start;
-
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: center;
+          align-items: flex-start;
           padding: 20px;
           font-family: Arial, sans-serif;
           max-width: 600px;
@@ -109,7 +138,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
         }
 
         .course-form {
-          width:500px;
+          width: 500px;
           background: white;
           padding: 20px;
           border-radius: 4px;
@@ -117,7 +146,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
         }
 
         .form-group {
-        margin-right:20px;
+          margin-right: 20px;
           margin-bottom: 15px;
         }
 
@@ -128,7 +157,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
           color: #333;
         }
 
-        input {
+        input, select {
           width: 100%;
           padding: 10px;
           border: 1px solid #e0e0e0;
@@ -136,7 +165,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
           font-size: 14px;
         }
 
-        input:focus {
+        input:focus, select:focus {
           outline: none;
           border-color: #4caf50;
           box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
@@ -159,13 +188,36 @@ export const CourseForm: React.FC<CourseFormProps> = ({
           background-color: #45a049;
         }
 
-        /* Error styling to match your existing pattern */
         input:invalid {
           border-color: #e74c3c;
         }
 
         input:invalid:focus {
           box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+        }
+
+        .close-button {
+          width: 32px;
+          height: 32px;
+          background-color: #f5f5f5;
+          border: none;
+          border-radius: 50%;
+          color: #666;
+          font-size: 18px;
+          font-weight: bold;
+          cursor: pointer;
+          margin-left: 10px;
+        }
+
+        .close-button:hover {
+          background-color: #e74c3c;
+          color: white;
+          transform: scale(1.1);
+        }
+
+        .close-button:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5);
         }
       `}</style>
     </div>

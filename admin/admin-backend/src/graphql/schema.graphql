@@ -18,6 +18,8 @@ type AuthPayload {
   user: Admin
   candidate:Candidate
   candidates: [Candidate!]
+  lecturer: Lecturer
+  lecturers: [Lecturer!]
 }
 
 
@@ -76,6 +78,7 @@ type Query {
   candidatesWithMoreThan3Courses: [CandidateWithCourses!]!
   unselectedCandidates: [UnselectedCandidate!]!
   allCandidates:AuthPayload
+  allLecturers:AuthPayload
   getCourse(id: ID!): CoursePayload
   getAllCourses: CoursePayload
   getCoursesBySemester(semester: Int!):CoursePayload
@@ -86,8 +89,25 @@ type Mutation {
   updateCandidateActive(id: ID!, active: Boolean!): AuthPayload
   # course
   createCourse(input: CourseInput!): CoursePayload
-  updateCourse(id: ID!, name: String! ,code: String!): CoursePayload
+  updateCourse(id: ID!, name: String! ,code: String!,lecturerId:ID!): CoursePayload
   deleteCourse(id: ID!): CoursePayload
+
+  # lecturer
+  assignLecturersToCourse(
+    courseId: ID!
+    lecturerIds: [ID!]!
+  ): AssignmentPayload
+  
+  removeLecturerFromCourse(
+    courseId: ID!
+    lecturerId: ID!
+  ): AssignmentPayload
+}
+
+type AssignmentPayload {
+  success: Boolean!
+  message: String!
+  course: Course
 }
 
 
@@ -95,9 +115,10 @@ type Course {
   id: ID!
   code: String!
   name: String!
-  semester: Int!
   createdAt: String!
   updatedAt: String!
+  lecturerName: String
+  lecturerId: ID
 }
 
 type CoursePayload {
@@ -110,10 +131,18 @@ type CoursePayload {
 input CourseInput {
   code: String!
   name: String!
+  lecturerId:ID!
 }
 
 input UpdateCourseInput {
   code: String
   name: String
   semester: Int
+}
+
+type Lecturer {
+  id: ID!
+  name: String
+  createdAt: String!
+  updatedAt: String
 }

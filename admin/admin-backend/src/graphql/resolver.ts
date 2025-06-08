@@ -35,6 +35,38 @@ export const resolvers = {
       };
     }
   },
+  allLecturers: async () => {
+    try {
+      const [lecturers] = await pool.query(
+        `SELECT 
+        c.id as id, 
+        CONCAT(u.firstName,' ',u.lastName) AS name,
+        c.createdAt as createdAt
+        FROM lecturer c
+        JOIN user u ON c.user_id = u.id
+        WHERE c.id IS NOT NULL`
+      );
+
+      if (lecturers.length === 0) {
+        return {
+          success: true,
+          message: "Empty Data",
+          lecturers: [],
+        };
+      }
+      return {
+        success: true,
+        message: "Success",
+        lecturers: lecturers,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: String(error),
+        lecturers: [],
+      };
+    }
+  },
 
   login: async (_, args) => {
     const { username, password } = args.body.variables;
@@ -279,10 +311,19 @@ export const resolvers = {
   },
 
   getAllCourses: async () => {
-    console.log("inside");
     try {
       const [courses] = await pool.query(
-        `SELECT * FROM course ORDER BY semester, code`
+        `SELECT 
+          c.id AS id,
+          c.name AS name,
+          c.code AS code,
+          CONCAT(u.firstName, ' ', u.lastName) AS lecturerName,
+          c.lecturerId AS lecturerId,
+          c.createdAt AS createdAt,
+          c.updatedAt AS updatedAt
+        FROM course c
+        LEFT JOIN lecturer l ON c.lecturerId = l.id  
+        LEFT JOIN user u ON l.user_id = u.id`
       );
 
       return {
@@ -334,7 +375,7 @@ export const resolvers = {
 
   createCourse: async (_: any, args) => {
     try {
-      const { code, name } = args.body.variables.input;
+      const { code, name, lecturerId } = args.body.variables.input;
 
       // Validate course code format
       if (!/^COSC\d{4}$/.test(code)) {
@@ -347,8 +388,8 @@ export const resolvers = {
       }
 
       const [result] = await pool.query(
-        `INSERT INTO course (code, name) VALUES (?, ?)`,
-        [code, name]
+        `INSERT INTO course (code, name,lecturerId) VALUES (?, ?, ?)`,
+        [code, name, lecturerId]
       );
 
       const [newCourse] = await pool.query(
@@ -375,7 +416,7 @@ export const resolvers = {
 
   updateCourse: async (_: any, args) => {
     try {
-      const { id, name, code } = args.body.variables;
+      const { id, name, code, lecturerId } = args.body.variables;
       console.log(args.body.variables);
 
       if (code && !/^COSC\d{4}$/.test(code)) {
@@ -387,11 +428,10 @@ export const resolvers = {
         };
       }
 
-      await pool.query(`UPDATE course SET name = ?, code = ? WHERE id = ?`, [
-        name,
-        code,
-        id,
-      ]);
+      await pool.query(
+        `UPDATE course SET name = ?, code = ?, lecturerId = ? WHERE id = ?`,
+        [name, code, lecturerId, id]
+      );
 
       const [updatedCourse] = await pool.query(
         `SELECT * FROM course WHERE id = ?`,
@@ -448,6 +488,93 @@ export const resolvers = {
         message: "Failed to delete course",
         course: null,
         courses: null,
+      };
+    }
+  },
+
+  assignLecturersToCourse: async (_, { courseId, lecturerIds }) => {
+    try {
+      // First clear existing assignments (or modify to merge)
+      await pool.query("DELETE FROM course_lecturers WHERE course_id = ?", [
+        courseId,
+      ]);
+
+      // Insert new assignments
+      for (const lecturerId of lecturerIds) {
+        await pool.query(
+          "INSERT INTO course_lecturers (course_id, lecturer_id) VALUES (?, ?)",
+          [courseId, lecturerId]
+        );
+      }
+
+      // Fetch updated course with lecturers
+      const [course] = await pool.query(
+        `
+          SELECT c.*, 
+            JSON_ARRAYAGG(
+              JSON_OBJECT(
+                'id', l.id,
+                'user', JSON_OBJECT(
+                  'id', u.id,
+                  'firstName', u.firstName,
+                  'lastName', u.lastName
+                )
+              )
+            ) AS lecturers
+          FROM course c
+          LEFT JOIN course_lecturers cl ON c.id = cl.course_id
+          LEFT JOIN lecturer l ON cl.lecturer_id = l.id
+          LEFT JOIN user u ON l.user_id = u.id
+          WHERE c.id = ?
+          GROUP BY c.id
+        `,
+        [courseId]
+      );
+
+      return {
+        success: true,
+        message: "Lecturers assigned successfully",
+        course: {
+          ...course[0],
+          lecturers: JSON.parse(course[0].lecturers || "[]").filter(
+            (l) => l.id
+          ),
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Failed to assign lecturers",
+        course: null,
+      };
+    }
+  },
+
+  removeLecturerFromCourse: async (_, { courseId, lecturerId }) => {
+    try {
+      await pool.query(
+        "DELETE FROM course_lecturers WHERE course_id = ? AND lecturer_id = ?",
+        [courseId, lecturerId]
+      );
+
+      // Return updated course
+      const [course] = await pool.query(
+        `
+          SELECT * FROM course WHERE id = ?
+        `,
+        [courseId]
+      );
+
+      return {
+        success: true,
+        message: "Lecturer removed successfully",
+        course: course[0],
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Failed to remove lecturer",
+        course: null,
       };
     }
   },

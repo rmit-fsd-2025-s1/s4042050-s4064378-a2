@@ -42,7 +42,7 @@ const MainPage = ({ isSuccessLogin = false }: { isSuccessLogin?: boolean }) => {
       <Dashboard />
       <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main>
-        {activeTab === "lecturer" && <div>Lecture</div>}
+        {/* {activeTab === "lecturer" && <div>Lecture</div>} */}
 
         {activeTab === "candidate" && <CandidateTable />}
 
