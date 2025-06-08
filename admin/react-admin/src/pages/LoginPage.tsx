@@ -1,19 +1,19 @@
+// Import React hooks and necessary dependencies
 import React, { useRef, useState } from "react";
+// Import styled components for layout
 import {
   AuthContainer,
-  AuthFooter,
   AuthWrapper,
   ErrorMessageWrapper,
   FormGroup,
-  Link,
   PrimaryButtonWrapper,
-  SuccessMessage,
 } from "./element";
-
+// Import routing and GraphQL dependencies
 import { useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 import { LOGIN_MUTATION } from "../graphql/queiris";
 
+// Define TypeScript type for login response
 type LoginResponse = {
   login: {
     success: boolean;
@@ -26,42 +26,53 @@ type LoginResponse = {
   };
 };
 
+// Main LoginPage component
 export const LoginPage = () => {
+  // State for form inputs and error handling
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  // const recaptcha = useRef<ReCAPTCHA>(null);
+  // const recaptcha = useRef<ReCAPTCHA>(null); // Uncomment if using reCAPTCHA
 
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
+  // Initialize login mutation
   const [login] = useMutation<LoginResponse>(LOGIN_MUTATION);
 
+  // Form submission handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Clear previous errors
 
     try {
+      // Execute login mutation with form data
       const { data } = await login({
         variables: { username, password },
       });
 
+      // Handle successful login
       if (data?.login.success) {
-        localStorage.setItem("isAuthenticated", "true");
-        navigate("/dashboard");
+        localStorage.setItem("isAuthenticated", "true"); // Set auth flag
+        navigate("/dashboard"); // Redirect to dashboard
       } else {
+        // Display error message from server
         setError(data?.login.message || "Login failed");
       }
     } catch (err) {
+      // Handle login errors
       setError("Invalid credentials");
       console.error("Login error:", err);
     }
   };
 
+  // Render login form
   return (
     <AuthWrapper>
       <AuthContainer>
         <h1>Admin Login</h1>
 
+        {/* Login form */}
         <form onSubmit={handleSubmit}>
+          {/* Username input field */}
           <FormGroup>
             <label htmlFor="username">Username</label>
             <input
@@ -73,6 +84,7 @@ export const LoginPage = () => {
             />
           </FormGroup>
 
+          {/* Password input field */}
           <FormGroup>
             <label htmlFor="password">Password</label>
             <input
@@ -83,8 +95,14 @@ export const LoginPage = () => {
               placeholder="Enter password"
             />
           </FormGroup>
+
+          {/* Uncomment if using reCAPTCHA */}
           {/* <ReCAPTCHA ref={recaptcha} sitekey={REACT_APP_SITE_KEY} /> */}
+
+          {/* Submit button */}
           <PrimaryButton>Login</PrimaryButton>
+
+          {/* Display error message if exists */}
           {error && <ErrorMessage message={error} />}
         </form>
       </AuthContainer>
@@ -92,6 +110,7 @@ export const LoginPage = () => {
   );
 };
 
+// Custom styled button component
 const PrimaryButton = ({
   children,
   type,
@@ -107,6 +126,7 @@ const PrimaryButton = ({
   );
 };
 
+// Error message display component
 export const ErrorMessage = ({ message }: { message: string }) => {
   return <ErrorMessageWrapper>{message}</ErrorMessageWrapper>;
 };

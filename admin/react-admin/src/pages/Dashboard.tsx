@@ -21,7 +21,6 @@ export const Dashboard = () => {
     localStorage.clear();
     navigate("/");
   };
-  // const [generatedConfig, setX] = useState(genConfig(avatarConfig));
 
   return (
     <DashboardWrapper>
@@ -34,23 +33,6 @@ export const Dashboard = () => {
             onLogout();
           }}
         />
-        {/* &nbsp;&nbsp;&nbsp;&nbsp;
-        <div>
-          <Avatar
-            style={{ width: "60px", height: "60px" }}
-            {...generatedConfig}
-          />
-
-          <div
-            className={`avatar ${avatarConfig.shape}`}
-            style={{
-              backgroundColor: avatarConfig.bgColor,
-              backgroundImage: avatarConfig.isGradient
-                ? `linear-gradient(45deg, ${avatarConfig.bgColor}, #FFFFFF)`
-                : undefined,
-            }}
-          />
-        </div> */}
       </DashboardRightSide>
     </DashboardWrapper>
   );

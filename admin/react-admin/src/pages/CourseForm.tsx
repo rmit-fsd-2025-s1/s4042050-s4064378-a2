@@ -8,6 +8,7 @@ import {
 import { ErrorMessage } from "./LoginPage";
 import { useEffect, useState } from "react";
 
+// Interface defining the structure of a Lecturer
 interface Lecturer {
   id: number;
   user: {
@@ -17,25 +18,30 @@ interface Lecturer {
   };
 }
 
+// Props interface for the CourseForm component
 interface CourseFormProps {
-  course?: Course;
-  onSuccess: () => void;
+  course?: Course; // Optional existing course data for editing
+  onSuccess: () => void; // Callback function for successful operations
 }
 
+// CourseForm component for creating or updating a course
 export const CourseForm: React.FC<CourseFormProps> = ({
   course,
   onSuccess,
 }) => {
+  // Mutation hook for creating or updating a course based on whether 'course' prop exists
   const [mutate] = useMutation(course ? UPDATE_COURSE : CREATE_COURSE);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // State for storing error messages
   const [selectedLecturer, setSelectedLecturer] = useState<number | null>(
-    course?.lecturerId || null
+    course?.lecturerId || null // Initialize with existing lecturer ID if editing
   );
 
   // Fetch all available lecturers
   const { data: lec } = useQuery(GET_ALL_LECTURERS);
 
-  const [lecturers, setAllLecturers] = useState([]);
+  const [lecturers, setAllLecturers] = useState([]); // State for storing lecturer list
+
+  // Form submission handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -46,6 +52,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
     };
 
     try {
+      // Execute mutation (either create or update based on whether 'course' exists)
       const { data } = await mutate({
         variables: course
           ? {
@@ -54,6 +61,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
             }
           : { input },
       });
+      // Check for success and either call onSuccess or show error
       if (data?.createCourse?.success || data?.updateCourse?.success) {
         onSuccess();
       } else {
@@ -69,6 +77,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
     }
   };
 
+  // Effect to update lecturers list when data is fetched
   useEffect(() => {
     if (lec && lec.allLecturers) {
       setAllLecturers(lec.allLecturers.lecturers);
@@ -77,10 +86,13 @@ export const CourseForm: React.FC<CourseFormProps> = ({
 
   return (
     <div className="form-container">
+      {/* Close button that triggers the onSuccess callback */}
       <button className="close-button" onClick={() => onSuccess()}>
         ×
       </button>
+      {/* Course form with submission handler */}
       <form onSubmit={handleSubmit} className="course-form">
+        {/* Course code input field */}
         <div className="form-group">
           <label htmlFor="code">Course Code</label>
           <input
@@ -93,11 +105,13 @@ export const CourseForm: React.FC<CourseFormProps> = ({
           />
         </div>
 
+        {/* Course name input field */}
         <div className="form-group">
           <label htmlFor="name">Course Name</label>
           <input id="name" name="name" defaultValue={course?.name} required />
         </div>
 
+        {/* Lecturer selection dropdown */}
         <div className="form-group">
           <label htmlFor="lecturer">Lecturer</label>
           <select
@@ -119,12 +133,15 @@ export const CourseForm: React.FC<CourseFormProps> = ({
           </select>
         </div>
 
+        {/* Submit button with dynamic text based on create/update mode */}
         <button type="submit" className="submit-btn">
           {course ? "Update" : "Create"} Course
         </button>
+        {/* Display error message if any */}
         {error && <ErrorMessage message={error} />}
       </form>
 
+      {/* Inline CSS styles for the component */}
       <style>{`
         .form-container {
           display: flex;

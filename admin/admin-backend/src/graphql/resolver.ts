@@ -1,9 +1,15 @@
 import { pool } from "../db";
 const bcrypt = require("bcrypt");
 
+// GraphQL resolvers for handling all data operations
 export const resolvers = {
+  /**
+   * Fetch all candidates with their basic information
+   * @returns Object containing success status, message, and candidates array
+   */
   allCandidates: async () => {
     try {
+      // Query database for all candidates with user information
       const [candidates] = await pool.query(
         `SELECT 
         c.id as id, 
@@ -15,6 +21,7 @@ export const resolvers = {
         WHERE c.id IS NOT NULL`
       );
 
+      // Handle empty result case
       if (candidates.length === 0) {
         return {
           success: true,
@@ -35,8 +42,14 @@ export const resolvers = {
       };
     }
   },
+
+  /**
+   * Fetch all lecturers with their basic information
+   * @returns Object containing success status, message, and lecturers array
+   */
   allLecturers: async () => {
     try {
+      // Query database for all lecturers with user information
       const [lecturers] = await pool.query(
         `SELECT 
         c.id as id, 
@@ -47,6 +60,7 @@ export const resolvers = {
         WHERE c.id IS NOT NULL`
       );
 
+      // Handle empty result case
       if (lecturers.length === 0) {
         return {
           success: true,
@@ -68,13 +82,21 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Authenticate admin user
+   * @param _ - Parent resolver (unused)
+   * @param args - Contains username and password
+   * @returns Object with success status, message, and user info if successful
+   */
   login: async (_, args) => {
     const { username, password } = args.body.variables;
+    // Query database for admin with matching username
     const [admins] = await pool.query(
       "SELECT * FROM admin WHERE username = ?",
       [username]
     );
 
+    // Check if admin exists
     if (admins.length === 0) {
       return {
         success: false,
@@ -83,6 +105,7 @@ export const resolvers = {
       };
     }
 
+    // Verify password against hashed password
     const admin = admins[0];
     const valid = await bcrypt.compare(password, admin.password);
     if (!valid) {
@@ -93,6 +116,7 @@ export const resolvers = {
       };
     }
 
+    // Return success response with user info
     return {
       success: true,
       message: "Login successful",
@@ -103,7 +127,12 @@ export const resolvers = {
     };
   },
 
+  /**
+   * Get candidates grouped by their accepted courses
+   * @returns Array of courses with their accepted candidates
+   */
   candidatesByCourse: async () => {
+    // Query for all accepted applications with related data
     const [rows] = await pool.query(`
     SELECT 
       c.id AS courseId,
@@ -123,7 +152,7 @@ export const resolvers = {
     WHERE a.status = 'accepted'
   `);
 
-    // Group by courseId
+    // Group results by course ID
     const courseMap: Record<
       number,
       {
@@ -133,6 +162,7 @@ export const resolvers = {
       }
     > = {};
 
+    // Process each row and group by course
     for (const row of rows) {
       const courseId = row.courseId;
 
@@ -154,11 +184,16 @@ export const resolvers = {
       });
     }
 
-    // Return array of reports
+    // Return array of grouped courses
     return Object.values(courseMap);
   },
 
+  /**
+   * Get candidates with more than 3 accepted courses
+   * @returns Array of candidates with their course assignments
+   */
   candidatesWithMoreThan3Courses: async () => {
+    // Query for all accepted applications
     const [rows] = await pool.query(`
     SELECT 
       u.id,
@@ -178,6 +213,7 @@ export const resolvers = {
     // Group applications by candidate
     const candidateMap: Record<string, any> = {};
 
+    // Process each row and group by candidate
     for (const row of rows) {
       if (!candidateMap[row.id]) {
         candidateMap[row.id] = {
@@ -195,11 +231,16 @@ export const resolvers = {
       });
     }
 
-    // Filter candidates with more than 3 accepted courses
+    // Filter candidates with more than 3 courses
     return Object.values(candidateMap).filter((c: any) => c.courses.length > 3);
   },
 
+  /**
+   * Get candidates who haven't been accepted for any course
+   * @returns Array of unselected candidates with their applications
+   */
   unselectedCandidates: async () => {
+    // Query for candidates without any accepted applications
     const [rows] = await pool.query(`
     SELECT 
       u.id AS userId,
@@ -221,8 +262,10 @@ export const resolvers = {
     AND a.status != 'accepted'
   `);
 
+    // Group applications by candidate
     const grouped: Record<string, any> = {};
 
+    // Process each row and group by candidate
     for (const row of rows) {
       if (!grouped[row.userId]) {
         grouped[row.userId] = {
@@ -243,14 +286,22 @@ export const resolvers = {
     return Object.values(grouped);
   },
 
+  /**
+   * Update a candidate's active status
+   * @param _ - Parent resolver (unused)
+   * @param args - Contains candidate ID and new active status
+   * @returns Object with success status, message, and updated candidates list
+   */
   updateCandidateActive: async (_, args) => {
     const { active, id } = args.body.variables;
     try {
+      // Update candidate's active status in database
       await pool.query("UPDATE candidate SET active = ? WHERE id = ?", [
         active,
         id,
       ]);
 
+      // Fetch updated list of all candidates
       const [updatedCandidates] = await pool.query(`
         SELECT 
         c.id as id, 
@@ -275,12 +326,20 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Get a single course by ID
+   * @param _ - Parent resolver (unused)
+   * @param id - Course ID to fetch
+   * @returns Object with success status, message, and course data
+   */
   getCourse: async (_: any, { id }: { id: number }) => {
     try {
+      // Query database for specific course
       const [courses] = await pool.query(`SELECT * FROM course WHERE id = ?`, [
         id,
       ]);
 
+      // Handle course not found case
       if (!courses[0]) {
         return {
           success: false,
@@ -307,8 +366,13 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Get all courses with lecturer information
+   * @returns Object with success status, message, and courses array
+   */
   getAllCourses: async () => {
     try {
+      // Query all courses with associated lecturer info
       const [courses] = await pool.query(
         `SELECT 
           c.id AS id,
@@ -343,8 +407,15 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Get courses by semester
+   * @param _ - Parent resolver (unused)
+   * @param semester - Semester number to filter by
+   * @returns Object with success status, message, and courses array
+   */
   getCoursesBySemester: async (_: any, { semester }: { semester: number }) => {
     try {
+      // Query courses for specific semester
       const [courses] = await pool.query(
         `SELECT * FROM course WHERE semester = ? ORDER BY code`,
         [semester]
@@ -370,6 +441,12 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Create a new course
+   * @param _ - Parent resolver (unused)
+   * @param args - Contains course details (code, name, lecturerId)
+   * @returns Object with success status, message, and created course data
+   */
   createCourse: async (_: any, args) => {
     try {
       const { code, name, lecturerId } = args.body.variables.input;
@@ -384,11 +461,13 @@ export const resolvers = {
         };
       }
 
+      // Insert new course into database
       const [result] = await pool.query(
         `INSERT INTO course (code, name,lecturerId) VALUES (?, ?, ?)`,
         [code, name, lecturerId]
       );
 
+      // Fetch the newly created course
       const [newCourse] = await pool.query(
         `SELECT * FROM course WHERE id = ?`,
         [result.insertId]
@@ -411,10 +490,17 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Update an existing course
+   * @param _ - Parent resolver (unused)
+   * @param args - Contains course ID and updated details
+   * @returns Object with success status, message, and updated course data
+   */
   updateCourse: async (_: any, args) => {
     try {
       const { id, name, code, lecturerId } = args.body.variables;
 
+      // Validate course code format if provided
       if (code && !/^COSC\d{4}$/.test(code)) {
         return {
           success: false,
@@ -424,11 +510,13 @@ export const resolvers = {
         };
       }
 
+      // Update course in database
       await pool.query(
         `UPDATE course SET name = ?, code = ?, lecturerId = ? WHERE id = ?`,
         [name, code, lecturerId, id]
       );
 
+      // Fetch the updated course
       const [updatedCourse] = await pool.query(
         `SELECT * FROM course WHERE id = ?`,
         [id]
@@ -451,6 +539,12 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Delete a course
+   * @param _ - Parent resolver (unused)
+   * @param args - Contains course ID to delete
+   * @returns Object with success status, message, and deleted course data
+   */
   deleteCourse: async (_: any, args) => {
     const { id } = args.body.variables;
     try {
@@ -460,6 +554,7 @@ export const resolvers = {
         [id]
       );
 
+      // Handle course not found case
       if (!courseToDelete[0]) {
         return {
           success: false,
@@ -469,6 +564,7 @@ export const resolvers = {
         };
       }
 
+      // Delete the course from database
       await pool.query(`DELETE FROM course WHERE id = ?`, [id]);
 
       return {
@@ -488,6 +584,13 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Assign multiple lecturers to a course
+   * @param _ - Parent resolver (unused)
+   * @param courseId - ID of course to assign lecturers to
+   * @param lecturerIds - Array of lecturer IDs to assign
+   * @returns Object with success status, message, and updated course data
+   */
   assignLecturersToCourse: async (_, { courseId, lecturerIds }) => {
     try {
       // First clear existing assignments (or modify to merge)
@@ -495,7 +598,7 @@ export const resolvers = {
         courseId,
       ]);
 
-      // Insert new assignments
+      // Insert new assignments for each lecturer
       for (const lecturerId of lecturerIds) {
         await pool.query(
           "INSERT INTO course_lecturers (course_id, lecturer_id) VALUES (?, ?)",
@@ -503,7 +606,7 @@ export const resolvers = {
         );
       }
 
-      // Fetch updated course with lecturers
+      // Fetch updated course with lecturer information
       const [course] = await pool.query(
         `
           SELECT c.*, 
@@ -546,8 +649,16 @@ export const resolvers = {
     }
   },
 
+  /**
+   * Remove a lecturer from a course
+   * @param _ - Parent resolver (unused)
+   * @param courseId - ID of course to remove lecturer from
+   * @param lecturerId - ID of lecturer to remove
+   * @returns Object with success status, message, and updated course data
+   */
   removeLecturerFromCourse: async (_, { courseId, lecturerId }) => {
     try {
+      // Remove the lecturer-course association
       await pool.query(
         "DELETE FROM course_lecturers WHERE course_id = ? AND lecturer_id = ?",
         [courseId, lecturerId]
