@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Select } from "../styles/Shared";
 import axios from "axios";
+import { getCurrentUser } from "../../../util/localStorage"; 
 
 interface Course {
   id: number;
@@ -20,12 +21,20 @@ const CourseBasedFilter: React.FC<Props> = ({ value, onChange, disabled }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        const currentUser = getCurrentUser();
+        const userId = currentUser?.id;
+
+        if (!userId) {
+          console.error("User ID not found in current user");
+          return;
+        }
+
         const response = await axios.get(
-          `http://localhost:3001/teach_team/courses`
+          `http://localhost:3001/teach_team/courses/by-user/${userId}`
         );
         setCourses(response.data);
       } catch (error) {
-        console.error("Error loading courses:", error);
+        console.error("Error loading courses by user ID:", error);
       }
     };
 

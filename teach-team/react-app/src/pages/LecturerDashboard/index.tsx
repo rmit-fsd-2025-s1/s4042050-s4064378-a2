@@ -10,6 +10,21 @@ import { DEFAULT_AVATAR_CONFIG } from "../../components/Avatar/avatarConfig";
 import { filterTutorsBySelectionType } from "../../util/tutorSelection";
 import SelectionSummaryView from "./SelectionSummery/SelectionSummaryView";
 
+/**
+ * LecturerPage Component
+ *
+ * Architectural Note:
+ * This component serves as the top-level container for the lecturer dashboard.
+ * It is responsible for orchestrating data retrieval, processing, and delegation to visual components.
+ * 
+ * The code follows a container-presentational separation pattern:
+ * - This component handles all data-fetching logic and state management.
+ * - Child components like TutorList and SelectionSummaryView handle only visual representation.
+ * 
+ * This separation improves maintainability, allows easy testing of business logic,
+ * and enables future expansion of the UI without modifying core logic.
+ */
+
 export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }) => {
   const [filteredTutorApps, setFilteredTutorApps] = useState<TutorApplication[]>([]);
   const [tutors, setTutors] = useState<Tutor[]>([]);
@@ -17,29 +32,38 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
   const [showSummary, setShowSummary] = useState(false);
   const user = getCurrentUser();
 
-  // Expose this function to child to refresh after patch
+  /**
+   * Fetch tutor applications based on currently logged-in lecturer.
+   * This function encapsulates the business logic of making API calls,
+   * separated from any rendering logic.
+   */
   const fetchTutors = async () => {
-  try {
-    const currentUser = getCurrentUser();
-    const userId = currentUser?.id;
+    try {
+      const currentUser = getCurrentUser();
+      const userId = currentUser?.id;
 
-    if (!userId) {
-      console.error("User ID not found in current user");
-      return;
+      if (!userId) {
+        console.error("User ID not found in current user");
+        return;
+      }
+
+      const res = await axios.get(`http://localhost:3001/teach_team/applications/by-lecturer/${userId}`);
+      setTutors(res.data);
+    } catch (error) {
+      console.error("Error fetching tutor applications by user ID:", error);
     }
+  };
 
-    const res = await axios.get(`http://localhost:3001/teach_team/applications/by-lecturer/${userId}`);
-    setTutors(res.data);
-  } catch (error) {
-    console.error("Error fetching tutor applications by user ID:", error);
-  }
-};
-
+  // Load tutor data once on component mount
   useEffect(() => {
     fetchTutors();
   }, []);
 
-  // Pre-process grouped data for visual summary (used in modal)
+  /**
+   * Group data for selection summary visualization.
+   * This logic is computed at the container level and passed down to child components,
+   * adhering to the single-responsibility principle.
+   */
   const most = filterTutorsBySelectionType(tutors, "most");
   const least = filterTutorsBySelectionType(tutors, "least");
   const unselected = filterTutorsBySelectionType(tutors, "unselected");
@@ -62,9 +86,10 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
         onViewModeChange={setViewMode}
       />
 
-      {/* ✅ Now passes `refreshTutors` to trigger fresh fetch after update */}
+      {/* Pass down refresh function to child to allow re-fetching after updates */}
       <TutorList tutors={filteredTutorApps} refreshTutors={fetchTutors} />
 
+      {/* Conditionally render modal for summary statistics */}
       {showSummary && (
         <div style={modalStyle}>
           <div style={modalContentStyle}>
@@ -83,7 +108,7 @@ export const LecturerPage = ({ navigateTo }: { navigateTo: (page: any) => void }
   );
 };
 
-// Modal Styles
+// UI-only modal styling - kept separate from component logic
 const modalStyle: React.CSSProperties = {
   position: "fixed",
   top: 0,

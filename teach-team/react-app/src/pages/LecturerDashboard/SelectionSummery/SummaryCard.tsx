@@ -28,10 +28,32 @@ interface Props {
   }[];
 }
 
+/**
+ * SummaryCard Component
+ *
+ * Architectural Note:
+ * --------------------
+ * This is a **pure presentational component** responsible for rendering
+ * the visual layout of tutor summaries. It assumes all data is already
+ * formatted and structured correctly.
+ *
+ * Responsibilities:
+ * - Visualize tutor name, progress, and role information
+ * - Render styled progress bars and tags
+ * - Separate display logic for full-time and part-time roles
+ *
+ * Benefits of This Approach:
+ * - Keeps rendering code clean and focused
+ * - Decouples from any data manipulation logic
+ * - Easy to style, refactor, or reuse in future components
+ */
+
 const SummaryCard: React.FC<Props> = ({ title, tutors }) => {
   return (
     <Wrapper>
       <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>{title}</h3>
+
+      {/* Conditional rendering if no tutor data is provided */}
       {tutors.length === 0 ? (
         <p>No tutors found.</p>
       ) : (
@@ -39,6 +61,7 @@ const SummaryCard: React.FC<Props> = ({ title, tutors }) => {
           {tutors.map(({ id, name, accepted, total, courses }) => {
             const progress = Math.round((accepted / total) * 100);
 
+            // Separate courses by availability type for grouped display
             const fullTimeCourses = courses.filter(c => c.availability === "full-time");
             const partTimeCourses = courses.filter(c => c.availability === "part-time");
 
@@ -46,6 +69,7 @@ const SummaryCard: React.FC<Props> = ({ title, tutors }) => {
               <TutorCard key={id}>
                 <TutorName>{name}</TutorName>
 
+                {/* Progress bar and acceptance summary */}
                 <ProgressBarContainer>
                   <ProgressBar progress={progress} />
                 </ProgressBarContainer>
@@ -53,6 +77,7 @@ const SummaryCard: React.FC<Props> = ({ title, tutors }) => {
                   {accepted} accepted / {total} total ({progress}%)
                 </ProgressText>
 
+                {/* Full-Time Courses */}
                 {fullTimeCourses.length > 0 && (
                   <>
                     <AvailabilityLabel>Full-Time</AvailabilityLabel>
@@ -66,6 +91,7 @@ const SummaryCard: React.FC<Props> = ({ title, tutors }) => {
                   </>
                 )}
 
+                {/* Part-Time Courses */}
                 {partTimeCourses.length > 0 && (
                   <>
                     <AvailabilityLabel>Part-Time</AvailabilityLabel>

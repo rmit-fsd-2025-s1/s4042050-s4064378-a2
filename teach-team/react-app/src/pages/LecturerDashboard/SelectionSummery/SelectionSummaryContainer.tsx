@@ -12,18 +12,29 @@ interface Props {
  *
  * Architectural Note:
  * --------------------
- * This container component is responsible for processing raw tutor data
- * (e.g., grouping by tutor, computing accepted vs total roles) and passing
- * the formatted data to the `SummaryCard` presentational component.
+ * This component serves as a "container" in a container-presentational pattern.
  *
- * This follows the container-presentational pattern:
- * - Keeps business logic separate from UI rendering
- * - Improves testability, reusability, and clarity
- * - Supports future scaling and modification with minimal UI impact
+ * - It is responsible for all business logic related to transforming raw data into
+ *   a summarized structure suitable for rendering.
+ * - The actual visual display is fully delegated to the `SummaryCard` component,
+ *   which is a stateless, purely presentational component.
+ *
+ * Benefits of this separation:
+ * - Decouples data logic from UI, making code more modular and testable
+ * - Encourages reuse of visual components for other summary types with minimal changes
+ * - Enhances maintainability by isolating logic-heavy operations
  */
 
 const SummaryCardContainer: React.FC<Props> = ({ title, tutors }) => {
-  // Group tutors by full name
+  /**
+   * Group tutors by full name and compute selection stats:
+   * - accepted: number of accepted applications
+   * - total: total number of applications
+   * - courses: list of course-role-status info to display
+   *
+   * This transformation is done once here in the container to ensure
+   * the visual component (SummaryCard) remains clean and focused only on rendering.
+   */
   const grouped = tutors.reduce<
     Record<
       string,
@@ -43,6 +54,7 @@ const SummaryCardContainer: React.FC<Props> = ({ title, tutors }) => {
 
     const courseEntry = { name: courseName, status, role, availability };
 
+    // Initialize grouping entry if not already present
     if (!acc[fullName]) {
       acc[fullName] = {
         id: t.id,
@@ -51,6 +63,7 @@ const SummaryCardContainer: React.FC<Props> = ({ title, tutors }) => {
         courses: [courseEntry],
       };
     } else {
+      // Update aggregation for existing tutor
       acc[fullName].accepted += status === "accepted" ? 1 : 0;
       acc[fullName].total += 1;
       acc[fullName].courses.push(courseEntry);
@@ -59,12 +72,13 @@ const SummaryCardContainer: React.FC<Props> = ({ title, tutors }) => {
     return acc;
   }, {});
 
-  // Flatten into array for rendering
+  // Convert object to array for visual rendering
   const processed = Object.entries(grouped).map(([name, data]) => ({
     name,
     ...data,
   }));
 
+  // Render the visual component with processed tutor summary data
   return <SummaryCard title={title} tutors={processed} />;
 };
 

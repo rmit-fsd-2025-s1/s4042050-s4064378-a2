@@ -113,7 +113,7 @@ const SearchSortBar: React.FC<Props> = ({
           disabled={["least", "most", "unselected"].includes(tutorSelectFilter)}
         />
 
-        <TutorFilter value={tutorSelectFilter} onChange={setTutorSelectFilter} />
+        {/* <TutorFilter value={tutorSelectFilter} onChange={setTutorSelectFilter} /> */}
       </div>
     </Filter>
   );
