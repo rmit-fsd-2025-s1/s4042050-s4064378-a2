@@ -15,11 +15,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strictPropertyInitialization": false,
-    "types": ["jest", "node"]        // ✅ ADD THIS LINE
+    "types": ["jest", "node"]        
   },
   "include": [
     "src/**/*",
-    "__tests__/**/*",                // ✅ ADD TESTS DIRECTORY
+    "__tests__/**/*",               
     "src/**/*.ts"
   ],
   "exclude": [
