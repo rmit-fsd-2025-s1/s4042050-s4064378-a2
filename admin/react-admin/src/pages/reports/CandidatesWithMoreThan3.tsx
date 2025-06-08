@@ -1,7 +1,7 @@
-// src/pages/Reports/CandidatesWithMoreThan3Courses.tsx
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CANDIDATES_WITH_MORE_THAN_3_COURSES } from "../../graphql/queiris";
+import "./CandidatesWithMoreThan3Courses.css";
 
 const CandidatesWithMoreThan3Courses: React.FC = () => {
   const { data, loading, error } = useQuery(GET_CANDIDATES_WITH_MORE_THAN_3_COURSES, {
@@ -12,23 +12,17 @@ const CandidatesWithMoreThan3Courses: React.FC = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2 style={{ marginBottom: "1.5rem" }}>
-        Candidates with More Than 3 Accepted Courses
-      </h2>
+    <div className="report-container">
+      <h2 className="report-heading">Candidates with More Than 3 Accepted Courses</h2>
 
       {data.candidatesWithMoreThan3Courses.map((candidate: any) => (
-        <div key={candidate.email} style={{ marginBottom: "2rem" }}>
-          <h3 style={{ marginBottom: "0.5rem" }}>
-            {candidate.name} ({candidate.email})
+        <div key={candidate.email} className="candidate-section">
+          <h3 className="candidate-title">
+            {candidate.name} <span style={{ fontWeight: "normal" }}>({candidate.email})</span>
           </h3>
 
-          <table
-            border={1}
-            cellPadding={8}
-            style={{ width: "100%", borderCollapse: "collapse" }}
-          >
-            <thead style={{ backgroundColor: "#f0f0f0" }}>
+          <table className="report-table">
+            <thead>
               <tr>
                 <th>Course Name</th>
                 <th>Role</th>
