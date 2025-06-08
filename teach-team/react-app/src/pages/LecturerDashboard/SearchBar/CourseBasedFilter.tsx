@@ -32,7 +32,7 @@ const CourseBasedFilter: React.FC<Props> = ({ value, onChange, disabled }) => {
         }
 
         const response = await axios.get(
-          `${BASE_URL}/teach_team/courses/by-user/${userId}`
+          `${BASE_URL}/courses/by-user/${userId}`
         );
         setCourses(response.data);
       } catch (error) {
