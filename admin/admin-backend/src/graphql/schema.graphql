@@ -29,9 +29,18 @@ type Candidate {
   user: User
 }
 
+type CandidateWithMeta {
+  id: ID!
+  firstName: String!
+  email: String!
+  role: String!
+  availability: String!
+}
+
+
 type Report {
   courseName: String!
-  candidates: [User!]!
+  candidates: [CandidateWithMeta!]!
 }
 
 type Query {

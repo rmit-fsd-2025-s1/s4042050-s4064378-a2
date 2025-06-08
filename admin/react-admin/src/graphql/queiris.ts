@@ -9,10 +9,13 @@ export const GET_CANDIDATES_BY_COURSE = gql`
         id
         firstName
         email
+        role
+        availability
       }
     }
   }
 `;
+
 
 export const GET_ALL_CANDIDATES = gql`
   query {

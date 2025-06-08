@@ -74,18 +74,22 @@ export const resolvers = {
 
   candidatesByCourse: async () => {
     const [rows] = await pool.query(`
-    SELECT 
-      c.name AS courseName,
-      u.id AS id,
-      u.firstName AS firstName,
-      u.lastName AS lastName,
-      u.email AS email
-    FROM application a
-    JOIN course c ON a.courseId = c.id
-    JOIN candidate cand ON a.candidateId = cand.id
-    JOIN user u ON cand.user_id = u.id
-    WHERE a.status = 'accepted'
-  `);
+      SELECT 
+        c.name AS courseName,
+        u.id AS id,
+        u.firstName AS firstName,
+        u.lastName AS lastName,
+        u.email AS email,
+        r.name AS role,
+        a.availability AS availability
+      FROM application a
+      JOIN course c ON a.courseId = c.id
+      JOIN candidate cand ON a.candidateId = cand.id
+      JOIN user u ON cand.user_id = u.id
+      JOIN role r ON a.roleId = r.id
+      WHERE a.status = 'accepted'
+    `);
+
 
     // Group users under each course
     const courseMap: Record<string, any[]> = {};
@@ -96,8 +100,9 @@ export const resolvers = {
       courseMap[row.courseName].push({
         id: row.id,
         firstName: row.firstName,
-        lastName: row.lastName,
         email: row.email,
+        role: row.role,
+        availability: row.availability,
       });
     }
 
