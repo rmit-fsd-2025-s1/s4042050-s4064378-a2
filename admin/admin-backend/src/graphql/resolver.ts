@@ -72,9 +72,10 @@ export const resolvers = {
     };
   },
 
-  candidatesByCourse: async () => {
-    const [rows] = await pool.query(`
+ candidatesByCourse: async () => {
+  const [rows] = await pool.query(`
     SELECT 
+      c.id AS courseId,
       c.name AS courseName,
       c.semester AS semester,
       u.id AS id,
@@ -91,29 +92,40 @@ export const resolvers = {
     WHERE a.status = 'accepted'
   `);
 
-    // Group users under each course (by course name + semester)
-    const courseMap: Record<string, any[]> = {};
-    for (const row of rows) {
-      const courseKey = `${row.courseName} - ${row.semester}`;
-      if (!courseMap[courseKey]) {
-        courseMap[courseKey] = [];
-      }
-      courseMap[courseKey].push({
-        id: row.id,
-        firstName: row.firstName,
-        email: row.email,
-        role: row.role,
-        availability: row.availability,
+  // Group by courseId
+  const courseMap: Record<
+    number,
+    {
+      courseName: string;
+      semester: string;
+      candidates: any[];
+    }
+  > = {};
+
+  for (const row of rows) {
+    const courseId = row.courseId;
+
+    if (!courseMap[courseId]) {
+      courseMap[courseId] = {
+        courseName: row.courseName,
         semester: row.semester,
-      });
+        candidates: [],
+      };
     }
 
-    // Convert to Report[]
-    return Object.entries(courseMap).map(([courseName, candidates]) => ({
-      courseName,
-      candidates,
-    }));
-  },
+    courseMap[courseId].candidates.push({
+      id: row.id,
+      firstName: row.firstName,
+      email: row.email,
+      role: row.role,
+      availability: row.availability,
+      semester: row.semester,
+    });
+  }
+
+  // Return array of reports
+  return Object.values(courseMap);
+},
 
   candidatesWithMoreThan3Courses: async () => {
     const [rows] = await pool.query(`
