@@ -8,9 +8,7 @@ export class CandidateController {
   async save(request: Request, response: Response) {
     const { user_id } = request.body;
     const candidate = new Candidate();
-    // candidate.availability = "part-time";
-    // candidate.skills = [];
-    // candidate.credentials = [];
+    candidate.active = true;
     candidate.userId = user_id;
     try {
       const savedCandidate = await this.candidateRepository.save(candidate);

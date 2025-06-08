@@ -13,3 +13,18 @@ export const GET_CANDIDATES_BY_COURSE = gql`
     }
   }
 `;
+
+export const GET_ALL_CANDIDATES = gql`
+  query {
+    allCandidates {
+      success
+      message
+      candidates {
+        id
+        name
+        createdAt
+        active
+      }
+    }
+  }
+`;

@@ -2,10 +2,33 @@ import { pool } from "../db";
 const bcrypt = require("bcrypt");
 
 export const resolvers = {
-  // users: async () => {
-  //   const [rows] = await pool.query("SELECT * FROM users");
-  //   return rows;
-  // },
+  allCandidates: async () => {
+    const [candidates] = await pool.query(
+      `SELECT 
+        c.id as id, 
+        CONCAT(u.firstName,' ',u.lastName) AS name,
+        c.active AS active,
+        c.createdAt as createdAt
+        FROM candidate c
+        JOIN user u ON c.user_id = u.id
+        WHERE c.id IS NOT NULL`
+    );
+
+    console.log(candidates);
+
+    if (candidates.length === 0) {
+      return {
+        success: false,
+        message: "Invalid credentials",
+        candidates: [],
+      };
+    }
+    return {
+      success: true,
+      message: "Success",
+      candidates: candidates,
+    };
+  },
 
   login: async (_, args) => {
     const { username, password } = args.body.variables;
@@ -106,5 +129,4 @@ export const resolvers = {
       `);
     return rows;
   },
-
 };

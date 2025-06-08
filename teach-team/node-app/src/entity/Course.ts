@@ -19,12 +19,18 @@ export class Course {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ unique: true })
+  @Column()
   code: string;
 
   @Column()
   name: string;
 
-  @ManyToOne(() => Lecturer, (lecturer) => lecturer.courses, { onDelete: "SET NULL", nullable: true })
+  @Column()
+  semester: number;
+
+  @ManyToOne(() => Lecturer, (lecturer) => lecturer.courses, {
+    onDelete: "SET NULL",
+    nullable: true,
+  })
   lecturer: Lecturer;
 }

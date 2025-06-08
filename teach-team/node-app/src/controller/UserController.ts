@@ -164,6 +164,12 @@ export class UserController {
 
       if (user.candidate) {
         role = "candidate";
+
+        if (!user.candidate.active) {
+          return response
+            .status(400)
+            .json({ message: "User is blocked by the system" });
+        }
       } else if (user.lecturer) {
         role = "lecturer";
       }

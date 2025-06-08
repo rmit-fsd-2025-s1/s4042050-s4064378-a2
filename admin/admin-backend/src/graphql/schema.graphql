@@ -18,9 +18,14 @@ type AuthPayload {
   user: Admin
 }
 
+
+
 type Candidate {
   id: ID!
-  user: User!
+  name:String!
+  active:Boolean!
+  createdAt:String!
+  user: User
 }
 
 type Report {
@@ -33,8 +38,19 @@ type Query {
   candidatesByCourse: [Report!]!
   candidatesWithMoreThan3Courses: [User!]!
   unselectedCandidates: [User!]!
+  allCandidates:AuthPayload2
 }
 
 type Mutation {
   login(username: String!, password: String!): AuthPayload
 }
+
+type AuthPayload2{
+  success: Boolean!
+  message: String!
+  candidates: [Candidate!]!
+}
+
+# type GetAllCandidates{
+#   allCandidates():AuthPayload2
+# }

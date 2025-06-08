@@ -16,8 +16,8 @@ export class Candidate {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @Column()
-  // availability: string;
+  @Column({ default: true })
+  active: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

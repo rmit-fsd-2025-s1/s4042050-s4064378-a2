@@ -7,6 +7,7 @@ import { Dashboard } from "./Dashboard";
 import { MainPageWrapper } from "./element";
 import { NavBar } from "./NavBar";
 import CandidatesByCourse from "./reports/CandidatesByCourse";
+import CandidateTable from "./CandidateTable";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -53,7 +54,7 @@ const MainPage = ({ isSuccessLogin = false }: { isSuccessLogin?: boolean }) => {
       <main>
         {activeTab === "lecturer" && <div>Lecture</div>}
 
-        {activeTab === "candidate" && <div>candidate</div>}
+        {activeTab === "candidate" && <CandidateTable />}
 
         {activeTab === "course" && <div>Courses</div>}
         {activeTab === "report" && <CandidatesByCourse />}
