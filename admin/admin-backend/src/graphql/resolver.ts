@@ -166,7 +166,6 @@ export const resolvers = {
       CONCAT(u.firstName, ' ', u.lastName) AS name,
       u.email,
       c.name AS courseName,
-      c.semester AS semester,
       r.name AS role,
       a.availability
     FROM application a
@@ -192,7 +191,6 @@ export const resolvers = {
 
       candidateMap[row.id].courses.push({
         courseName: row.courseName,
-        semester: row.semester,
         role: row.role,
         availability: row.availability,
       });

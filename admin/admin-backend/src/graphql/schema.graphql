@@ -44,7 +44,6 @@ type CandidateCourseInfo {
   courseName: String!
   role: String!
   availability: String!
-  semester: String!
 }
 
 type CandidateWithCourses {

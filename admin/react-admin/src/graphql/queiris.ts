@@ -102,7 +102,6 @@ export const GET_CANDIDATES_WITH_MORE_THAN_3_COURSES = gql`
         courseName
         role
         availability
-        semester
       }
     }
   }

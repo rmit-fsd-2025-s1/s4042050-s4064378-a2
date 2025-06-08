@@ -1,7 +1,7 @@
-// src/pages/Reports/UnselectedCandidates.tsx
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { GET_UNSELECTED_CANDIDATES } from "../../graphql/queiris";
+import "./UnselectedCandidates.css";
 
 const UnselectedCandidates: React.FC = () => {
   const { data, loading, error } = useQuery(GET_UNSELECTED_CANDIDATES, {
@@ -12,21 +12,17 @@ const UnselectedCandidates: React.FC = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div style={{ padding: "1rem" }}>
+    <div className="container">
       <h2>Unselected Candidates</h2>
 
       {data.unselectedCandidates.map((candidate: any) => (
-        <div key={candidate.id} style={{ marginBottom: "2rem" }}>
-          <h3>
+        <div key={candidate.id} className="section">
+          <h3 className="candidate-header">
             {candidate.name} ({candidate.email})
           </h3>
 
-          <table
-            border={1}
-            cellPadding={8}
-            style={{ width: "100%", borderCollapse: "collapse" }}
-          >
-            <thead style={{ backgroundColor: "#f0f0f0" }}>
+          <table className="report-table">
+            <thead>
               <tr>
                 <th>Course Name</th>
                 <th>Role</th>

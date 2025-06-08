@@ -1,7 +1,7 @@
-// src/pages/Reports/CandidatesByCourse.tsx
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CANDIDATES_BY_COURSE } from "../../graphql/queiris";
+import "./CandidatesByCourse.css";
 
 const CandidatesByCourse: React.FC = () => {
   const { data, loading, error } = useQuery(GET_CANDIDATES_BY_COURSE, {
@@ -12,25 +12,21 @@ const CandidatesByCourse: React.FC = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div style={{ padding: "1rem" }}>
+    <div className="container">
       <h2 style={{ marginBottom: "1.5rem" }}>Candidates by Course</h2>
 
       {data.candidatesByCourse.map((report: any, index: number) => (
-        <div key={`${report.courseName}-${index}`} style={{ marginBottom: "2rem" }}>
-          <h3 style={{ marginBottom: "0.25rem" }}>{report.courseName}</h3>
-          <p style={{ marginTop: 0, marginBottom: "0.75rem", fontStyle: "italic" }}>
+        <div className="course-section" key={`${report.courseName}-${index}`}>
+          <h3 className="course-title">{report.courseName}</h3>
+          <p className="candidate-count">
             {report.candidates.length} candidate{report.candidates.length !== 1 ? "s" : ""} accepted
           </p>
 
           {report.candidates.length === 0 ? (
             <p>No accepted candidates for this course.</p>
           ) : (
-            <table
-              border={1}
-              cellPadding={8}
-              style={{ width: "100%", borderCollapse: "collapse" }}
-            >
-              <thead style={{ backgroundColor: "#f0f0f0" }}>
+            <table className="candidate-table">
+              <thead>
                 <tr>
                   <th>ID</th>
                   <th>First Name</th>
