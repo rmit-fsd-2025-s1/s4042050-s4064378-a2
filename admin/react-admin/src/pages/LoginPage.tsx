@@ -12,20 +12,7 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-
-// Updated to match your AuthPayload type
-const LOGIN_MUTATION = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      success
-      message
-      user {
-        id
-        username
-      }
-    }
-  }
-`;
+import { LOGIN_MUTATION } from "../graphql/queiris";
 
 type LoginResponse = {
   login: {

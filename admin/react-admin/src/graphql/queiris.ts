@@ -31,3 +31,32 @@ export const GET_ALL_CANDIDATES = gql`
     }
   }
 `;
+
+export const UPDATE_CANDIDATE_ACTIVE = gql`
+  mutation updateCandidateActive($id: ID!, $active: Boolean!) {
+    updateCandidateActive(id: $id, active: $active) {
+      success
+      message
+      candidates {
+        id
+        name
+        createdAt
+        active
+      }
+    }
+  }
+`;
+
+// Updated to match your AuthPayload type
+export const LOGIN_MUTATION = gql`
+  mutation Login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      success
+      message
+      user {
+        id
+        username
+      }
+    }
+  }
+`;

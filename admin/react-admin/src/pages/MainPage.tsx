@@ -19,20 +19,8 @@ export type CandidateTabType = "apply" | "profile" | "roles";
  */
 
 const MainPage = ({ isSuccessLogin = false }: { isSuccessLogin?: boolean }) => {
-  //   const [candidateProfile, setCandidateProfile] = useState<Candidate | null>(
-  //     null
-  //   );
-  //   const [courses, setCourses] = useState<Course[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("profile");
+  const [activeTab, setActiveTab] = useState<string>("lecturer");
   const [openPopup, setOpenpopup] = useState(isSuccessLogin);
-
-  //   useEffect(() => {
-  //     if (currentUser && currentUser.candidate) {
-  //       // const newCandidate = currentUser.candidate;
-  //       // newCandidate.user = omit(currentUser, ["candidate"]);
-  //       setCandidateProfile(currentUser.candidate);
-  //     }
-  //   }, [currentUser]);
 
   const handleApplyForRole = (
     courseId: string,

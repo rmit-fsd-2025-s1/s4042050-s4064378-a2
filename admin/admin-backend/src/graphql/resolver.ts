@@ -140,4 +140,36 @@ export const resolvers = {
       `);
     return rows;
   },
+
+  updateCandidateActive: async (_, args) => {
+    const { active, id } = args.body.variables;
+    try {
+      await pool.query("UPDATE candidate SET active = ? WHERE id = ?", [
+        active,
+        id,
+      ]);
+
+      const [updatedCandidates] = await pool.query(`
+        SELECT 
+        c.id as id, 
+        CONCAT(u.firstName,' ',u.lastName) AS name,
+        c.active AS active,
+        c.createdAt as createdAt
+        FROM candidate c
+        JOIN user u ON c.user_id = u.id
+        WHERE c.id IS NOT NULL`);
+
+      return {
+        success: true,
+        message: "Status updated successfully",
+        candidates: updatedCandidates,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Failed to update status",
+        candidates: null,
+      };
+    }
+  },
 };

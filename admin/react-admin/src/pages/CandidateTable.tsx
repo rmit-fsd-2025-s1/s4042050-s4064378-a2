@@ -1,19 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./CandidateTable.css";
-import { useQuery } from "@apollo/client";
-import { GET_ALL_CANDIDATES } from "../graphql/queiris";
-
-// interface Candidate {
-//   id: number;
-//   name: string;
-//   joinedDate: Date;
-//   active: boolean;
-// }
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  GET_ALL_CANDIDATES,
+  UPDATE_CANDIDATE_ACTIVE,
+} from "../graphql/queiris";
 
 interface Candidate {
   id: number;
   name: string;
-  joinedDate: string;
+  createdAt: string;
   active: boolean;
 }
 
@@ -28,37 +24,28 @@ interface AllCandidatesResponse {
 const CandidateTable: React.FC = () => {
   const { loading, error, data } =
     useQuery<AllCandidatesResponse>(GET_ALL_CANDIDATES);
+  const [updateStatus] = useMutation(UPDATE_CANDIDATE_ACTIVE);
 
-  console.log(data);
-  const [candidates, setCandidates] = useState<Candidate[]>([
-    {
-      id: 1,
-      name: "John Doe",
-      joinedDate: String(new Date("2023-10-15")),
-      active: true,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      joinedDate: String(new Date("2023-09-20")),
-      active: false,
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      joinedDate: String(new Date("2023-11-05")),
-      active: true,
-    },
-  ]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
 
-  const toggleActiveStatus = (id: number): void => {
-    setCandidates((prevCandidates) =>
-      prevCandidates.map((candidate) =>
-        candidate.id === id
-          ? { ...candidate, active: !candidate.active }
-          : candidate
-      )
-    );
+  useEffect(() => {
+    if (data) {
+      setCandidates(data.allCandidates.candidates);
+    }
+  }, [data]);
+
+  const toggleActiveStatus = async (candidate: Candidate) => {
+    try {
+      const result = await updateStatus({
+        variables: {
+          id: candidate.id,
+          active: !candidate.active,
+        },
+      });
+      setCandidates(result.data.updateCandidateActive.candidates);
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
   };
 
   const formatDate = (date: Date): string => {
@@ -72,45 +59,47 @@ const CandidateTable: React.FC = () => {
   return (
     <div className="candidate-table-container">
       <h2>Candidate Management</h2>
-      <table className="candidate-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Joined Date</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {candidates.map((candidate: Candidate) => (
-            <tr key={candidate.id}>
-              <td>{candidate.id}</td>
-              <td>{candidate.name}</td>
-              <td>{formatDate(new Date())}</td>
-              <td>
-                <span
-                  className={`status-badge ${
-                    candidate.active ? "active" : "inactive"
-                  }`}
-                >
-                  {candidate.active ? "Active" : "Blocked"}
-                </span>
-              </td>
-              <td>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={candidate.active}
-                    onChange={() => toggleActiveStatus(candidate.id)}
-                  />
-                  <span className="slider"></span>
-                </label>
-              </td>
+      <div style={{ maxHeight: "500px", overflow: "auto" }}>
+        <table className="candidate-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Joined Date</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {candidates.map((candidate: Candidate) => (
+              <tr key={candidate.id}>
+                <td>{candidate.id}</td>
+                <td>{candidate.name}</td>
+                <td>{formatDate(new Date())}</td>
+                <td>
+                  <span
+                    className={`status-badge ${
+                      candidate.active ? "active" : "inactive"
+                    }`}
+                  >
+                    {candidate.active ? "Active" : "Blocked"}
+                  </span>
+                </td>
+                <td>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={candidate.active}
+                      onChange={() => toggleActiveStatus(candidate)}
+                    />
+                    <span className="slider"></span>
+                  </label>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

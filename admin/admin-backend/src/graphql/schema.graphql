@@ -53,4 +53,5 @@ type Query {
 
 type Mutation {
   login(username: String!, password: String!): AuthPayload
+  updateCandidateActive(id: ID!, active: Boolean!): AuthPayload
 }
