@@ -8,6 +8,7 @@ import { MainPageWrapper } from "./element";
 import { NavBar } from "./NavBar";
 import CandidatesByCourse from "./reports/CandidatesByCourse";
 import CandidateTable from "./CandidateTable";
+import ReportsPage from "./reports/ReportsPage";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -45,7 +46,7 @@ const MainPage = ({ isSuccessLogin = false }: { isSuccessLogin?: boolean }) => {
         {activeTab === "candidate" && <CandidateTable />}
 
         {activeTab === "course" && <div>Courses</div>}
-        {activeTab === "report" && <CandidatesByCourse />}
+        {activeTab === "report" && <ReportsPage />}
       </main>
       {/* <Popup
         message={"Welcome to the Teach Team"}
