@@ -16,6 +16,7 @@ type AuthPayload {
   success: Boolean!
   message: String!
   user: Admin
+  candidates: [Candidate!]
 }
 
 
@@ -38,19 +39,9 @@ type Query {
   candidatesByCourse: [Report!]!
   candidatesWithMoreThan3Courses: [User!]!
   unselectedCandidates: [User!]!
-  allCandidates:AuthPayload2
+  allCandidates:AuthPayload
 }
 
 type Mutation {
   login(username: String!, password: String!): AuthPayload
 }
-
-type AuthPayload2{
-  success: Boolean!
-  message: String!
-  candidates: [Candidate!]!
-}
-
-# type GetAllCandidates{
-#   allCandidates():AuthPayload2
-# }

@@ -3,8 +3,9 @@ const bcrypt = require("bcrypt");
 
 export const resolvers = {
   allCandidates: async () => {
-    const [candidates] = await pool.query(
-      `SELECT 
+    try {
+      const [candidates] = await pool.query(
+        `SELECT 
         c.id as id, 
         CONCAT(u.firstName,' ',u.lastName) AS name,
         c.active AS active,
@@ -12,22 +13,27 @@ export const resolvers = {
         FROM candidate c
         JOIN user u ON c.user_id = u.id
         WHERE c.id IS NOT NULL`
-    );
+      );
 
-    console.log(candidates);
-
-    if (candidates.length === 0) {
+      if (candidates.length === 0) {
+        return {
+          success: true,
+          message: "Empty Data",
+          candidates: [],
+        };
+      }
+      return {
+        success: true,
+        message: "Success",
+        candidates: candidates,
+      };
+    } catch (error) {
       return {
         success: false,
-        message: "Invalid credentials",
+        message: String(error),
         candidates: [],
       };
     }
-    return {
-      success: true,
-      message: "Success",
-      candidates: candidates,
-    };
   },
 
   login: async (_, args) => {
