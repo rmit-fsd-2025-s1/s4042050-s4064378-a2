@@ -18,12 +18,13 @@ import {
 import Dropdown from "../../components/DropDown";
 
 interface Props {
-  tutor: TutorApplication;
-  onUpdate: (update: { id: number; updatedRole: TutorRole }) => void;
-  allTutors: TutorApplication[];
+  tutor: TutorApplication; // Individual tutor application
+  onUpdate: (update: { id: number; updatedRole: TutorRole }) => void; // Handler for saving updates
+  allTutors: TutorApplication[]; // Full list to check for duplicate rank
 }
 
 const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
+  // Local state for form fields and UI feedback
   const [tutorStatus, settutorStatus] = useState<"rejected" | "accepted" | "pending">(
     tutor.appliedRole.status
   );
@@ -37,15 +38,18 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
     "rejected" | "accepted" | "pending"
   >(tutor.appliedRole.status);
 
+  // Handle save button click
   const handleSave = () => {
     setErrorMessage("");
     setSuccessStatus(false);
 
+    // Validation: rank must be a positive number when accepted
     if (tutorStatus === "accepted" && (isNaN(tutorRank) || tutorRank <= 0)) {
       setErrorMessage("Please enter a valid rank greater than 0.");
       return;
     }
 
+    // Check for duplicate rank within same course and role
     if (tutorStatus === "accepted" && tutorRank > 0) {
       const duplicateRank = allTutors.find(
         (t) =>
@@ -54,11 +58,10 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
           t.appliedRole.rank === tutorRank &&
           t.appliedRole.course.id === tutor.appliedRole.course.id &&
           t.appliedRole.role === tutor.appliedRole.role
-
       );
 
       if (duplicateRank) {
-        settutorStatus(prevTutuorStatus);
+        settutorStatus(prevTutuorStatus); // revert status
         setErrorMessage(
           `Rank ${tutorRank} is already assigned to another applicant for this course.`
         );
@@ -66,6 +69,7 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
       }
     }
 
+    // Construct update object to pass to parent
     const updated = {
       id: tutor.appliedRole.id,
       updatedRole: {
@@ -80,17 +84,23 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
       },
     };
 
+    // Trigger update handler
     onUpdate(updated);
     setSuccessStatus(true);
     setprevTutuorStatus(tutorStatus);
+
+    // Automatically clear success message after 3 seconds
     setTimeout(() => setSuccessStatus(false), 3000);
   };
 
   return (
     <TutoCard>
+      {/* Tutor basic name header */}
       <Name>
         {tutor.firstName} {tutor.lastName}
       </Name>
+
+      {/* Tutor details section */}
       <TutorDetails>
         <Row>
           <RowLabel>Email:</RowLabel>
@@ -116,7 +126,9 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
         </Row>
       </TutorDetails>
 
+      {/* Form for status, rank, and comment */}
       <Form>
+        {/* Status Dropdown */}
         <FormGroup>
           <RowLabel>Select Application Status:</RowLabel>
           <Dropdown
@@ -129,18 +141,21 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
             onChange={(value) => {
               const updated = value as "rejected" | "accepted" | "pending";
               settutorStatus(updated);
+
+              // Clear rank if status isn't accepted
               if (updated !== "accepted") settutorRank(0);
             }}
           />
         </FormGroup>
 
+        {/* Rank Input */}
         <FormGroup>
           <RowLabel>Add The Tutor Rank:</RowLabel>
           <StyledInput
             type="number"
             min={1}
             value={tutorRank === 0 ? "" : tutorRank.toString().replace(/^0+/, "")}
-            disabled={tutorStatus !== "accepted"}
+            disabled={tutorStatus !== "accepted"} // Enable only for accepted status
             onChange={(e) => {
               const val = parseInt(e.target.value);
               settutorRank(isNaN(val) ? 0 : val);
@@ -148,6 +163,7 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
           />
         </FormGroup>
 
+        {/* Comment Input */}
         <FormGroup>
           <RowLabel>Add Comment:</RowLabel>
           <Textarea
@@ -158,6 +174,7 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
           />
         </FormGroup>
 
+        {/* Error Message Display */}
         {errorMessage && (
           <>
             <ErrorMessage>{errorMessage}</ErrorMessage>
@@ -165,10 +182,12 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
           </>
         )}
 
+        {/* Success Message */}
         {successStatus && (
           <SuccessMessage>Successfully saved the tutor!</SuccessMessage>
         )}
 
+        {/* Save Button */}
         <Button onClick={handleSave}>Save</Button>
       </Form>
     </TutoCard>

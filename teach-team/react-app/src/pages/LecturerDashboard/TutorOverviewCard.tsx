@@ -10,20 +10,24 @@ import {
 } from "./styles/TutorCard";
 
 interface Props {
-  tutor: Tutor;
+  tutor: Tutor; // A single tutor object with applied roles
 }
 
+// Component to display a non-editable overview of a tutor and their accepted courses
 const TutorOverviewCard: React.FC<Props> = ({ tutor }) => {
+  // Filter only accepted roles for displaying courses
   const acceptedCourses = tutor.appliedRoles?.filter(
     (r) => r.status === "accepted"
   ) ?? [];
 
   return (
     <TutoCard>
+      {/* Tutor name displayed prominently */}
       <Name>
         {tutor.firstName} {tutor.lastName}
       </Name>
 
+      {/* Tutor contact and profile details */}
       <TutorDetails>
         <Row>
           <RowLabel>Email:</RowLabel>
@@ -39,12 +43,15 @@ const TutorOverviewCard: React.FC<Props> = ({ tutor }) => {
         </Row>
       </TutorDetails>
 
+      {/* List of accepted courses with rank */}
       <div style={{ marginTop: "0.9rem" }}>
         <RowLabel>Accepted Courses:</RowLabel>
         <CourseList>
           {acceptedCourses.length === 0 ? (
+            // Show fallback if no courses accepted
             <li style={{ color: "#9ca4af" }}>None</li>
           ) : (
+            // List accepted courses and ranks
             acceptedCourses.map((role, index) => (
               <li key={index}>
                 {role.course.name} ({role.course.code}) — Rank:{" "}
