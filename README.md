@@ -100,6 +100,7 @@ This repository contains two main applications: **Admin Application** and **Teac
    npm run dev
    ```
 4. Run test cases:
+   there 15 test cases in tech-team/node-app/src/__test__ folder
    ```bash
    npm run test
    ```
