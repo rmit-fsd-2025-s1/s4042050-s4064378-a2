@@ -31,16 +31,14 @@ const CandidatesWithMoreThan3Courses: React.FC = () => {
             <thead style={{ backgroundColor: "#f0f0f0" }}>
               <tr>
                 <th>Course Name</th>
-                <th>Semester</th>
                 <th>Role</th>
                 <th>Availability</th>
               </tr>
             </thead>
             <tbody>
               {candidate.courses.map((c: any, index: number) => (
-                <tr key={`${candidate.email}-${c.courseName}-${c.semester}-${index}`}>
+                <tr key={`${candidate.email}-${c.courseName}-${index}`}>
                   <td>{c.courseName}</td>
-                  <td>{c.semester}</td>
                   <td>{c.role}</td>
                   <td>{c.availability}</td>
                 </tr>

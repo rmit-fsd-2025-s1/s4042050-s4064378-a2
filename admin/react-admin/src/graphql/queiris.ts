@@ -77,3 +77,20 @@ export const GET_CANDIDATES_WITH_MORE_THAN_3_COURSES = gql`
     }
   }
 `;
+
+
+export const GET_UNSELECTED_CANDIDATES = gql`
+  query {
+    unselectedCandidates {
+      id
+      name
+      email
+      applications {
+        courseName
+        semester
+        role
+        availability
+      }
+    }
+  }
+`;
