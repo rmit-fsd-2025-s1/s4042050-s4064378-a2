@@ -11,7 +11,6 @@ export const GET_CANDIDATES_BY_COURSE = gql`
         email
         role
         availability
-        semester
       }
     }
   }

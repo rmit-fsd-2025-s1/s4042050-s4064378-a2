@@ -36,7 +36,6 @@ type CandidateWithMeta {
   email: String!
   role: String!
   availability: String!
-  semester: String!
 }
 
 type CandidateCourseInfo {
