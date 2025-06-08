@@ -1,6 +1,13 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 
+/**
+ * Popup component that displays a temporary message overlay.
+ *
+ * @param {string} message - Text to be shown inside the popup
+ * @param {boolean} isOpen - Controls visibility of the popup
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setIsOpen - Function to toggle popup visibility
+ */
 export const Popup = ({
   message,
   isOpen,
@@ -10,15 +17,17 @@ export const Popup = ({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  // Toggle function to manually close the popup
   const togglePopup = () => {
     setIsOpen(!isOpen);
   };
 
+  // Automatically close popup after 1 second when opened
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         setIsOpen(false);
-      }, 1000);
+      }, 1000); // Auto-close delay: 1000ms
     }
   }, [isOpen]);
 
@@ -27,9 +36,13 @@ export const Popup = ({
       {isOpen && (
         <PopupContainer>
           <PopupContent>
+            {/* Close icon button */}
             <CloseButton onClick={togglePopup}>&times;</CloseButton>
+            {/* Display the popup message */}
             <h3>{message}</h3>
           </PopupContent>
+
+          {/* Overlay that closes the popup when clicked */}
           <PopupOverlay onClick={togglePopup} />
         </PopupContainer>
       )}
@@ -37,6 +50,7 @@ export const Popup = ({
   );
 };
 
+/* Styled container for the popup (full-screen centered flex box) */
 const PopupContainer = styled.div`
   position: fixed;
   top: 0;
@@ -49,6 +63,7 @@ const PopupContainer = styled.div`
   z-index: 1000;
 `;
 
+/* The visible popup box with shadow and rounded corners */
 const PopupContent = styled.div`
   position: relative;
   background: white;
@@ -63,6 +78,7 @@ const PopupContent = styled.div`
   }
 `;
 
+/* Close button (X icon) styled and placed at top-right */
 const CloseButton = styled.button`
   position: absolute;
   top: 10px;
@@ -78,6 +94,7 @@ const CloseButton = styled.button`
   }
 `;
 
+/* Semi-transparent background overlay to dim rest of screen */
 const PopupOverlay = styled.div`
   position: absolute;
   top: 0;

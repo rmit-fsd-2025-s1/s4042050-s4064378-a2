@@ -1,28 +1,13 @@
 import React, { FormEvent, useState } from "react";
 import { Candidate } from "../../types/Candidate";
-import {
-  AddCredentialWrapper,
-  CredentialItem,
-  CredentialList,
-  FormGroupWrapper,
-  ProfileInformationWrapper,
-  RadioGroup,
-  RemoveSkillsButton,
-  Section,
-  SkillList,
-  SkillTag,
-  SubmitButton,
-} from "./element";
+import { ProfileInformationWrapper, Section } from "./element";
 import { Popup } from "../../components/Popup";
 import { EditButton } from "../../components/Buttons/EditButton";
 import { ErrorMessage } from "../../components/ActivityStatus/ErrorMessage";
 import PopupContainer from "../../components/PopupContainer";
-import { FormGroup, StyledLabel, StyledSelect } from "../element";
+import { FormGroup } from "../element";
 import AvatarCustomizer from "../../components/Avatar/AvatarCustomizer";
-import {
-  AvatarConfigProps,
-  DEFAULT_AVATAR_CONFIG,
-} from "../../components/Avatar/avatarConfig";
+import { AvatarConfigProps } from "../../components/Avatar/avatarConfig";
 import { PrimaryButton } from "../../components/Buttons/PrimaryButton";
 import {
   getCurrentUser,
@@ -32,72 +17,67 @@ import { userApi } from "../../services/userApi";
 import { User } from "../../types/User";
 
 /**
- * ProfileInformation - A component for displaying and editing candidate profile information.
- *
- * This component renders a candidate's profile details and provides functionality to update them.
- * It handles the display logic while delegating the actual update operations to the parent component.
- *
- * @component
- * @param {Object} props - Component props
- * @param {Candidate} props.profile - The candidate profile object containing all profile information
- * @param {function} props.onUpdate - Callback function invoked when profile updates occur
- * @returns {React.ReactElement} The profile information form component
- *
+ * Props type definition for ProfileInformation component.
  */
-
 interface ProfileInformationProps {
   currentUser: User;
   onUpdate: (updatedProfile: Partial<Candidate>) => void;
 }
 
+/**
+ * ProfileInformation - A component for viewing and editing user profile.
+ *
+ * Displays user's name, email, join date, and allows editing these details
+ * including avatar customization. Profile updates are saved through an API call.
+ */
 const ProfileInformation: React.FC<ProfileInformationProps> = ({
   currentUser,
   onUpdate,
 }) => {
-  // candidate availability
-  // const [availability, setAvailability] = useState<"part-time" | "full-time">(
-  //   profile.availability
-  // );
-  const [newSkill, setNewSkill] = useState<string>("");
-  // const [skills, setSkills] = useState<string[]>(profile.skills);
-
+  // State to toggle edit mode
   const [isEditProfile, setIsEditProfile] = useState<Boolean>(false);
 
-  // const currentUser = getCurrentUser();
-
-  const [newCredential, setNewCredential] = useState({
-    degree: "",
-    institution: "",
-    year: new Date().getFullYear(),
-  });
-
+  // States for popup visibility and message
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
+  // Form field states initialized with current user data
   const [email, setEmail] = useState(currentUser.email);
   const [firstName, setFirstName] = useState(currentUser.firstName);
   const [lastName, setLastName] = useState(currentUser.lastName);
   const [newPassword, setNewPassword] = useState("");
-  // const [oldPassword, setOldPassword] = useState("");
+
+  // Error message state
   const [error, setError] = useState("");
-  // const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  // Avatar config state initialized from localStorage
   const [avatarConfig, setAvatarConfig] = useState(
     getCurrentUser()!.avatarConfig
   );
 
+  /**
+   * Handler for switching to edit mode
+   */
   const onEditProfile = () => {
     setIsEditProfile(true);
   };
 
+  /**
+   * Handles form submission to save or cancel profile changes
+   * Performs validation and triggers update API call if saving
+   */
   const handleEditProfile = async (event: any) => {
     event.preventDefault();
     const submitter = event.nativeEvent.submitter.name;
+
     if (submitter === "save" && currentUser) {
+      // Validate required fields
       if (!email || !firstName || !lastName) {
         setError("Please fill all fields");
         return;
       }
       try {
+        // API call to update user profile
         const result = await userApi.updateUser(currentUser.id, {
           firstName,
           lastName,
@@ -106,6 +86,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
           avatarConfig,
         });
 
+        // Persist updated user and reload page
         setCurrentUserToLocalStorage(result);
         setIsEditProfile(false);
         window.location.reload();
@@ -120,9 +101,11 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
   return (
     <ProfileInformationWrapper>
       {isEditProfile ? (
+        // Edit mode view
         <div>
           <h2 style={{ textAlign: "center" }}>Edit Profile</h2>
           <form onSubmit={handleEditProfile}>
+            {/* Email field */}
             <FormGroup>
               <label htmlFor="email">Email</label>
               <input
@@ -134,6 +117,8 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
                 required
               />
             </FormGroup>
+
+            {/* First Name field */}
             <FormGroup>
               <label htmlFor="first-name">First Name</label>
               <input
@@ -145,6 +130,8 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
                 required
               />
             </FormGroup>
+
+            {/* Last Name field */}
             <FormGroup>
               <label htmlFor="last-name">Last Name</label>
               <input
@@ -156,6 +143,8 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
                 required
               />
             </FormGroup>
+
+            {/* New Password field */}
             <FormGroup>
               <label htmlFor="password">New Password</label>
               <input
@@ -167,6 +156,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
               />
             </FormGroup>
 
+            {/* Edit avatar button */}
             <div>
               <button
                 onClick={(e) => {
@@ -177,6 +167,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
                 Edit Avatar
               </button>
 
+              {/* Avatar customization popup */}
               <PopupContainer
                 isOpen={isPopupOpen}
                 onClose={() => setIsPopupOpen(false)}
@@ -193,6 +184,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
               </PopupContainer>
             </div>
 
+            {/* Save and Cancel buttons */}
             <PrimaryButton type="submit" name="save">
               Save
             </PrimaryButton>
@@ -200,11 +192,14 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
               Cancel
             </PrimaryButton>
 
+            {/* Display error message if any */}
             {error && <ErrorMessage message={error} />}
           </form>
         </div>
       ) : (
+        // View-only mode
         <div>
+          {/* Header with Edit button */}
           <div
             style={{
               display: "flex",
@@ -216,6 +211,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
             <EditButton onClick={onEditProfile} />
           </div>
 
+          {/* Display user profile information */}
           <Section>
             <div>
               <label>Full Name: </label>
@@ -230,6 +226,8 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({
               {String(currentUser.createdAt).split("T")[0]}
             </div>
           </Section>
+
+          {/* Popup for general messages (not avatar) */}
           <Popup
             isOpen={isPopupOpen}
             message={popupMessage}

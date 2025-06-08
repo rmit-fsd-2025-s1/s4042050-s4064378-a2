@@ -14,6 +14,7 @@ import { Popup } from "../../components/Popup";
 import { omit } from "lodash";
 import { DEFAULT_AVATAR_CONFIG } from "../../components/Avatar/avatarConfig";
 
+// Define the types of tabs available in the candidate dashboard
 export type CandidateTabType = "apply" | "profile" | "roles";
 
 /**
@@ -21,8 +22,8 @@ export type CandidateTabType = "apply" | "profile" | "roles";
  *
  * @param currentUser - Currently logged in user (null if not authenticated)
  * @param navigateTo - Function to navigate between dashboard pages
+ * @param isSuccessLogin - Flag to indicate if login was successful (shows welcome popup)
  */
-
 const CandidateDashboard = ({
   currentUser,
   navigateTo,
@@ -32,43 +33,18 @@ const CandidateDashboard = ({
   navigateTo: (page: Page) => void;
   isSuccessLogin?: boolean;
 }) => {
+  // State for storing candidate profile data
   const [candidateProfile, setCandidateProfile] = useState<Candidate | null>(
     null
   );
+  // State for storing courses (currently unused in the component)
   const [courses, setCourses] = useState<Course[]>([]);
+  // State for tracking the active tab
   const [activeTab, setActiveTab] = useState<CandidateTabType>("profile");
+  // State for controlling the welcome popup visibility
   const [openPopup, setOpenpopup] = useState(isSuccessLogin);
 
-  // useEffect(() => {
-  //   // Mock API call to fetch candidate profile
-  //   const fetchCandidateProfile = async () => {
-  //     if (currentUser) {
-  //       let candidate: Candidate | null = getCandidateByEmail(currentUser.email);
-  //       if (!candidate) {
-  //         candidate = {
-  //           ...currentUser,
-  //           id: Date.now.toString(),
-  //           availability: "part-time",
-  //           skills: [],
-  //           credentials: [],
-  //           appliedRoles: [],
-  //         };
-  //         addCandidate(candidate);
-  //       }
-  //       setCandidateProfile(candidate);
-  //     }
-  //   };
-
-  //   // Mock API call to fetch available courses
-  //   const fetchCourses = async () => {
-  //     // In a real application, this would be an API call
-  //     setCourses(mockCourses);
-  //   };
-
-  //   fetchCandidateProfile();
-  //   fetchCourses();
-  // }, [currentUser]);
-
+  // Effect to initialize candidate profile when currentUser changes
   useEffect(() => {
     if (currentUser && currentUser.candidate) {
       // const newCandidate = currentUser.candidate;
@@ -77,42 +53,10 @@ const CandidateDashboard = ({
     }
   }, [currentUser]);
 
-  // const fetchCandidateData = async (user_id: number) => {
-  //   try {
-  //     const candidateData = await candidateApi.getCandidateByUserId(user_id);
-  //     setCandidateProfile(candidateData);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const handleApplyForRole = (
-    courseId: string,
-    role: "tutor" | "lab-assistant"
-  ) => {
-    // In a real application, this would be an API call
-    // Update local state to show the application
-    // if (candidateProfile) {
-    //   const course = courses.find((c) => c.id === courseId);
-    //   if (course) {
-    //     const newRole: CandidateRole = {
-    //       courseId,
-    //       status: "pending",
-    //       rank: 0,
-    //       role,
-    //     };
-    //     // const updateProfile: Candidate = {
-    //     //   ...candidateProfile,
-    //     //   appliedRoles: candidateProfile.appliedRoles
-    //     //     ? [...candidateProfile.appliedRoles, newRole]
-    //     //     : [newRole],
-    //     // };
-    //     // setCandidateProfile(updateProfile);
-    //     // updateCandidate(updateProfile);
-    //   }
-    // }
-  };
-
+  /**
+   * Updates the candidate profile with new data
+   * @param updatedProfile - Partial candidate object with updated fields
+   */
   const updateProfile = (updatedProfile: Partial<Candidate>) => {
     // update candidate profile
     if (candidateProfile) {
@@ -123,33 +67,24 @@ const CandidateDashboard = ({
 
   return (
     <CandidateDashboardWrapper>
+      {/* Main dashboard component with header and navigation */}
       <Dashboard
         header="Candidate Dashboard"
         navigateTo={navigateTo}
         avatarConfig={currentUser?.avatarConfig || DEFAULT_AVATAR_CONFIG}
       />
+      {/* Navigation bar for switching between tabs */}
       <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main>
-        {/* {currentUser && currentUser.candidate && (
-          <ProfileInformation
-            currentUser={currentUser}
-            onUpdate={updateProfile}
-          />
-        )} */}
-        {/* <PreviousRoles roles={[]} /> */}
+        {/* Application tab content */}
+        {activeTab === "apply" && <CandidateApplication />}
 
-        {activeTab === "apply" && (
-          <CandidateApplication
-            courses={courses}
-            onApply={handleApplyForRole}
-            candidateProfile={candidateProfile}
-          />
-        )}
-
+        {/* Roles tab content - shows previous applications */}
         {activeTab === "roles" && candidateProfile && (
           <PreviousRoles roles={[]} />
         )}
 
+        {/* Profile tab content - shows and allows editing profile information */}
         {activeTab === "profile" && currentUser && currentUser.candidate && (
           <ProfileInformation
             currentUser={currentUser}
@@ -157,6 +92,7 @@ const CandidateDashboard = ({
           />
         )}
       </main>
+      {/* Welcome popup shown after successful login */}
       <Popup
         message={"Welcome to the Teach Team"}
         isOpen={openPopup}
