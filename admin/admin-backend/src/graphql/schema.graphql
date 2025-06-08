@@ -130,7 +130,7 @@ type CoursePayload {
 input CourseInput {
   code: String!
   name: String!
-  lecturerId:ID!
+  lecturerId:ID
 }
 
 input UpdateCourseInput {
