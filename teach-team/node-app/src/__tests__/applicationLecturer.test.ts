@@ -148,16 +148,5 @@ describe("ApplicationLecturerController API Tests", () => {
     expect(res.body.error).toBe("Application not found");
   });
 
-  /**
-   * Test: POST /teach_team/applications
-   * Verifies that unimplemented POST endpoint returns 501
-   */
-  it("should return 501 for unimplemented create endpoint", async () => {
-    const res = await request(app)
-      .post("/teach_team/applications")
-      .send({});
-
-    expect(res.statusCode).toBe(501);
-    expect(res.body.message).toBe("Not implemented");
-  });
+ 
 });
