@@ -145,7 +145,7 @@ describe("ApplicationLecturerController API Tests", () => {
       .send({ status: "rejected" });
 
     expect(res.statusCode).toBe(404);
-    expect(res.body.error).toBe("Application not found");
+    expect(res.body.error).toBe("Application not found.");
   });
 
  
