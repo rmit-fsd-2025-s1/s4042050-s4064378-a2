@@ -1,5 +1,11 @@
 import { CandidateTabType } from "./CandidateDashboard";
 
+/**
+ * Navigation bar component for the Candidate Dashboard
+ *
+ * @param activeTab - Currently active tab
+ * @param setActiveTab - Function to update the active tab
+ */
 export const NavBar = ({
   activeTab,
   setActiveTab,
@@ -9,7 +15,9 @@ export const NavBar = ({
 }) => {
   return (
     <nav>
+      {/* Navigation list for dashboard tabs */}
       <ul>
+        {/* Profile Information tab button */}
         <li>
           <button
             className={activeTab === "profile" ? "active" : ""}
@@ -18,6 +26,8 @@ export const NavBar = ({
             Profile Information
           </button>
         </li>
+
+        {/* Apply for Roles tab button */}
         <li>
           <button
             className={activeTab === "apply" ? "active" : ""}
@@ -26,6 +36,8 @@ export const NavBar = ({
             Apply for Roles
           </button>
         </li>
+
+        {/* Applied Roles tab button */}
         <li>
           <button
             className={activeTab === "roles" ? "active" : ""}

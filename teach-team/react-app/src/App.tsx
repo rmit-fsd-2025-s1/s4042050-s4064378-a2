@@ -13,27 +13,37 @@ import {
 } from "./util/localStorage";
 import { TeachTeamLanding } from "./pages/LandingPage";
 
+// Define the possible page types in the application
 export type Page = "login" | "register" | "candidate" | "lecturer" | "landing";
 
+// Main component for the TechTeam application
 const TechTeam = () => {
+  // State for managing the current authenticated user
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  // State for managing the current active page
   const [currentPage, setCurrentPage] = useState<Page | null>(null);
+  // State to track if registration was successful
   const [registrationSuccess, setRegistrationSuccess] = useState<
     boolean | undefined
   >(false);
+  // State to track if login was successful
   const [isSuccessLogin, setIsSuccessLogin] = useState(false);
 
+  // Function to navigate between pages and persist the current page in localStorage
   const navigateTo = (page: Page) => {
     setCurrentPage(page);
     setCurrentPageToLocalStorage(page);
   };
 
+  // Function to set the current user and persist it in localStorage
   const setUser = (user: User) => {
     setCurrentUserToLocalStorage(user);
     setCurrentUser(user);
   };
 
+  // Effect hook to initialize user and page from localStorage when component mounts
   useEffect(() => {
+    // Check if there's a user in localStorage and set it to state
     if (!currentUser) {
       const user = getCurrentUser();
 
@@ -42,9 +52,11 @@ const TechTeam = () => {
       }
     }
 
+    // Check if there's a page in localStorage and set it to state
     if (!currentPage) {
       const page = getCurrentPage();
       if (page) {
+        // Redirect login/register pages to landing page if found in localStorage
         if (page === "login" || page === "register") {
           setCurrentPage("landing");
         } else {
@@ -54,20 +66,18 @@ const TechTeam = () => {
     }
   }, [currentPage, currentUser]);
 
+  // Function to render the appropriate page component based on currentPage state
   const renderPage = () => {
     switch (currentPage) {
       case "login":
         return (
-          <>
-            <LoginPage
-              setCurrentUser={setUser}
-              navigateTo={navigateTo}
-              registrationSuccess={registrationSuccess}
-              setIsSuccessLogin={setIsSuccessLogin}
-              setRegistrationSuccess={setRegistrationSuccess}
-            />
-            <div>test</div>
-          </>
+          <LoginPage
+            setCurrentUser={setUser}
+            navigateTo={navigateTo}
+            registrationSuccess={registrationSuccess}
+            setIsSuccessLogin={setIsSuccessLogin}
+            setRegistrationSuccess={setRegistrationSuccess}
+          />
         );
       case "register":
         return (
@@ -89,10 +99,12 @@ const TechTeam = () => {
       case "landing":
         return <TeachTeamLanding navigateTo={navigateTo} />;
       default:
+        // Default to landing page if no page is specified
         return <TeachTeamLanding navigateTo={navigateTo} />;
     }
   };
 
+  // Render the application with the current page component
   return <App>{renderPage()}</App>;
 };
 

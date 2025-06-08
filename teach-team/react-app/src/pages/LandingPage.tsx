@@ -2,19 +2,23 @@ import React from "react";
 import styled from "styled-components";
 import { Page } from "../App";
 
+// Interface for navigation button props used to style buttons based on variant
 interface NavButtonProps {
   variant?: "primary" | "secondary" | "disabled";
 }
 
+// Interface for feature icon props to determine its background color
 interface FeatureIconProps {
   color?: "blue" | "green" | "purple";
 }
 
+// Layout container for full-height page background
 const Container = styled.div`
   min-height: 100vh;
   background-color: #ffffff;
 `;
 
+// Header and navigation styling
 const Header = styled.header`
   border-bottom: 1px solid #e5e7eb;
 `;
@@ -65,6 +69,7 @@ const Navigation = styled.nav`
   gap: 1rem;
 `;
 
+// Styled navigation buttons with different visual states (primary, secondary, disabled)
 const NavButton = styled.button<NavButtonProps>`
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -103,8 +108,10 @@ const NavButton = styled.button<NavButtonProps>`
   `}
 `;
 
+// Main content container
 const Main = styled.main``;
 
+// Hero (introductory) section styling
 const HeroSection = styled.section`
   padding: 4rem 1.5rem;
 `;
@@ -138,6 +145,7 @@ const HeroDescription = styled.p`
   margin-bottom: 2rem;
 `;
 
+// Section for showcasing user groups: applicants and lecturers
 const UserGroupsSection = styled.section`
   padding: 3rem 1.5rem;
   background-color: #f9fafb;
@@ -192,6 +200,7 @@ const FeatureItem = styled.li`
   }
 `;
 
+// Section for key features display
 const FeaturesSection = styled.section`
   padding: 3rem 1.5rem;
 `;
@@ -223,6 +232,7 @@ const FeatureCard = styled.div`
   padding: 1rem;
 `;
 
+// Icon inside feature card with dynamic color based on prop
 const FeatureIcon = styled.div<FeatureIconProps>`
   width: 3rem;
   height: 3rem;
@@ -264,6 +274,7 @@ const FeatureDescription = styled.p`
   margin: 0;
 `;
 
+// Footer styling
 const Footer = styled.footer`
   padding: 2rem 1.5rem;
   background-color: #111827;
@@ -310,6 +321,12 @@ const FooterCopyright = styled.p`
   margin: 0;
 `;
 
+/**
+ * TeachTeamLanding - Landing page component for the TeachTeam system
+ *
+ * @param {function} navigateTo - Function to change the current page view (e.g., login, register)
+ * @returns React component representing the main public-facing landing page
+ */
 export const TeachTeamLanding = ({
   navigateTo,
 }: {
@@ -317,7 +334,7 @@ export const TeachTeamLanding = ({
 }) => {
   return (
     <Container>
-      {/* Header */}
+      {/* Header with brand and navigation */}
       <Header>
         <HeaderContent>
           <HeaderFlex>
@@ -340,15 +357,14 @@ export const TeachTeamLanding = ({
               >
                 Sign Up
               </NavButton>
-              {/* <NavButton variant="disabled" onClick={()=>navigateTo('login')}>Sign Out</NavButton> */}
             </Navigation>
           </HeaderFlex>
         </HeaderContent>
       </Header>
 
-      {/* Main Content */}
+      {/* Main site content */}
       <Main>
-        {/* Hero Section */}
+        {/* Hero title and description */}
         <HeroSection>
           <HeroContent>
             <HeroTitle>
@@ -362,10 +378,11 @@ export const TeachTeamLanding = ({
           </HeroContent>
         </HeroSection>
 
-        {/* User Groups */}
+        {/* Description of platform user roles */}
         <UserGroupsSection>
           <UserGroupsContent>
             <UserGroupsGrid>
+              {/* Card for applicants */}
               <UserGroupCard>
                 <CardTitle>For Tutor Applicants</CardTitle>
                 <FeatureList>
@@ -380,6 +397,7 @@ export const TeachTeamLanding = ({
                 </FeatureList>
               </UserGroupCard>
 
+              {/* Card for lecturers */}
               <UserGroupCard>
                 <CardTitle>For Lecturers</CardTitle>
                 <FeatureList>
@@ -393,7 +411,7 @@ export const TeachTeamLanding = ({
           </UserGroupsContent>
         </UserGroupsSection>
 
-        {/* Features */}
+        {/* Key system features */}
         <FeaturesSection>
           <FeaturesContent>
             <SectionTitle>Key Features</SectionTitle>
@@ -426,7 +444,7 @@ export const TeachTeamLanding = ({
         </FeaturesSection>
       </Main>
 
-      {/* Footer */}
+      {/* Footer with branding and copyright */}
       <Footer>
         <FooterContent>
           <FooterLogoSection>

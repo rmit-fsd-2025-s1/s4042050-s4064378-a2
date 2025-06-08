@@ -7,88 +7,92 @@ import {
   Link,
   StyledLabel,
   StyledSelect,
-} from "./element";
-import { PrimaryButton } from "../components/Buttons/PrimaryButton";
-import { HAVE_ACCOUNT, LOGIN, REGISTER, TEACH_TEAM } from "./constant";
-import { UserType } from "../types/User";
-import { Page } from "../App";
-import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage";
-import { userApi } from "../services/userApi";
-import PopupContainer from "../components/PopupContainer";
-import AvatarCustomizer from "../components/Avatar/AvatarCustomizer";
+} from "./element"; // Styled layout components
+import { PrimaryButton } from "../components/Buttons/PrimaryButton"; // Reusable primary button
+import { HAVE_ACCOUNT, LOGIN, REGISTER, TEACH_TEAM } from "./constant"; // UI string constants
+import { UserType } from "../types/User"; // Enum/type defining user roles
+import { Page } from "../App"; // Page navigation types
+import { ErrorMessage } from "../components/ActivityStatus/ErrorMessage"; // Component to show error messages
+import { userApi } from "../services/userApi"; // User service for API calls
+import PopupContainer from "../components/PopupContainer"; // Modal wrapper
+import AvatarCustomizer from "../components/Avatar/AvatarCustomizer"; // Avatar customization tool
 import {
   AvatarConfigProps,
   DEFAULT_AVATAR_CONFIG,
-} from "../components/Avatar/avatarConfig";
+} from "../components/Avatar/avatarConfig"; // Avatar config type and default config
 
 /**
- * Handles user registration and manages registration success state.
- *
- * @param navigateTo - Callback for navigating to other pages (e.g., login after successful registration)
- * @param setRegistrationSuccess - Updates the registration success state (used to show success messages)
+ * Component responsible for rendering registration form
+ * Handles form state, validation, and avatar selection
+ * On successful registration, redirects to login page
  */
-
 export const RegisterPage = ({
   navigateTo,
   setRegistrationSuccess,
 }: {
-  navigateTo: (page: Page) => void;
+  navigateTo: (page: Page) => void; // Called after successful registration
   setRegistrationSuccess: React.Dispatch<
-    React.SetStateAction<boolean | undefined>
+    React.SetStateAction<boolean | undefined> // Used to flag registration success
   >;
 }) => {
-  const [role, setRole] = useState<UserType>("candidate");
+  // Form field states
+  const [role, setRole] = useState<UserType>("candidate"); // Default role is candidate
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // Holds any error messages
+
+  // Avatar popup and config state
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [avatarConfig, setAvatarConfig] = useState(DEFAULT_AVATAR_CONFIG);
 
+  // Form submit handler
   const handleRegister = async (e: any) => {
     e.preventDefault();
 
-    // Basic validation
+    // Basic required field validation
     if (!email || !password || !confirmPassword || !lastName) {
       setError("Please fill all fields");
       return;
     }
 
+    // Password confirmation
     if (confirmPassword !== password) {
       setError("Passwords should be same");
       return;
     }
 
-    // NOTE: enable this once the development is done
-
-    // if (password.length < 8) {
-    //   setError("Password must be at least 8 characters");
-    //   return;
-    // } else if (!/[A-Z]/.test(password)) {
-    //   setError("Add at least one uppercase letter");
-    //   return;
-    // } else if (!/[a-z]/.test(password)) {
-    //   setError("Add at least one lowercase letter");
-    //   return;
-    // } else if (!/\d/.test(password)) {
-    //   setError("Add at least one number");
-    //   return;
-    // } else {
-    //   setError(""); // No error = password accepted
-    // }
+    // Strong password checks
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    } else if (!/[A-Z]/.test(password)) {
+      setError("Add at least one uppercase letter");
+      return;
+    } else if (!/[a-z]/.test(password)) {
+      setError("Add at least one lowercase letter");
+      return;
+    } else if (!/\d/.test(password)) {
+      setError("Add at least one number");
+      return;
+    } else {
+      setError(""); // Clear error if validation passed
+    }
 
     try {
+      // Create user via API
       await userApi.createUser({
         password: password,
         email,
         lastName,
         firstName,
         role,
-        avatarConfig,
+        avatarConfig, // Save avatar config along with user
       });
     } catch (error: any) {
+      // Handle duplicate email errors or fallback
       if (
         error.response.data.error &&
         error.response.data.error.code === "ER_DUP_ENTRY"
@@ -97,9 +101,10 @@ export const RegisterPage = ({
       } else {
         setError("Error in creating user");
       }
-
       return;
     }
+
+    // On success: clear error, show success, go to login
     setError("");
     setRegistrationSuccess(true);
     navigateTo("login");
@@ -112,6 +117,7 @@ export const RegisterPage = ({
         <h2>{REGISTER}</h2>
 
         <form onSubmit={handleRegister}>
+          {/* Email field */}
           <FormGroup>
             <label htmlFor="email">Email</label>
             <input
@@ -123,6 +129,8 @@ export const RegisterPage = ({
               required
             />
           </FormGroup>
+
+          {/* First name field */}
           <FormGroup>
             <label htmlFor="first-name">First Name</label>
             <input
@@ -134,6 +142,8 @@ export const RegisterPage = ({
               required
             />
           </FormGroup>
+
+          {/* Last name field */}
           <FormGroup>
             <label htmlFor="last-name">Last Name</label>
             <input
@@ -145,6 +155,8 @@ export const RegisterPage = ({
               required
             />
           </FormGroup>
+
+          {/* Role selection (candidate or lecturer) */}
           <FormGroup>
             <StyledLabel htmlFor="role">Type</StyledLabel>
             <StyledSelect
@@ -158,6 +170,7 @@ export const RegisterPage = ({
             </StyledSelect>
           </FormGroup>
 
+          {/* New password field */}
           <FormGroup>
             <label htmlFor="password">New Password</label>
             <input
@@ -170,6 +183,7 @@ export const RegisterPage = ({
             />
           </FormGroup>
 
+          {/* Confirm password field */}
           <FormGroup>
             <label htmlFor="password">Confirm Password</label>
             <input
@@ -181,6 +195,8 @@ export const RegisterPage = ({
               required
             />
           </FormGroup>
+
+          {/* Avatar selection popup trigger */}
           <div>
             <button
               onClick={(e) => {
@@ -191,6 +207,7 @@ export const RegisterPage = ({
               Select Avatar
             </button>
 
+            {/* Avatar customization popup */}
             <PopupContainer
               isOpen={isPopupOpen}
               onClose={() => setIsPopupOpen(false)}
@@ -207,9 +224,13 @@ export const RegisterPage = ({
             </PopupContainer>
           </div>
 
+          {/* Submit button */}
           <PrimaryButton type="submit">Register</PrimaryButton>
+
+          {/* Error feedback */}
           {error && <ErrorMessage message={error} />}
 
+          {/* Login link */}
           <AuthFooter>
             {HAVE_ACCOUNT}{" "}
             <Link className="link" onClick={() => navigateTo("login")}>
