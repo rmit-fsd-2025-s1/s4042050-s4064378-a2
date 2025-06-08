@@ -2,7 +2,7 @@ import "reflect-metadata";
 import express from "express";
 import { AppDataSource } from "./data-source";
 import userRoutes from "./routes/user.routes";
-import applicationsRouter from "./routes/applications.routes.";
+import applicationsRouter from "./routes/applications.routes";
 import courseRoutes from "./routes/courses.routes";
 import cors from "cors";
 import rolesRoutes from "./routes/roles.routes";
