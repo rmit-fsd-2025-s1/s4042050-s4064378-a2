@@ -8,19 +8,9 @@ export const NavBar = ({
   activeTab: string;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  const navigate = useNavigate();
-
   return (
     <nav>
       <ul>
-        {/* <li>
-          <button
-            className={activeTab === "lecturer" ? "active" : ""}
-            onClick={() => setActiveTab("lecturer")}
-          >
-            Lecturers
-          </button>
-        </li> */}
         <li>
           <button
             className={activeTab === "candidate" ? "active" : ""}

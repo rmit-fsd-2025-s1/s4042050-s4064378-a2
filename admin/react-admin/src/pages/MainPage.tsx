@@ -10,6 +10,7 @@ import CandidatesByCourse from "./reports/CandidatesByCourse";
 import CandidateTable from "./CandidateTable";
 import ReportsPage from "./reports/ReportsPage";
 import { CourseList } from "./CourseList";
+import { useNavigate } from "react-router-dom";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -21,29 +22,26 @@ export type CandidateTabType = "apply" | "profile" | "roles";
  */
 
 const MainPage = ({ isSuccessLogin = false }: { isSuccessLogin?: boolean }) => {
-  const [activeTab, setActiveTab] = useState<string>("lecturer");
+  const [activeTab, setActiveTab] = useState<string>("candidate");
   const [openPopup, setOpenpopup] = useState(isSuccessLogin);
+  const navigate = useNavigate();
 
   const handleApplyForRole = (
     courseId: string,
     role: "tutor" | "lab-assistant"
   ) => {};
 
-  //   const updateProfile = (updatedProfile: Partial<Candidate>) => {
-  //     // update candidate profile
-  //     if (candidateProfile) {
-  //       setCandidateProfile({ ...candidateProfile, ...updatedProfile });
-  //       // updateCandidate({ ...candidateProfile, ...updatedProfile });
-  //     }
-  //   };
+  useEffect(() => {
+    if (localStorage.getItem("isAuthenticated") !== "true") {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <MainPageWrapper>
       <Dashboard />
       <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main>
-        {/* {activeTab === "lecturer" && <div>Lecture</div>} */}
-
         {activeTab === "candidate" && <CandidateTable />}
 
         {activeTab === "course" && <CourseList />}
