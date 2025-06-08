@@ -74,35 +74,37 @@ export const resolvers = {
 
   candidatesByCourse: async () => {
     const [rows] = await pool.query(`
-      SELECT 
-        c.name AS courseName,
-        u.id AS id,
-        u.firstName AS firstName,
-        u.lastName AS lastName,
-        u.email AS email,
-        r.name AS role,
-        a.availability AS availability
-      FROM application a
-      JOIN course c ON a.courseId = c.id
-      JOIN candidate cand ON a.candidateId = cand.id
-      JOIN user u ON cand.user_id = u.id
-      JOIN role r ON a.roleId = r.id
-      WHERE a.status = 'accepted'
-    `);
+    SELECT 
+      c.name AS courseName,
+      c.semester AS semester,
+      u.id AS id,
+      u.firstName AS firstName,
+      u.lastName AS lastName,
+      u.email AS email,
+      r.name AS role,
+      a.availability AS availability
+    FROM application a
+    JOIN course c ON a.courseId = c.id
+    JOIN candidate cand ON a.candidateId = cand.id
+    JOIN user u ON cand.user_id = u.id
+    JOIN role r ON a.roleId = r.id
+    WHERE a.status = 'accepted'
+  `);
 
-
-    // Group users under each course
+    // Group users under each course (by course name + semester)
     const courseMap: Record<string, any[]> = {};
     for (const row of rows) {
-      if (!courseMap[row.courseName]) {
-        courseMap[row.courseName] = [];
+      const courseKey = `${row.courseName} - ${row.semester}`;
+      if (!courseMap[courseKey]) {
+        courseMap[courseKey] = [];
       }
-      courseMap[row.courseName].push({
+      courseMap[courseKey].push({
         id: row.id,
         firstName: row.firstName,
         email: row.email,
         role: row.role,
         availability: row.availability,
+        semester: row.semester,
       });
     }
 
@@ -120,6 +122,7 @@ export const resolvers = {
       CONCAT(u.firstName, ' ', u.lastName) AS name,
       u.email,
       c.name AS courseName,
+      c.semester AS semester,
       r.name AS role,
       a.availability
     FROM application a
@@ -145,14 +148,16 @@ export const resolvers = {
 
       candidateMap[row.id].courses.push({
         courseName: row.courseName,
+        semester: row.semester,
         role: row.role,
         availability: row.availability,
       });
     }
 
-    // Filter candidates with more than 3 courses
+    // Filter candidates with more than 3 accepted courses
     return Object.values(candidateMap).filter((c: any) => c.courses.length > 3);
   },
+
 
 
   unselectedCandidates: async () => {

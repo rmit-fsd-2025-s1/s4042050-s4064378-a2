@@ -59,3 +59,19 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+
+
+export const GET_CANDIDATES_WITH_MORE_THAN_3_COURSES = gql`
+  query {
+    candidatesWithMoreThan3Courses {
+      name
+      email
+      courses {
+        courseName
+        role
+        availability
+      }
+    }
+  }
+`;
+
