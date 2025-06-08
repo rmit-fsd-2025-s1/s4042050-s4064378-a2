@@ -6,8 +6,10 @@ import { LoginPage } from "./pages/LoginPage";
 import { Dashboard } from "./pages/Dashboard";
 import MainPage from "./pages/MainPage";
 
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL
+console.log("BASE_URL", BASE_URL)
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
+  uri: BASE_URL,
   cache: new InMemoryCache(),
 });
 
