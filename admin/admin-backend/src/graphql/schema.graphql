@@ -78,9 +78,44 @@ type Query {
   candidatesWithMoreThan3Courses: [CandidateWithCourses!]!
   unselectedCandidates: [UnselectedCandidate!]!
   allCandidates:AuthPayload
+  getCourse(id: ID!): CoursePayload
+  getAllCourses: CoursePayload
+  getCoursesBySemester(semester: Int!):CoursePayload
 }
 
 type Mutation {
   login(username: String!, password: String!): AuthPayload
   updateCandidateActive(id: ID!, active: Boolean!): AuthPayload
+  # course
+  createCourse(input: CourseInput!): CoursePayload
+  updateCourse(id: ID!, name: String! ,code: String!): CoursePayload
+  deleteCourse(id: ID!): CoursePayload
+}
+
+
+type Course {
+  id: ID!
+  code: String!
+  name: String!
+  semester: Int!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type CoursePayload {
+  success: Boolean!
+  message: String!
+  course: Course
+  courses: [Course!]
+}
+
+input CourseInput {
+  code: String!
+  name: String!
+}
+
+input UpdateCourseInput {
+  code: String
+  name: String
+  semester: Int
 }

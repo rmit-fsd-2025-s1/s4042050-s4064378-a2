@@ -9,6 +9,7 @@ import { NavBar } from "./NavBar";
 import CandidatesByCourse from "./reports/CandidatesByCourse";
 import CandidateTable from "./CandidateTable";
 import ReportsPage from "./reports/ReportsPage";
+import { CourseList } from "./CourseList";
 
 export type CandidateTabType = "apply" | "profile" | "roles";
 
@@ -45,7 +46,7 @@ const MainPage = ({ isSuccessLogin = false }: { isSuccessLogin?: boolean }) => {
 
         {activeTab === "candidate" && <CandidateTable />}
 
-        {activeTab === "course" && <div>Courses</div>}
+        {activeTab === "course" && <CourseList />}
         {activeTab === "report" && <ReportsPage />}
       </main>
       {/* <Popup

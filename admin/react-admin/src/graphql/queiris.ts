@@ -60,8 +60,6 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
-
-
 export const GET_CANDIDATES_WITH_MORE_THAN_3_COURSES = gql`
   query {
     candidatesWithMoreThan3Courses {
@@ -77,7 +75,74 @@ export const GET_CANDIDATES_WITH_MORE_THAN_3_COURSES = gql`
     }
   }
 `;
+export const CREATE_COURSE = gql`
+  mutation CreateCourse($input: CourseInput!) {
+    createCourse(input: $input) {
+      success
+      message
+      course {
+        id
+        code
+        name
+        createdAt
+      }
+    }
+  }
+`;
 
+export const UPDATE_COURSE = gql`
+  mutation UpdateCourse($id: ID!, $name: String!, $code: String!) {
+    updateCourse(id: $id, name: $name, code: $code) {
+      success
+      message
+      course {
+        id
+        code
+        name
+      }
+    }
+  }
+`;
+
+export const DELETE_COURSE = gql`
+  mutation DeleteCourse($id: ID!) {
+    deleteCourse(id: $id) {
+      success
+      message
+    }
+  }
+`;
+
+export const GET_COURSE = gql`
+  query GetCourse($id: ID!) {
+    getCourse(id: $id) {
+      success
+      message
+      course {
+        id
+        code
+        name
+        semester
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
+export const GET_ALL_COURSES = gql`
+  query {
+    getAllCourses {
+      success
+      message
+      courses {
+        id
+        code
+        name
+      }
+    }
+  }
+`;
 
 export const GET_UNSELECTED_CANDIDATES = gql`
   query {

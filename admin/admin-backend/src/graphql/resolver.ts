@@ -170,8 +170,6 @@ export const resolvers = {
     return Object.values(candidateMap).filter((c: any) => c.courses.length > 3);
   },
 
-
-
   unselectedCandidates: async () => {
     const [rows] = await pool.query(`
     SELECT 
@@ -218,7 +216,6 @@ export const resolvers = {
     return Object.values(grouped);
   },
 
-
   updateCandidateActive: async (_, args) => {
     const { active, id } = args.body.variables;
     try {
@@ -247,6 +244,212 @@ export const resolvers = {
         success: false,
         message: "Failed to update status",
         candidates: null,
+      };
+    }
+  },
+
+  getCourse: async (_: any, { id }: { id: number }) => {
+    try {
+      const [courses] = await pool.query(`SELECT * FROM course WHERE id = ?`, [
+        id,
+      ]);
+
+      if (!courses[0]) {
+        return {
+          success: false,
+          message: "Course not found",
+          course: null,
+          courses: null,
+        };
+      }
+
+      return {
+        success: true,
+        message: "Course retrieved successfully",
+        course: courses[0],
+        courses: null,
+      };
+    } catch (error) {
+      console.error("Error fetching course:", error);
+      return {
+        success: false,
+        message: "Error fetching course",
+        course: null,
+        courses: null,
+      };
+    }
+  },
+
+  getAllCourses: async () => {
+    console.log("inside");
+    try {
+      const [courses] = await pool.query(
+        `SELECT * FROM course ORDER BY semester, code`
+      );
+
+      return {
+        success: true,
+        message:
+          courses.length > 0
+            ? "Courses retrieved successfully"
+            : "No courses found",
+        course: null,
+        courses: courses,
+      };
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      return {
+        success: false,
+        message: "Error fetching courses",
+        course: null,
+        courses: null,
+      };
+    }
+  },
+
+  getCoursesBySemester: async (_: any, { semester }: { semester: number }) => {
+    try {
+      const [courses] = await pool.query(
+        `SELECT * FROM course WHERE semester = ? ORDER BY code`,
+        [semester]
+      );
+
+      return {
+        success: true,
+        message:
+          courses.length > 0
+            ? "Courses retrieved successfully"
+            : "No courses found for this semester",
+        course: null,
+        courses: courses,
+      };
+    } catch (error) {
+      console.error("Error fetching courses by semester:", error);
+      return {
+        success: false,
+        message: "Error fetching courses by semester",
+        course: null,
+        courses: null,
+      };
+    }
+  },
+
+  createCourse: async (_: any, args) => {
+    try {
+      const { code, name } = args.body.variables.input;
+
+      // Validate course code format
+      if (!/^COSC\d{4}$/.test(code)) {
+        return {
+          success: false,
+          message: "Course code must be in COSCxxxx format",
+          course: null,
+          courses: null,
+        };
+      }
+
+      const [result] = await pool.query(
+        `INSERT INTO course (code, name) VALUES (?, ?)`,
+        [code, name]
+      );
+
+      const [newCourse] = await pool.query(
+        `SELECT * FROM course WHERE id = ?`,
+        [result.insertId]
+      );
+
+      return {
+        success: true,
+        message: "Course created successfully",
+        course: newCourse[0],
+        courses: null,
+      };
+    } catch (error) {
+      console.error("Error creating course:", error);
+      return {
+        success: false,
+        message: "Failed to create course. " + String(error),
+        course: null,
+        courses: null,
+      };
+    }
+  },
+
+  updateCourse: async (_: any, args) => {
+    try {
+      const { id, name, code } = args.body.variables;
+      console.log(args.body.variables);
+
+      if (code && !/^COSC\d{4}$/.test(code)) {
+        return {
+          success: false,
+          message: "Course code must be in COSCxxxx format",
+          course: null,
+          courses: null,
+        };
+      }
+
+      await pool.query(`UPDATE course SET name = ?, code = ? WHERE id = ?`, [
+        name,
+        code,
+        id,
+      ]);
+
+      const [updatedCourse] = await pool.query(
+        `SELECT * FROM course WHERE id = ?`,
+        [id]
+      );
+
+      return {
+        success: true,
+        message: "Course updated successfully",
+        course: updatedCourse[0],
+        courses: null,
+      };
+    } catch (error) {
+      console.error("Error updating course:", error);
+      return {
+        success: false,
+        message: "Failed to update course",
+        course: null,
+        courses: null,
+      };
+    }
+  },
+
+  deleteCourse: async (_: any, args) => {
+    const { id } = args.body.variables;
+    try {
+      // First get the course before deleting for the response
+      const [courseToDelete] = await pool.query(
+        `SELECT * FROM course WHERE id = ?`,
+        [id]
+      );
+
+      if (!courseToDelete[0]) {
+        return {
+          success: false,
+          message: "Course not found",
+          course: null,
+          courses: null,
+        };
+      }
+
+      await pool.query(`DELETE FROM course WHERE id = ?`, [id]);
+
+      return {
+        success: true,
+        message: "Course deleted successfully",
+        course: courseToDelete[0],
+        courses: null,
+      };
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      return {
+        success: false,
+        message: "Failed to delete course",
+        course: null,
+        courses: null,
       };
     }
   },

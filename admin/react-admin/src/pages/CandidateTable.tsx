@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./CandidateTable.css";
+import "./styles.css";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   GET_ALL_CANDIDATES,
@@ -58,6 +58,7 @@ const CandidateTable: React.FC = () => {
   return (
     <div className="candidate-table-container">
       <h2>Candidate Management</h2>
+
       <div style={{ maxHeight: "500px", overflow: "auto" }}>
         <table className="candidate-table">
           <thead>
