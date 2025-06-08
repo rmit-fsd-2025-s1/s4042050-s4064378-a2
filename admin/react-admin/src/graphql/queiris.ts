@@ -151,7 +151,6 @@ export const GET_UNSELECTED_CANDIDATES = gql`
       email
       applications {
         courseName
-        semester
         role
         availability
       }
