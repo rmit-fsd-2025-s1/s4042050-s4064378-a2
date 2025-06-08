@@ -30,10 +30,10 @@ export class ApplicationLecturerController {
             skills: a.skills,
             course: a.course
               ? {
-                  id: a.course.id,
-                  code: a.course.code,
-                  name: a.course.name,
-                }
+                id: a.course.id,
+                code: a.course.code,
+                name: a.course.name,
+              }
               : null,
             rank: a.rank,
             status: a.status,
@@ -90,10 +90,10 @@ export class ApplicationLecturerController {
                 skills: a.skills,
                 course: a.course
                   ? {
-                      id: a.course.id,
-                      code: a.course.code,
-                      name: a.course.name,
-                    }
+                    id: a.course.id,
+                    code: a.course.code,
+                    name: a.course.name,
+                  }
                   : null,
                 rank: a.rank,
                 status: a.status,
@@ -115,14 +115,33 @@ export class ApplicationLecturerController {
     const applicationId = parseInt(req.params.id);
     const { status, rank, comment } = req.body;
 
+    // Validate status
+    const validStatuses = ["accepted", "rejected", "pending"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: "Invalid status value. Must be one of: accepted, rejected, pending." });
+    }
+
+    // Validate rank if status is accepted
+    if (status === "accepted") {
+      if (typeof rank !== "number" || isNaN(rank) || rank <= 0 || !Number.isInteger(rank)) {
+        return res.status(400).json({ error: "Rank must be a positive integer when status is 'accepted'." });
+      }
+    }
+
+    // Validate comment if present
+    if (comment !== undefined && typeof comment !== "string") {
+      return res.status(400).json({ error: "Comment must be a string." });
+    }
+
     try {
       const appRepo = AppDataSource.getRepository(Application);
       const application = await appRepo.findOne({ where: { id: applicationId } });
 
       if (!application) {
-        return res.status(404).json({ error: "Application not found" });
+        return res.status(404).json({ error: "Application not found." });
       }
 
+      // Apply updates
       application.status = status;
       application.rank = status === "accepted" ? rank : 0;
       application.comment = comment ?? "";
@@ -130,12 +149,12 @@ export class ApplicationLecturerController {
       await appRepo.save(application);
 
       return res.json({
-        message: "Application updated successfully",
+        message: "Application updated successfully.",
         application,
       });
     } catch (err) {
       console.error("Error updating application:", err);
-      return res.status(500).json({ error: "Failed to update application" });
+      return res.status(500).json({ error: "Failed to update application." });
     }
   }
 
