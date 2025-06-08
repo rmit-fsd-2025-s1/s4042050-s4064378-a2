@@ -50,65 +50,67 @@ export class ApplicationLecturerController {
 
   // Get applications by lecturer userId
   async getByLecturer(req: Request, res: Response) {
-    const userId = parseInt(req.params.userId);
+  const userId = parseInt(req.params.userId);
 
-    try {
-      const lecturer = await AppDataSource.getRepository(Lecturer).findOne({
-        where: { userId },
-      });
+  try {
+    const lecturer = await AppDataSource.getRepository(Lecturer).findOne({
+      where: { userId },
+    });
 
-      if (!lecturer) {
-        return res.status(404).json({ error: "Lecturer not found" });
-      }
+    if (!lecturer) {
+      return res.status(404).json({ error: "Lecturer not found" });
+    }
 
-      const candidates = await AppDataSource.getRepository(Candidate).find({
-        relations: [
-          "user",
-          "applications",
-          "applications.role",
-          "applications.course",
-          "applications.course.lecturer",
-        ],
-      });
+    const candidates = await AppDataSource.getRepository(Candidate).find({
+      relations: [
+        "user",
+        "applications",
+        "applications.role",
+        "applications.course",
+        "applications.course.lecturer",
+      ],
+    });
 
-      const result = candidates
-        .map((c) => {
-          const filteredApplications = c.applications?.filter((a) => {
-            return a.course?.lecturer?.id === lecturer.id;
-          });
+    const result = candidates
+      .map((c) => {
+        const filteredApplications = c.applications?.filter((a) => {
+          return a.course?.lecturer?.id === lecturer.id;
+        });
 
-          return {
-            id: c.id,
-            firstName: c.user.firstName,
-            lastName: c.user.lastName,
-            email: c.user.email,
-            appliedRoles:
-              filteredApplications?.map((a) => ({
-                availability: a.availability,
-                id: a.id,
-                role: a.role.name,
-                skills: a.skills,
-                course: a.course
-                  ? {
+        return {
+          id: c.id,
+          firstName: c.user.firstName,
+          lastName: c.user.lastName,
+          email: c.user.email,
+          appliedRoles:
+            filteredApplications?.map((a) => ({
+              availability: a.availability,
+              id: a.id,
+              role: a.role.name,
+              skills: a.skills,
+              credentials: a.credentials,
+              previousRoles: a.previousRoles,
+              course: a.course
+                ? {
                     id: a.course.id,
                     code: a.course.code,
                     name: a.course.name,
                   }
-                  : null,
-                rank: a.rank,
-                status: a.status,
-                comment: a.comment ?? "",
-              })) ?? [],
-          };
-        })
-        .filter((r) => r.appliedRoles.length > 0);
+                : null,
+              rank: a.rank,
+              status: a.status,
+              comment: a.comment ?? "",
+            })) ?? [],
+        };
+      })
+      .filter((r) => r.appliedRoles.length > 0);
 
-      return res.json(result);
-    } catch (err) {
-      console.error("Error in /by-lecturer route:", err);
-      return res.status(500).json({ error: "Failed to fetch filtered applications" });
-    }
+    return res.json(result);
+  } catch (err) {
+    console.error("Error in /by-lecturer route:", err);
+    return res.status(500).json({ error: "Failed to fetch filtered applications" });
   }
+}
 
   // Update application (status, rank, comment)
   async update(req: Request, res: Response) {

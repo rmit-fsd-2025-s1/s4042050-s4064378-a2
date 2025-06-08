@@ -81,6 +81,8 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
         status: tutorStatus,
         availability: tutor.appliedRole.availability,
         skills: tutor.appliedRole.skills,
+        credentials: tutor.appliedRole.credentials,
+        previousRoles: tutor.appliedRole.previousRoles,
       },
     };
 
@@ -112,7 +114,7 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
         </Row>
         <Row>
           <RowLabel>Skills:</RowLabel>
-          <RowValue>{tutor.appliedRole.skills.join(", ")}</RowValue>
+          <RowValue>{tutor.appliedRole.skills.join(", ") || "—"}</RowValue>
         </Row>
         <Row>
           <RowLabel>Applied Course:</RowLabel>
@@ -123,6 +125,42 @@ const TutorCard: React.FC<Props> = ({ tutor, onUpdate, allTutors }) => {
         <Row>
           <RowLabel>Applied Role:</RowLabel>
           <RowValue>{tutor.appliedRole.role}</RowValue>
+        </Row>
+
+        {/* ✅ NEW: Credentials */}
+        <Row>
+          <RowLabel>Credentials:</RowLabel>
+          <RowValue>
+            {tutor.appliedRole.credentials?.length > 0 ? (
+              <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                {tutor.appliedRole.credentials.map((cred, idx) => (
+                  <li key={idx}>
+                    {cred.degree} - {cred.institution} ({cred.year})
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              "—"
+            )}
+          </RowValue>
+        </Row>
+
+        {/* ✅ NEW: Previous Roles */}
+        <Row>
+          <RowLabel>Previous Roles:</RowLabel>
+          <RowValue>
+            {tutor.appliedRole.previousRoles?.length > 0 ? (
+              <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                {tutor.appliedRole.previousRoles.map((prev, idx) => (
+                  <li key={idx}>
+                    {prev.role} - {prev.course}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              "—"
+            )}
+          </RowValue>
         </Row>
       </TutorDetails>
 

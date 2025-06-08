@@ -22,6 +22,17 @@ export interface TutorRole {
   comment?: string;
   availability: "full-time" | "part-time"; // ✅ new
   skills: string[]; // ✅ new
+
+  credentials: {
+    degree: string;
+    institution: string;
+    year: string;
+  }[];
+
+  previousRoles: {
+    course: string;
+    role: string;
+  }[];
 }
 
 export interface TutorApplication extends Omit<Tutor, "appliedRoles"> {
